@@ -83,7 +83,7 @@ const Qualidade = () => {
               Análises laboratoriais e certificações
             </p>
           </div>
-          <Button>
+          <Button onClick={() => window.location.href = "/nova-analise"}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Análise
           </Button>

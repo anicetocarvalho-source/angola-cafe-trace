@@ -13,6 +13,7 @@ import NovoLote from "./pages/NovoLote";
 import Exploracoes from "./pages/Exploracoes";
 import NovaExploracao from "./pages/NovaExploracao";
 import NovaSecagem from "./pages/NovaSecagem";
+import NovaAnalise from "./pages/NovaAnalise";
 import Validacao from "./pages/Validacao";
 import Qualidade from "./pages/Qualidade";
 import Admin from "./pages/Admin";
@@ -88,6 +89,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <NovaSecagem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/nova-analise"
+            element={
+              <ProtectedRoute>
+                <NovaAnalise />
               </ProtectedRoute>
             }
           />
