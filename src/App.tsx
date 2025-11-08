@@ -9,6 +9,14 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Mapa from "./pages/Mapa";
 import Lotes from "./pages/Lotes";
+import NovoLote from "./pages/NovoLote";
+import Exploracoes from "./pages/Exploracoes";
+import NovaExploracao from "./pages/NovaExploracao";
+import NovaSecagem from "./pages/NovaSecagem";
+import Validacao from "./pages/Validacao";
+import Admin from "./pages/Admin";
+import SIM from "./pages/SIM";
+import Exportacao from "./pages/Exportacao";
 import Relatorios from "./pages/Relatorios";
 import Verificar from "./pages/Verificar";
 import NotFound from "./pages/NotFound";
@@ -47,6 +55,70 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Lotes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lotes/novo"
+            element={
+              <ProtectedRoute>
+                <NovoLote />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/exploracoes"
+            element={
+              <ProtectedRoute>
+                <Exploracoes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/exploracoes/nova"
+            element={
+              <ProtectedRoute>
+                <NovaExploracao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/secagem/nova"
+            element={
+              <ProtectedRoute>
+                <NovaSecagem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/validacao"
+            element={
+              <ProtectedRoute requiredRole="tecnico_inca">
+                <Validacao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="admin_inca">
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sim"
+            element={
+              <ProtectedRoute>
+                <SIM />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/exportacao"
+            element={
+              <ProtectedRoute>
+                <Exportacao />
               </ProtectedRoute>
             }
           />

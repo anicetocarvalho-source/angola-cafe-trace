@@ -83,7 +83,7 @@ const Lotes = () => {
             <h1 className="text-3xl font-bold text-foreground">Gestão de Lotes</h1>
             <p className="text-muted-foreground">Registo e acompanhamento de lotes de café</p>
           </div>
-          <Button>
+          <Button onClick={() => navigate("/lotes/novo")}>
             <Plus className="h-4 w-4 mr-2" />
             Novo Lote
           </Button>
@@ -104,7 +104,7 @@ const Lotes = () => {
                 <p className="text-muted-foreground mb-4">
                   Ainda não existem lotes registados no sistema.
                 </p>
-                <Button>
+                <Button onClick={() => navigate("/lotes/novo")}>
                   <Plus className="h-4 w-4 mr-2" />
                   Registar Primeiro Lote
                 </Button>

@@ -79,16 +79,21 @@ const NovoLote = () => {
     setLoading(true);
 
     try {
+      const insertData: any = {
+        tipo: values.tipo,
+        volume_kg: parseFloat(values.volume_kg),
+        humidade_percent: values.humidade_percent ? parseFloat(values.humidade_percent) : null,
+        temperatura_c: values.temperatura_c ? parseFloat(values.temperatura_c) : null,
+        estado: "pendente",
+      };
+
+      if (values.colheita_id && values.colheita_id !== "none") {
+        insertData.colheita_id = values.colheita_id;
+      }
+
       const { data, error } = await supabase
         .from("lotes")
-        .insert({
-          colheita_id: values.colheita_id || null,
-          tipo: values.tipo,
-          volume_kg: parseFloat(values.volume_kg),
-          humidade_percent: values.humidade_percent ? parseFloat(values.humidade_percent) : null,
-          temperatura_c: values.temperatura_c ? parseFloat(values.temperatura_c) : null,
-          estado: "pendente",
-        })
+        .insert(insertData)
         .select()
         .single();
 

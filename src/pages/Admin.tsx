@@ -60,24 +60,16 @@ const Admin = () => {
           user_roles (
             role
           )
-        `)
-        .order("nome");
+        `);
 
       if (error) throw error;
 
-      // Get emails from auth.users
-      const userIds = data?.map((u) => u.id) || [];
-      const usersWithEmails = await Promise.all(
-        data?.map(async (profile) => {
-          // For now, we'll use the profile data as is since we can't query auth.users directly
-          return {
-            id: profile.id,
-            email: "user@example.com", // Placeholder
-            profiles: [{ nome: profile.nome }],
-            user_roles: profile.user_roles || [],
-          };
-        }) || []
-      );
+      const usersWithEmails: UserWithRoles[] = (data || []).map((profile: any) => ({
+        id: profile.id,
+        email: "user@example.com", // Placeholder
+        profiles: [{ nome: profile.nome }],
+        user_roles: Array.isArray(profile.user_roles) ? profile.user_roles : [],
+      }));
 
       setUsers(usersWithEmails);
     } catch (error) {
@@ -92,7 +84,7 @@ const Admin = () => {
     try {
       const { error } = await supabase
         .from("user_roles")
-        .insert({ user_id: userId, role });
+        .insert({ user_id: userId, role: role as any });
 
       if (error) {
         if (error.code === "23505") {
@@ -117,7 +109,7 @@ const Admin = () => {
         .from("user_roles")
         .delete()
         .eq("user_id", userId)
-        .eq("role", role);
+        .eq("role", role as any);
 
       if (error) throw error;
 
