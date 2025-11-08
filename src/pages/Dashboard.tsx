@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Coffee, MapPin, CheckCircle2, AlertTriangle, TrendingUp, Package } from "lucide-react";
 
@@ -105,30 +106,41 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="h-2 w-2 rounded-full bg-secondary" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Novo lote registado</p>
-                  <p className="text-xs text-muted-foreground">LOT-2024-123456 - Província de Huambo</p>
-                </div>
-                <span className="text-xs text-muted-foreground">Há 2h</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-2 w-2 rounded-full bg-accent" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Lote aprovado</p>
-                  <p className="text-xs text-muted-foreground">LOT-2024-123450 - SCA Score 85</p>
-                </div>
-                <span className="text-xs text-muted-foreground">Há 5h</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-2 w-2 rounded-full bg-primary" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Nova exploração</p>
-                  <p className="text-xs text-muted-foreground">Fazenda São José - Benguela</p>
-                </div>
-                <span className="text-xs text-muted-foreground">Há 1d</span>
-              </div>
+              {stats.totalLotes > 0 ? (
+                <>
+                  <div className="flex items-center gap-4">
+                    <div className="h-2 w-2 rounded-full bg-secondary" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Lotes aprovados</p>
+                      <p className="text-xs text-muted-foreground">
+                        {stats.lotesAprovados} lotes certificados no sistema
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="h-2 w-2 rounded-full bg-accent" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Aguardam validação</p>
+                      <p className="text-xs text-muted-foreground">
+                        {stats.lotesPendentes} lotes pendentes de análise
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Explorações registadas</p>
+                      <p className="text-xs text-muted-foreground">
+                        {stats.totalExploracoes} explorações no sistema
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Dados demo carregados. Sistema pronto para utilização.
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -141,11 +153,17 @@ const Dashboard = () => {
           <CardContent>
             <div className="flex items-center justify-center h-32">
               <div className="text-center">
-                <div className="text-5xl font-bold text-primary">82.5</div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  <TrendingUp className="inline h-4 w-4 text-secondary mr-1" />
-                  +2.3 vs mês anterior
-                </p>
+                {stats.lotesAprovados > 0 ? (
+                  <>
+                    <div className="text-5xl font-bold text-primary">85.2</div>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      <TrendingUp className="inline h-4 w-4 text-secondary mr-1" />
+                      Qualidade excelente
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground">Sem dados disponíveis</p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -168,7 +186,7 @@ const Dashboard = () => {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
+            <div className="text-2xl font-bold">{stats.totalLotes}</div>
             <p className="text-xs text-muted-foreground">Total registado</p>
           </CardContent>
         </Card>
@@ -179,7 +197,7 @@ const Dashboard = () => {
             <MapPin className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
+            <div className="text-2xl font-bold">{stats.totalExploracoes}</div>
             <p className="text-xs text-muted-foreground">Registadas</p>
           </CardContent>
         </Card>
@@ -190,7 +208,7 @@ const Dashboard = () => {
             <AlertTriangle className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
+            <div className="text-2xl font-bold">{stats.lotesPendentes}</div>
             <p className="text-xs text-muted-foreground">Pendentes</p>
           </CardContent>
         </Card>
@@ -199,13 +217,17 @@ const Dashboard = () => {
       <Card>
         <CardHeader>
           <CardTitle>Acções Rápidas</CardTitle>
-          <CardDescription>Comece por registar uma exploração agrícola</CardDescription>
+          <CardDescription>Comece a registar os seus dados</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2">
-          <p className="text-sm text-muted-foreground">
-            Ainda não tem explorações registadas. Registe a sua primeira exploração para começar
-            a rastrear os seus lotes de café.
-          </p>
+        <CardContent className="space-y-3">
+          <Button className="w-full justify-start" onClick={() => window.location.href = "/exploracoes/nova"}>
+            <MapPin className="h-4 w-4 mr-2" />
+            Registar Nova Exploração
+          </Button>
+          <Button className="w-full justify-start" variant="outline" onClick={() => window.location.href = "/lotes/novo"}>
+            <Coffee className="h-4 w-4 mr-2" />
+            Criar Novo Lote
+          </Button>
         </CardContent>
       </Card>
     </div>

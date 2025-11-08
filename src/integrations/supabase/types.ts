@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      auditoria: {
+        Row: {
+          acao: string
+          blockchain_tx_hash: string | null
+          by_ip: string | null
+          by_user_id: string | null
+          created_at: string
+          diff_json: Json | null
+          entidade: string
+          entidade_id: string
+          hash: string | null
+          id: string
+        }
+        Insert: {
+          acao: string
+          blockchain_tx_hash?: string | null
+          by_ip?: string | null
+          by_user_id?: string | null
+          created_at?: string
+          diff_json?: Json | null
+          entidade: string
+          entidade_id: string
+          hash?: string | null
+          id?: string
+        }
+        Update: {
+          acao?: string
+          blockchain_tx_hash?: string | null
+          by_ip?: string | null
+          by_user_id?: string | null
+          created_at?: string
+          diff_json?: Json | null
+          entidade?: string
+          entidade_id?: string
+          hash?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       colheitas: {
         Row: {
           campanha: string
@@ -54,6 +93,63 @@ export type Database = {
             columns: ["parcela_id"]
             isOneToOne: false
             referencedRelation: "parcelas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comercializacao: {
+        Row: {
+          comprador_id: string | null
+          contrato_ref: string | null
+          created_at: string
+          data_contrato: string | null
+          id: string
+          incoterm: string | null
+          lote_id: string
+          moeda: string | null
+          preco_unitario: number | null
+          quantidade_kg: number | null
+          updated_at: string
+        }
+        Insert: {
+          comprador_id?: string | null
+          contrato_ref?: string | null
+          created_at?: string
+          data_contrato?: string | null
+          id?: string
+          incoterm?: string | null
+          lote_id: string
+          moeda?: string | null
+          preco_unitario?: number | null
+          quantidade_kg?: number | null
+          updated_at?: string
+        }
+        Update: {
+          comprador_id?: string | null
+          contrato_ref?: string | null
+          created_at?: string
+          data_contrato?: string | null
+          id?: string
+          incoterm?: string | null
+          lote_id?: string
+          moeda?: string | null
+          preco_unitario?: number | null
+          quantidade_kg?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comercializacao_comprador_id_fkey"
+            columns: ["comprador_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comercializacao_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
             referencedColumns: ["id"]
           },
         ]
@@ -165,6 +261,194 @@ export type Database = {
           {
             foreignKeyName: "exploracoes_produtor_id_fkey"
             columns: ["produtor_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exportacoes: {
+        Row: {
+          bl_ref: string | null
+          booking: string | null
+          certificado_origem_url: string | null
+          created_at: string
+          data_embarque: string | null
+          du_ref: string | null
+          eudr_pacote_id: string | null
+          exportador_id: string
+          id: string
+          invoice_url: string | null
+          lote_ids: string[]
+          navio: string | null
+          packing_list_url: string | null
+          pais_destino: string | null
+          porto: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          bl_ref?: string | null
+          booking?: string | null
+          certificado_origem_url?: string | null
+          created_at?: string
+          data_embarque?: string | null
+          du_ref?: string | null
+          eudr_pacote_id?: string | null
+          exportador_id: string
+          id?: string
+          invoice_url?: string | null
+          lote_ids: string[]
+          navio?: string | null
+          packing_list_url?: string | null
+          pais_destino?: string | null
+          porto?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bl_ref?: string | null
+          booking?: string | null
+          certificado_origem_url?: string | null
+          created_at?: string
+          data_embarque?: string | null
+          du_ref?: string | null
+          eudr_pacote_id?: string | null
+          exportador_id?: string
+          id?: string
+          invoice_url?: string | null
+          lote_ids?: string[]
+          navio?: string | null
+          packing_list_url?: string | null
+          pais_destino?: string | null
+          porto?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exportacoes_exportador_id_fkey"
+            columns: ["exportador_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      iot_leituras: {
+        Row: {
+          assinatura: string | null
+          created_at: string
+          data_hora: string
+          dispositivo_id: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          lote_id: string | null
+          origem_fabricante: string | null
+          secagem_id: string | null
+          tipo: string
+          unidade: string | null
+          valor_decimal: number | null
+        }
+        Insert: {
+          assinatura?: string | null
+          created_at?: string
+          data_hora?: string
+          dispositivo_id: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          lote_id?: string | null
+          origem_fabricante?: string | null
+          secagem_id?: string | null
+          tipo: string
+          unidade?: string | null
+          valor_decimal?: number | null
+        }
+        Update: {
+          assinatura?: string | null
+          created_at?: string
+          data_hora?: string
+          dispositivo_id?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          lote_id?: string | null
+          origem_fabricante?: string | null
+          secagem_id?: string | null
+          tipo?: string
+          unidade?: string | null
+          valor_decimal?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iot_leituras_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "iot_leituras_secagem_id_fkey"
+            columns: ["secagem_id"]
+            isOneToOne: false
+            referencedRelation: "secagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      logistica: {
+        Row: {
+          checkpoints: Json | null
+          created_at: string
+          documentos: string[] | null
+          humidade_media_percent: number | null
+          id: string
+          lote_id: string
+          rota: string | null
+          temp_media_c: number | null
+          transportador_id: string | null
+          updated_at: string
+          veiculo: string | null
+        }
+        Insert: {
+          checkpoints?: Json | null
+          created_at?: string
+          documentos?: string[] | null
+          humidade_media_percent?: number | null
+          id?: string
+          lote_id: string
+          rota?: string | null
+          temp_media_c?: number | null
+          transportador_id?: string | null
+          updated_at?: string
+          veiculo?: string | null
+        }
+        Update: {
+          checkpoints?: Json | null
+          created_at?: string
+          documentos?: string[] | null
+          humidade_media_percent?: number | null
+          id?: string
+          lote_id?: string
+          rota?: string | null
+          temp_media_c?: number | null
+          transportador_id?: string | null
+          updated_at?: string
+          veiculo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "logistica_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logistica_transportador_id_fkey"
+            columns: ["transportador_id"]
             isOneToOne: false
             referencedRelation: "entities"
             referencedColumns: ["id"]
@@ -316,6 +600,56 @@ export type Database = {
         }
         Relationships: []
       }
+      qualidade_certificacoes: {
+        Row: {
+          certificacoes_emitidas: string[] | null
+          certificado_pdf_url: string | null
+          created_at: string
+          id: string
+          laboratorio: string | null
+          lote_id: string
+          parametros: Json | null
+          resultado: string | null
+          tipo: string
+          updated_at: string
+          validade_ate: string | null
+        }
+        Insert: {
+          certificacoes_emitidas?: string[] | null
+          certificado_pdf_url?: string | null
+          created_at?: string
+          id?: string
+          laboratorio?: string | null
+          lote_id: string
+          parametros?: Json | null
+          resultado?: string | null
+          tipo: string
+          updated_at?: string
+          validade_ate?: string | null
+        }
+        Update: {
+          certificacoes_emitidas?: string[] | null
+          certificado_pdf_url?: string | null
+          created_at?: string
+          id?: string
+          laboratorio?: string | null
+          lote_id?: string
+          parametros?: Json | null
+          resultado?: string | null
+          tipo?: string
+          updated_at?: string
+          validade_ate?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qualidade_certificacoes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       secagens: {
         Row: {
           created_at: string
@@ -360,6 +694,93 @@ export type Database = {
           {
             foreignKeyName: "secagens_lote_id_fkey"
             columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sim_mercado: {
+        Row: {
+          created_at: string
+          data_referencia: string
+          fonte: string
+          id: string
+          indicador: string
+          localizacao: string | null
+          unidade: string | null
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string
+          data_referencia: string
+          fonte: string
+          id?: string
+          indicador: string
+          localizacao?: string | null
+          unidade?: string | null
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string
+          data_referencia?: string
+          fonte?: string
+          id?: string
+          indicador?: string
+          localizacao?: string | null
+          unidade?: string | null
+          valor?: number | null
+        }
+        Relationships: []
+      }
+      transformacoes: {
+        Row: {
+          created_at: string
+          data: string
+          etapa: string
+          id: string
+          lote_id: string
+          parametros_json: Json | null
+          rendimento_percent: number | null
+          responsavel_id: string | null
+          resultado_lote_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: string
+          etapa: string
+          id?: string
+          lote_id: string
+          parametros_json?: Json | null
+          rendimento_percent?: number | null
+          responsavel_id?: string | null
+          resultado_lote_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          etapa?: string
+          id?: string
+          lote_id?: string
+          parametros_json?: Json | null
+          rendimento_percent?: number | null
+          responsavel_id?: string | null
+          resultado_lote_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transformacoes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transformacoes_resultado_lote_id_fkey"
+            columns: ["resultado_lote_id"]
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]

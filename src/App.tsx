@@ -14,6 +14,7 @@ import Exploracoes from "./pages/Exploracoes";
 import NovaExploracao from "./pages/NovaExploracao";
 import NovaSecagem from "./pages/NovaSecagem";
 import Validacao from "./pages/Validacao";
+import Qualidade from "./pages/Qualidade";
 import Admin from "./pages/Admin";
 import SIM from "./pages/SIM";
 import Exportacao from "./pages/Exportacao";
@@ -95,6 +96,14 @@ const App = () => (
             element={
               <ProtectedRoute requiredRole="tecnico_inca">
                 <Validacao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/qualidade"
+            element={
+              <ProtectedRoute>
+                <Qualidade />
               </ProtectedRoute>
             }
           />
