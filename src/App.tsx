@@ -19,6 +19,7 @@ import Qualidade from "./pages/Qualidade";
 import Admin from "./pages/Admin";
 import SIM from "./pages/SIM";
 import Exportacao from "./pages/Exportacao";
+import NovaExportacao from "./pages/NovaExportacao";
 import Relatorios from "./pages/Relatorios";
 import Verificar from "./pages/Verificar";
 import NotFound from "./pages/NotFound";
@@ -137,6 +138,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Exportacao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/nova-exportacao"
+            element={
+              <ProtectedRoute>
+                <NovaExportacao />
               </ProtectedRoute>
             }
           />

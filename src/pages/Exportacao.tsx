@@ -49,7 +49,7 @@ const Exportacao = () => {
               Preparar e gerir exportações de café certificado
             </p>
           </div>
-          <Button>
+          <Button onClick={() => window.location.href = "/nova-exportacao"}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Exportação
           </Button>
