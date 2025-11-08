@@ -30,7 +30,8 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     return null;
   }
 
-  if (requiredRole && !hasRole(requiredRole)) {
+  // Admins have access to everything, otherwise check specific role
+  if (requiredRole && !hasRole(requiredRole) && !hasRole("admin_inca")) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
