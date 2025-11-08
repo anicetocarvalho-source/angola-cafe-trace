@@ -24,8 +24,8 @@ const Mapa = () => {
   const [filteredExploracoes, setFilteredExploracoes] = useState<Exploracao[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    provincia: "",
-    status: "",
+    provincia: "all",
+    status: "all",
     search: "",
   });
   useEffect(() => {
@@ -57,11 +57,11 @@ const Mapa = () => {
   const applyFilters = () => {
     let filtered = [...exploracoes];
 
-    if (filters.provincia) {
+    if (filters.provincia && filters.provincia !== "all") {
       filtered = filtered.filter((e) => e.provincia === filters.provincia);
     }
 
-    if (filters.status) {
+    if (filters.status && filters.status !== "all") {
       filtered = filtered.filter((e) => e.status === filters.status);
     }
 
@@ -128,7 +128,7 @@ const Mapa = () => {
                     <SelectValue placeholder="Todas as províncias" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     {provincias.map((p) => (
                       <SelectItem key={p} value={p}>
                         {p}
@@ -148,7 +148,7 @@ const Mapa = () => {
                     <SelectValue placeholder="Todos os estados" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     <SelectItem value="validado">Validado</SelectItem>
                     <SelectItem value="pendente">Pendente</SelectItem>
                     <SelectItem value="indeferido">Indeferido</SelectItem>
