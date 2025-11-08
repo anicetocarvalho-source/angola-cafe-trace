@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          record_id: string
+          table_name: string
+          timestamp: string
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id: string
+          table_name: string
+          timestamp?: string
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string
+          table_name?: string
+          timestamp?: string
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       auditoria: {
         Row: {
           acao: string
@@ -335,6 +371,56 @@ export type Database = {
           },
         ]
       }
+      harvests: {
+        Row: {
+          created_at: string
+          created_by: string
+          harvest_date: string
+          id: string
+          notes: string | null
+          parcela_id: string
+          quality_score: number | null
+          quantity: number
+          status: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          harvest_date: string
+          id?: string
+          notes?: string | null
+          parcela_id: string
+          quality_score?: number | null
+          quantity: number
+          status?: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          harvest_date?: string
+          id?: string
+          notes?: string | null
+          parcela_id?: string
+          quality_score?: number | null
+          quantity?: number
+          status?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "harvests_parcela_id_fkey"
+            columns: ["parcela_id"]
+            isOneToOne: false
+            referencedRelation: "parcelas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       iot_leituras: {
         Row: {
           assinatura: string | null
@@ -394,6 +480,50 @@ export type Database = {
             columns: ["secagem_id"]
             isOneToOne: false
             referencedRelation: "secagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      iot_sensors: {
+        Row: {
+          created_at: string
+          id: string
+          last_reading_at: string | null
+          location: string | null
+          name: string
+          parcela_id: string | null
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_reading_at?: string | null
+          location?: string | null
+          name: string
+          parcela_id?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_reading_at?: string | null
+          location?: string | null
+          name?: string
+          parcela_id?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iot_sensors_parcela_id_fkey"
+            columns: ["parcela_id"]
+            isOneToOne: false
+            referencedRelation: "parcelas"
             referencedColumns: ["id"]
           },
         ]
@@ -516,6 +646,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          link: string | null
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       parcelas: {
         Row: {
@@ -696,6 +859,41 @@ export type Database = {
             columns: ["lote_id"]
             isOneToOne: false
             referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sensor_readings: {
+        Row: {
+          id: string
+          metadata: Json | null
+          sensor_id: string
+          timestamp: string
+          unit: string
+          value: number
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          sensor_id: string
+          timestamp?: string
+          unit: string
+          value: number
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          sensor_id?: string
+          timestamp?: string
+          unit?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sensor_readings_sensor_id_fkey"
+            columns: ["sensor_id"]
+            isOneToOne: false
+            referencedRelation: "iot_sensors"
             referencedColumns: ["id"]
           },
         ]
