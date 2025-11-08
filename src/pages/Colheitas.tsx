@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Table,
   TableBody,
@@ -69,6 +70,8 @@ export default function Colheitas() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
+        
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Gestão de Colheitas</h1>

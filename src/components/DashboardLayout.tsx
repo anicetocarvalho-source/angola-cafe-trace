@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
+import QRScanner from "@/components/QRScanner";
 import { Link, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
@@ -96,7 +97,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </span>
           </div>
 
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-2">
+            <QRScanner />
             <NotificationCenter />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

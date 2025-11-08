@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Table,
   TableBody,
@@ -83,6 +84,8 @@ export default function Auditoria() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
+        
         <div>
           <h1 className="text-3xl font-bold text-foreground">Auditoria</h1>
           <p className="text-muted-foreground mt-1">

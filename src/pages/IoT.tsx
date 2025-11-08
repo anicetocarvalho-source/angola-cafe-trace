@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Activity, Thermometer, Droplets, Gauge, Plus, RefreshCw } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function IoT() {
   const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
@@ -75,6 +76,8 @@ export default function IoT() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
+        
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Dashboard IoT</h1>

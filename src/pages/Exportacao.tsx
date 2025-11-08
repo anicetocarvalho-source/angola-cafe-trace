@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Ship, FileText, Plus, Package } from "lucide-react";
+import { Ship, FileText, Plus, Package, Eye } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Table,
   TableBody,
@@ -15,15 +18,11 @@ import {
 } from "@/components/ui/table";
 
 const Exportacao = () => {
-  const [lotes, setLotes] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchApprovedLotes();
-  }, []);
-
-  const fetchApprovedLotes = async () => {
-    try {
+  const { data: lotes, isLoading: lotesLoading } = useQuery({
+    queryKey: ['lotes-aprovados'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from("lotes")
         .select("*")
@@ -31,17 +30,46 @@ const Exportacao = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setLotes(data || []);
-    } catch (error) {
-      console.error("Error fetching lotes:", error);
-    } finally {
-      setLoading(false);
-    }
+      return data;
+    },
+  });
+
+  const { data: exportacoes, isLoading: exportacoesLoading } = useQuery({
+    queryKey: ['exportacoes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("exportacoes")
+        .select(`
+          *,
+          exportador:entities!exportacoes_exportador_id_fkey(nome_legal)
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const loading = lotesLoading || exportacoesLoading;
+
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, { variant: any; label: string }> = {
+      preparacao: { variant: "secondary", label: "Preparação" },
+      documentacao: { variant: "default", label: "Documentação" },
+      embarque: { variant: "default", label: "Embarque" },
+      transito: { variant: "default", label: "Em Trânsito" },
+      exportado: { variant: "default", label: "Exportado" },
+    };
+
+    const config = variants[status] || variants.preparacao;
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
+        
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Gestão de Exportações</h1>
@@ -49,7 +77,7 @@ const Exportacao = () => {
               Preparar e gerir exportações de café certificado
             </p>
           </div>
-          <Button onClick={() => window.location.href = "/nova-exportacao"}>
+          <Button onClick={() => navigate("/nova-exportacao")}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Exportação
           </Button>
@@ -74,8 +102,8 @@ const Exportacao = () => {
               <Ship className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Exportações activas</p>
+              <div className="text-2xl font-bold">{exportacoes?.length || 0}</div>
+              <p className="text-xs text-muted-foreground">Exportações registadas</p>
             </CardContent>
           </Card>
 
@@ -90,6 +118,47 @@ const Exportacao = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Exportações Ativas */}
+        {exportacoes && exportacoes.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Exportações Ativas</CardTitle>
+              <CardDescription>Gerir exportações em curso</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {exportacoes.map((exp) => (
+                  <div
+                    key={exp.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium">
+                          {exp.exportador?.nome_legal}
+                        </p>
+                        {getStatusBadge(exp.status)}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {exp.pais_destino} • {exp.lote_ids?.length || 0} lotes
+                        {exp.booking && ` • Booking: ${exp.booking}`}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/exportacao/${exp.id}`)}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Ver Detalhes
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Available Lots for Export */}
         <Card>

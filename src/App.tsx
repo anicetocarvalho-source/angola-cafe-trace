@@ -30,6 +30,7 @@ import IoT from "./pages/IoT";
 import Colheitas from "./pages/Colheitas";
 import NovaColheita from "./pages/NovaColheita";
 import Auditoria from "./pages/Auditoria";
+import ExportacaoDetalhes from "./pages/ExportacaoDetalhes";
 
 const queryClient = new QueryClient();
 
@@ -225,6 +226,14 @@ const App = () => (
             element={
               <ProtectedRoute requiredRole="admin_inca">
                 <Auditoria />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/exportacao/:id"
+            element={
+              <ProtectedRoute>
+                <ExportacaoDetalhes />
               </ProtectedRoute>
             }
           />
