@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, TrendingUp, Package, MapPin, Award } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FileText, TrendingUp, Package, MapPin, Award, Download } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { toast } from "sonner";
 
 const Relatorios = () => {
   const [stats, setStats] = useState({
@@ -95,12 +99,68 @@ const Relatorios = () => {
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(18);
+    doc.text('Relatorio de Lotes - INCA Coffee Trace', 14, 20);
+    
+    doc.setFontSize(11);
+    doc.text(`Data: ${new Date().toLocaleDateString('pt-PT')}`, 14, 30);
+    
+    // Statistics
+    doc.setFontSize(14);
+    doc.text('Estatisticas Gerais', 14, 45);
+    
+    const statsData = [
+      ['Total de Lotes', stats.totalLotes.toString()],
+      ['Lotes Aprovados', stats.lotesAprovados.toString()],
+      ['Total Exploracoes', stats.totalExploracoes.toString()],
+      ['Qualidade Media', stats.qualidadeMedia ? stats.qualidadeMedia.toString() : '-'],
+    ];
+    
+    autoTable(doc, {
+      startY: 50,
+      head: [['Metrica', 'Valor']],
+      body: statsData,
+      theme: 'grid',
+      headStyles: { fillColor: [79, 70, 229] },
+    });
+
+    if (lotesPorEstado.length > 0) {
+      const currentY = (doc as any).lastAutoTable.finalY + 10;
+      doc.text('Lotes por Estado', 14, currentY);
+      
+      const statusData = lotesPorEstado.map(item => [
+        item.name,
+        item.value.toString()
+      ]);
+      
+      autoTable(doc, {
+        startY: currentY + 5,
+        head: [['Estado', 'Quantidade']],
+        body: statusData,
+        theme: 'grid',
+        headStyles: { fillColor: [79, 70, 229] },
+      });
+    }
+
+    doc.save(`relatorio-${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success("PDF exportado com sucesso!");
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Relatórios & Análises</h1>
-          <p className="text-muted-foreground">Dados estatísticos do sistema INCA Coffee Trace</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Relatórios & Análises</h1>
+            <p className="text-muted-foreground">Dados estatísticos do sistema INCA Coffee Trace</p>
+          </div>
+          <Button onClick={exportToPDF}>
+            <Download className="h-4 w-4 mr-2" />
+            Exportar PDF
+          </Button>
         </div>
 
         {/* Stats */}

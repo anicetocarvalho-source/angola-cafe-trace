@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings } from "lucide-react";
+import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout } from "lucide-react";
+import NotificationCenter from "@/components/NotificationCenter";
 import { Link, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
@@ -32,6 +33,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Exportação", href: "/exportacao", icon: FileText, roles: ["exportador", "admin_inca"] },
     { name: "SIM", href: "/sim", icon: BarChart3, roles: ["all"] },
     { name: "Relatórios", href: "/relatorios", icon: FileText, roles: ["all"] },
+    { name: "IoT", href: "/iot", icon: Activity, roles: ["tecnico_inca", "admin_inca"] },
+    { name: "Colheitas", href: "/colheitas", icon: Sprout, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
+    { name: "Auditoria", href: "/auditoria", icon: History, roles: ["admin_inca"] },
     { name: "Admin", href: "/admin", icon: Settings, roles: ["admin_inca"] },
   ];
 
@@ -93,6 +97,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
 
           <div className="ml-auto flex items-center gap-4">
+            <NotificationCenter />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2">

@@ -26,6 +26,10 @@ import NotFound from "./pages/NotFound";
 import Parcelas from "./pages/Parcelas";
 import LoteDetalhes from "./pages/LoteDetalhes";
 import NovaParcela from "./pages/NovaParcela";
+import IoT from "./pages/IoT";
+import Colheitas from "./pages/Colheitas";
+import NovaColheita from "./pages/NovaColheita";
+import Auditoria from "./pages/Auditoria";
 
 const queryClient = new QueryClient();
 
@@ -181,6 +185,46 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <LoteDetalhes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/iot"
+            element={
+              <ProtectedRoute>
+                <IoT />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/colheitas"
+            element={
+              <ProtectedRoute>
+                <Colheitas />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/colheitas/nova"
+            element={
+              <ProtectedRoute>
+                <NovaColheita />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/colheitas/:id/editar"
+            element={
+              <ProtectedRoute>
+                <NovaColheita />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/auditoria"
+            element={
+              <ProtectedRoute requiredRole="admin_inca">
+                <Auditoria />
               </ProtectedRoute>
             }
           />
