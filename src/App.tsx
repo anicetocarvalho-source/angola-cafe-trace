@@ -23,6 +23,9 @@ import NovaExportacao from "./pages/NovaExportacao";
 import Relatorios from "./pages/Relatorios";
 import Verificar from "./pages/Verificar";
 import NotFound from "./pages/NotFound";
+import Parcelas from "./pages/Parcelas";
+import LoteDetalhes from "./pages/LoteDetalhes";
+import NovaParcela from "./pages/NovaParcela";
 
 const queryClient = new QueryClient();
 
@@ -154,6 +157,30 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Relatorios />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/parcelas"
+            element={
+              <ProtectedRoute>
+                <Parcelas />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/parcelas/nova"
+            element={
+              <ProtectedRoute>
+                <NovaParcela />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lotes/:id"
+            element={
+              <ProtectedRoute>
+                <LoteDetalhes />
               </ProtectedRoute>
             }
           />

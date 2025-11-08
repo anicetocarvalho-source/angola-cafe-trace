@@ -153,13 +153,15 @@ const Lotes = () => {
                           {new Date(lote.created_at).toLocaleDateString("pt-PT")}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate(`/verificar/${lote.referencia_lote}`)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => navigate(`/lotes/${lote.id}`)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

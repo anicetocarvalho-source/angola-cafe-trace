@@ -24,12 +24,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const allNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3, roles: ["all"] },
     { name: "Explorações", href: "/exploracoes", icon: MapPin, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
+    { name: "Parcelas", href: "/parcelas", icon: MapPin, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
     { name: "Lotes", href: "/lotes", icon: Coffee, roles: ["all"] },
     { name: "Mapa", href: "/mapa", icon: MapPin, roles: ["all"] },
     { name: "Qualidade", href: "/qualidade", icon: FileText, roles: ["tecnico_inca", "admin_inca"] },
     { name: "Validação", href: "/validacao", icon: FileText, roles: ["tecnico_inca", "admin_inca"] },
     { name: "Exportação", href: "/exportacao", icon: FileText, roles: ["exportador", "admin_inca"] },
     { name: "SIM", href: "/sim", icon: BarChart3, roles: ["all"] },
+    { name: "Relatórios", href: "/relatorios", icon: FileText, roles: ["all"] },
     { name: "Admin", href: "/admin", icon: Settings, roles: ["admin_inca"] },
   ];
 

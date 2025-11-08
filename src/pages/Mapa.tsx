@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
+import InteractiveMap from "@/components/InteractiveMap";
 
 interface Exploracao {
   id: string;
@@ -160,18 +161,16 @@ const Mapa = () => {
         </Card>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Map Placeholder */}
+          {/* Interactive Map */}
           <Card className="lg:col-span-2">
             <CardContent className="p-0">
-              <div className="h-[600px] w-full rounded-lg overflow-hidden bg-muted flex items-center justify-center">
-                <div className="text-center p-8">
-                  <MapPin className="h-16 w-16 text-primary mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Mapa Interactivo</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Visualização geográfica das explorações em Angola<br />
-                    (Funcionalidade de mapa será activada em breve)
-                  </p>
-                </div>
+              <div className="h-[600px] w-full">
+                <InteractiveMap 
+                  exploracoes={filteredExploracoes}
+                  onMarkerClick={(exp) => {
+                    console.log("Clicked:", exp.designacao);
+                  }}
+                />
               </div>
             </CardContent>
           </Card>
