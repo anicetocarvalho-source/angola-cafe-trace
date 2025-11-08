@@ -135,10 +135,10 @@ const Index = () => {
             da cafeicultura angolana.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8">
+            <Button size="lg" className="text-lg px-8" onClick={() => window.location.href = "/auth"}>
               Registar Entidade
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8">
+            <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               Saber Mais
             </Button>
           </div>
