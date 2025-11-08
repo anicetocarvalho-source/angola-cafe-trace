@@ -57,10 +57,10 @@ const Index = () => {
             Da produção à exportação, garantindo transparência e excelência.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8">
+            <Button size="lg" variant="secondary" className="text-lg px-8" onClick={() => window.location.href = "/verificar"}>
               Verificar Lote
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+            <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => window.location.href = "/auth"}>
               Acesso ao Sistema
             </Button>
           </div>
