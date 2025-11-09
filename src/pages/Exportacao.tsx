@@ -211,7 +211,13 @@ const Exportacao = () => {
                           {lote.humidade_percent ? `${lote.humidade_percent}%` : "-"}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => navigate("/nova-exportacao", { 
+                              state: { selectedLoteId: lote.id } 
+                            })}
+                          >
                             Seleccionar
                           </Button>
                         </TableCell>
