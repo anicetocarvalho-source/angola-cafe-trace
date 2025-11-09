@@ -91,7 +91,7 @@ const Exportacao = () => {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{lotes.length}</div>
+              <div className="text-2xl font-bold">{lotes?.length || 0}</div>
               <p className="text-xs text-muted-foreground">Aprovados para exportação</p>
             </CardContent>
           </Card>
@@ -171,7 +171,7 @@ const Exportacao = () => {
           <CardContent>
             {loading ? (
               <p className="text-center text-muted-foreground py-8">A carregar...</p>
-            ) : lotes.length === 0 ? (
+            ) : !lotes || lotes.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">
                   Não há lotes aprovados disponíveis para exportação
@@ -191,7 +191,7 @@ const Exportacao = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {lotes.map((lote) => (
+                    {lotes?.map((lote) => (
                       <TableRow key={lote.id}>
                         <TableCell className="font-medium">
                           {lote.referencia_lote}
@@ -242,7 +242,7 @@ const Exportacao = () => {
                   </p>
                 </div>
                 <Badge className="bg-secondary">
-                  {lotes.filter((l) => l.classificacao_sensorial && l.humidade_percent).length}
+                  {lotes?.filter((l) => l.classificacao_sensorial && l.humidade_percent).length || 0}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
