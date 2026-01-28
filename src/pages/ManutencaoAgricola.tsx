@@ -5,7 +5,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Leaf, Calendar, Trash2, Filter, X, CalendarIcon, Pencil } from "lucide-react";
+import { Plus, Leaf, Calendar, Trash2, Filter, X, CalendarIcon, Pencil, Download, FileSpreadsheet } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -42,6 +42,9 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { toast } from "sonner";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 
 interface Manutencao {
   id: string;
@@ -176,6 +179,87 @@ const ManutencaoAgricola = () => {
     setDataFim(undefined);
   };
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(18);
+    doc.text("Manutencao Agricola - INCA Coffee Trace", 14, 20);
+    
+    doc.setFontSize(11);
+    doc.text(`Data: ${format(new Date(), "dd/MM/yyyy", { locale: pt })}`, 14, 30);
+    doc.text(`Total de registos: ${filteredManutencoes.length}`, 14, 36);
+    
+    if (hasActiveFilters) {
+      doc.setFontSize(9);
+      const filterTexts: string[] = [];
+      if (selectedParcela !== "all") {
+        const parcela = parcelas.find(p => p.id === selectedParcela);
+        filterTexts.push(`Parcela: ${parcela?.codigo_parcela || selectedParcela}`);
+      }
+      if (selectedTipo !== "all") {
+        filterTexts.push(`Tipo: ${tipoLabels[selectedTipo] || selectedTipo}`);
+      }
+      if (dataInicio) {
+        filterTexts.push(`Desde: ${format(dataInicio, "dd/MM/yyyy")}`);
+      }
+      if (dataFim) {
+        filterTexts.push(`Ate: ${format(dataFim, "dd/MM/yyyy")}`);
+      }
+      doc.text(`Filtros: ${filterTexts.join(" | ")}`, 14, 42);
+    }
+
+    const tableData = filteredManutencoes.map((m) => [
+      format(new Date(m.data_execucao), "dd/MM/yyyy"),
+      tipoLabels[m.tipo] || m.tipo,
+      m.parcelas?.codigo_parcela || "-",
+      m.parcelas?.exploracoes?.designacao || "-",
+      m.produtos_utilizados?.join(", ") || "-",
+      m.custo_estimado?.toLocaleString("pt-AO") || "-",
+    ]);
+
+    autoTable(doc, {
+      startY: hasActiveFilters ? 48 : 42,
+      head: [["Data", "Tipo", "Parcela", "Exploracao", "Produtos", "Custo (AOA)"]],
+      body: tableData,
+      theme: "grid",
+      headStyles: { fillColor: [79, 70, 229] },
+      styles: { fontSize: 8 },
+    });
+
+    doc.save(`manutencao-agricola-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+    toast.success("PDF exportado com sucesso!");
+  };
+
+  const exportToExcel = () => {
+    const data = filteredManutencoes.map((m) => ({
+      Data: format(new Date(m.data_execucao), "dd/MM/yyyy"),
+      Tipo: tipoLabels[m.tipo] || m.tipo,
+      Parcela: m.parcelas?.codigo_parcela || "-",
+      Exploracao: m.parcelas?.exploracoes?.designacao || "-",
+      Descricao: m.descricao || "-",
+      Produtos: m.produtos_utilizados?.join(", ") || "-",
+      Quantidade: m.quantidade_produto || "-",
+      Unidade: m.unidade_produto || "-",
+      "Area (ha)": m.area_aplicada_ha || "-",
+      Responsavel: m.responsavel || "-",
+      "Custo (AOA)": m.custo_estimado || "-",
+      Observacoes: m.observacoes || "-",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Manutencao Agricola");
+    
+    // Auto-size columns
+    const colWidths = Object.keys(data[0] || {}).map((key) => ({
+      wch: Math.max(key.length, 15),
+    }));
+    ws["!cols"] = colWidths;
+
+    XLSX.writeFile(wb, `manutencao-agricola-${format(new Date(), "yyyy-MM-dd")}.xlsx`);
+    toast.success("Excel exportado com sucesso!");
+  };
+
   const hasActiveFilters = selectedParcela !== "all" || selectedTipo !== "all" || dataInicio || dataFim;
 
   const filteredManutencoes = useMemo(() => {
@@ -217,10 +301,20 @@ const ManutencaoAgricola = () => {
               Gestão de tratamentos, fertilizações e práticas culturais
             </p>
           </div>
-          <Button onClick={() => navigate("/manutencao/nova")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Manutenção
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={exportToPDF} disabled={filteredManutencoes.length === 0}>
+              <Download className="h-4 w-4 mr-2" />
+              PDF
+            </Button>
+            <Button variant="outline" onClick={exportToExcel} disabled={filteredManutencoes.length === 0}>
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              Excel
+            </Button>
+            <Button onClick={() => navigate("/manutencao/nova")}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Manutenção
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
