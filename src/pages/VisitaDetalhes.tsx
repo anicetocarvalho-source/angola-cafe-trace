@@ -32,9 +32,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Play, CheckCircle, XCircle, Edit, MapPin, Calendar, User } from "lucide-react";
+import { ArrowLeft, Plus, Play, CheckCircle, XCircle, Edit, MapPin, Calendar, User, Camera } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+import PhotoGalleryUpload from "@/components/PhotoGalleryUpload";
 
 type VisitStatus = "agendada" | "em_curso" | "realizada" | "cancelada";
 type ActionStatus = "pendente" | "em_curso" | "concluida" | "nao_cumprida";
@@ -179,6 +180,27 @@ const VisitaDetalhes = () => {
       toast({
         title: "Erro",
         description: "Não foi possível actualizar a visita.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updatePhotosMutation = useMutation({
+    mutationFn: async (fotos_urls: string[]) => {
+      const { error } = await supabase
+        .from("visitas_tecnicas")
+        .update({ fotos_urls })
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["visita-tecnica", id] });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível guardar as fotos.",
         variant: "destructive",
       });
     },
@@ -426,6 +448,26 @@ const VisitaDetalhes = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Photos Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Camera className="h-5 w-5" />
+              Registo Fotográfico
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PhotoGalleryUpload
+              bucket="exploration-photos"
+              folder={`visitas/${id}`}
+              existingPhotos={visita.fotos_urls || []}
+              onPhotosChange={(urls) => updatePhotosMutation.mutate(urls)}
+              maxPhotos={20}
+              maxSizeMB={5}
+            />
+          </CardContent>
+        </Card>
 
         {/* Control Actions */}
         <Card>
