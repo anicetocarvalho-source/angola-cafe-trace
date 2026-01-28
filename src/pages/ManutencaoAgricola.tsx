@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Leaf, Calendar, Trash2 } from "lucide-react";
+import { Plus, Leaf, Calendar, Trash2, Filter, X, CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -27,6 +28,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { toast } from "sonner";
 
 interface Manutencao {
@@ -50,6 +64,11 @@ interface Manutencao {
   };
 }
 
+interface Parcela {
+  id: string;
+  codigo_parcela: string;
+}
+
 const tipoLabels: Record<string, string> = {
   tratamento: "Tratamento Fitossanitário",
   fertilizacao: "Fertilização",
@@ -68,13 +87,30 @@ const tipoBadgeVariant: Record<string, "default" | "secondary" | "outline" | "de
   outro: "outline",
 };
 
+const tiposManutencao = [
+  { value: "tratamento", label: "Tratamento Fitossanitário" },
+  { value: "fertilizacao", label: "Fertilização" },
+  { value: "poda", label: "Poda" },
+  { value: "capina", label: "Capina/Monda" },
+  { value: "irrigacao", label: "Irrigação" },
+  { value: "outro", label: "Outro" },
+];
+
 const ManutencaoAgricola = () => {
   const navigate = useNavigate();
   const [manutencoes, setManutencoes] = useState<Manutencao[]>([]);
+  const [parcelas, setParcelas] = useState<Parcela[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Filters
+  const [selectedParcela, setSelectedParcela] = useState<string>("all");
+  const [selectedTipo, setSelectedTipo] = useState<string>("all");
+  const [dataInicio, setDataInicio] = useState<Date | undefined>();
+  const [dataFim, setDataFim] = useState<Date | undefined>();
 
   useEffect(() => {
     fetchManutencoes();
+    fetchParcelas();
   }, []);
 
   const fetchManutencoes = async () => {
@@ -102,6 +138,20 @@ const ManutencaoAgricola = () => {
     }
   };
 
+  const fetchParcelas = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("parcelas")
+        .select("id, codigo_parcela")
+        .order("codigo_parcela");
+
+      if (error) throw error;
+      setParcelas(data || []);
+    } catch (error) {
+      console.error("Error fetching parcelas:", error);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
@@ -118,6 +168,44 @@ const ManutencaoAgricola = () => {
       toast.error("Erro ao eliminar registo");
     }
   };
+
+  const clearFilters = () => {
+    setSelectedParcela("all");
+    setSelectedTipo("all");
+    setDataInicio(undefined);
+    setDataFim(undefined);
+  };
+
+  const hasActiveFilters = selectedParcela !== "all" || selectedTipo !== "all" || dataInicio || dataFim;
+
+  const filteredManutencoes = useMemo(() => {
+    return manutencoes.filter((m) => {
+      // Filter by parcela
+      if (selectedParcela !== "all" && m.parcela_id !== selectedParcela) {
+        return false;
+      }
+      
+      // Filter by tipo
+      if (selectedTipo !== "all" && m.tipo !== selectedTipo) {
+        return false;
+      }
+      
+      // Filter by date range
+      const dataExecucao = new Date(m.data_execucao);
+      if (dataInicio && dataExecucao < dataInicio) {
+        return false;
+      }
+      if (dataFim) {
+        const endOfDay = new Date(dataFim);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (dataExecucao > endOfDay) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [manutencoes, selectedParcela, selectedTipo, dataInicio, dataFim]);
 
   return (
     <DashboardLayout>
@@ -142,7 +230,10 @@ const ManutencaoAgricola = () => {
               <Leaf className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{manutencoes.length}</div>
+              <div className="text-2xl font-bold">{filteredManutencoes.length}</div>
+              {hasActiveFilters && (
+                <p className="text-xs text-muted-foreground">de {manutencoes.length} total</p>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -152,7 +243,7 @@ const ManutencaoAgricola = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {manutencoes.filter(m => {
+                {filteredManutencoes.filter(m => {
                   const date = new Date(m.data_execucao);
                   const now = new Date();
                   return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
@@ -167,32 +258,150 @@ const ManutencaoAgricola = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {manutencoes.reduce((acc, m) => acc + (m.custo_estimado || 0), 0).toLocaleString("pt-AO")}
+                {filteredManutencoes.reduce((acc, m) => acc + (m.custo_estimado || 0), 0).toLocaleString("pt-AO")}
               </div>
             </CardContent>
           </Card>
         </div>
 
+        {/* Filters */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-base">Filtros</CardTitle>
+              </div>
+              {hasActiveFilters && (
+                <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  <X className="h-4 w-4 mr-1" />
+                  Limpar filtros
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Parcela</label>
+                <Select value={selectedParcela} onValueChange={setSelectedParcela}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todas as parcelas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as parcelas</SelectItem>
+                    {parcelas.map((parcela) => (
+                      <SelectItem key={parcela.id} value={parcela.id}>
+                        {parcela.codigo_parcela}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Tipo de Manutenção</label>
+                <Select value={selectedTipo} onValueChange={setSelectedTipo}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos os tipos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os tipos</SelectItem>
+                    {tiposManutencao.map((tipo) => (
+                      <SelectItem key={tipo.value} value={tipo.value}>
+                        {tipo.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Data Início</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !dataInicio && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dataInicio ? format(dataInicio, "dd/MM/yyyy", { locale: pt }) : "Seleccione"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dataInicio}
+                      onSelect={setDataInicio}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Data Fim</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !dataFim && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dataFim ? format(dataFim, "dd/MM/yyyy", { locale: pt }) : "Seleccione"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dataFim}
+                      onSelect={setDataFim}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Registos de Manutenção</CardTitle>
             <CardDescription>
-              {manutencoes.length} registos no sistema
+              {filteredManutencoes.length} registos {hasActiveFilters ? "filtrados" : "no sistema"}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
               <p className="text-center text-muted-foreground py-8">A carregar...</p>
-            ) : manutencoes.length === 0 ? (
+            ) : filteredManutencoes.length === 0 ? (
               <div className="text-center py-12">
                 <Leaf className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground mb-4">
-                  Ainda não existem registos de manutenção agrícola.
+                  {hasActiveFilters 
+                    ? "Nenhum registo encontrado com os filtros seleccionados."
+                    : "Ainda não existem registos de manutenção agrícola."
+                  }
                 </p>
-                <Button onClick={() => navigate("/manutencao/nova")}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Registar Primeira Manutenção
-                </Button>
+                {hasActiveFilters ? (
+                  <Button variant="outline" onClick={clearFilters}>
+                    Limpar filtros
+                  </Button>
+                ) : (
+                  <Button onClick={() => navigate("/manutencao/nova")}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Registar Primeira Manutenção
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="rounded-md border">
@@ -209,7 +418,7 @@ const ManutencaoAgricola = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {manutencoes.map((manutencao) => (
+                    {filteredManutencoes.map((manutencao) => (
                       <TableRow key={manutencao.id}>
                         <TableCell>
                           {format(new Date(manutencao.data_execucao), "dd/MM/yyyy", { locale: pt })}
