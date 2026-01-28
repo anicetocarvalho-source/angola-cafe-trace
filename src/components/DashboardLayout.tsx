@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf } from "lucide-react";
+import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
 import { Link, useLocation } from "react-router-dom";
@@ -37,6 +37,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "IoT", href: "/iot", icon: Activity, roles: ["tecnico_inca", "admin_inca"] },
     { name: "Colheitas", href: "/colheitas", icon: Sprout, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
     { name: "Manutenção", href: "/manutencao", icon: Leaf, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
+    { name: "Fiscalização", href: "/fiscalizacao", icon: ClipboardCheck, roles: ["tecnico_inca", "admin_inca"] },
     { name: "Auditoria", href: "/auditoria", icon: History, roles: ["admin_inca"] },
     { name: "Admin", href: "/admin", icon: Settings, roles: ["admin_inca"] },
   ];
