@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      acoes_controlo: {
+        Row: {
+          created_at: string
+          data_conclusao: string | null
+          descricao: string
+          estado: Database["public"]["Enums"]["action_status"]
+          id: string
+          observacoes: string | null
+          prazo: string | null
+          responsavel: string | null
+          tipo: string
+          updated_at: string
+          visita_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_conclusao?: string | null
+          descricao: string
+          estado?: Database["public"]["Enums"]["action_status"]
+          id?: string
+          observacoes?: string | null
+          prazo?: string | null
+          responsavel?: string | null
+          tipo: string
+          updated_at?: string
+          visita_id: string
+        }
+        Update: {
+          created_at?: string
+          data_conclusao?: string | null
+          descricao?: string
+          estado?: Database["public"]["Enums"]["action_status"]
+          id?: string
+          observacoes?: string | null
+          prazo?: string | null
+          responsavel?: string | null
+          tipo?: string
+          updated_at?: string
+          visita_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "acoes_controlo_visita_id_fkey"
+            columns: ["visita_id"]
+            isOneToOne: false
+            referencedRelation: "visitas_tecnicas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -1065,6 +1115,59 @@ export type Database = {
         }
         Relationships: []
       }
+      visitas_tecnicas: {
+        Row: {
+          conformidade_geral: string | null
+          created_at: string
+          data_visita: string
+          estado: Database["public"]["Enums"]["visit_status"]
+          exploracao_id: string
+          fotos_urls: string[] | null
+          id: string
+          objetivo: string | null
+          observacoes: string | null
+          tecnico_id: string
+          tipo: Database["public"]["Enums"]["visit_type"]
+          updated_at: string
+        }
+        Insert: {
+          conformidade_geral?: string | null
+          created_at?: string
+          data_visita: string
+          estado?: Database["public"]["Enums"]["visit_status"]
+          exploracao_id: string
+          fotos_urls?: string[] | null
+          id?: string
+          objetivo?: string | null
+          observacoes?: string | null
+          tecnico_id: string
+          tipo?: Database["public"]["Enums"]["visit_type"]
+          updated_at?: string
+        }
+        Update: {
+          conformidade_geral?: string | null
+          created_at?: string
+          data_visita?: string
+          estado?: Database["public"]["Enums"]["visit_status"]
+          exploracao_id?: string
+          fotos_urls?: string[] | null
+          id?: string
+          objetivo?: string | null
+          observacoes?: string | null
+          tecnico_id?: string
+          tipo?: Database["public"]["Enums"]["visit_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visitas_tecnicas_exploracao_id_fkey"
+            columns: ["exploracao_id"]
+            isOneToOne: false
+            referencedRelation: "exploracoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1081,6 +1184,7 @@ export type Database = {
       }
     }
     Enums: {
+      action_status: "pendente" | "em_curso" | "concluida" | "nao_cumprida"
       app_role:
         | "admin_inca"
         | "tecnico_inca"
@@ -1105,6 +1209,8 @@ export type Database = {
         | "exportado"
         | "consumido"
       lot_type: "cereja" | "cafe_verde" | "parchment" | "torrado" | "moido"
+      visit_status: "agendada" | "em_curso" | "realizada" | "cancelada"
+      visit_type: "rotina" | "fiscalizacao" | "acompanhamento" | "emergencia"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1232,6 +1338,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      action_status: ["pendente", "em_curso", "concluida", "nao_cumprida"],
       app_role: [
         "admin_inca",
         "tecnico_inca",
@@ -1259,6 +1366,8 @@ export const Constants = {
         "consumido",
       ],
       lot_type: ["cereja", "cafe_verde", "parchment", "torrado", "moido"],
+      visit_status: ["agendada", "em_curso", "realizada", "cancelada"],
+      visit_type: ["rotina", "fiscalizacao", "acompanhamento", "emergencia"],
     },
   },
 } as const

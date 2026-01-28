@@ -33,6 +33,9 @@ import Auditoria from "./pages/Auditoria";
 import ExportacaoDetalhes from "./pages/ExportacaoDetalhes";
 import ManutencaoAgricola from "./pages/ManutencaoAgricola";
 import NovaManutencao from "./pages/NovaManutencao";
+import Fiscalizacao from "./pages/Fiscalizacao";
+import NovaVisita from "./pages/NovaVisita";
+import VisitaDetalhes from "./pages/VisitaDetalhes";
 
 const queryClient = new QueryClient();
 
@@ -260,6 +263,30 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <NovaManutencao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/fiscalizacao"
+            element={
+              <ProtectedRoute requiredRole="tecnico_inca">
+                <Fiscalizacao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/fiscalizacao/nova"
+            element={
+              <ProtectedRoute requiredRole="tecnico_inca">
+                <NovaVisita />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/fiscalizacao/:id"
+            element={
+              <ProtectedRoute requiredRole="tecnico_inca">
+                <VisitaDetalhes />
               </ProtectedRoute>
             }
           />
