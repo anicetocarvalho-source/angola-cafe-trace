@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,11 @@ const tiposManutencao = [
 
 const NovaManutencao = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const isEditMode = Boolean(id);
+  
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(isEditMode);
   const [parcelas, setParcelas] = useState<Parcela[]>([]);
   const [loadingParcelas, setLoadingParcelas] = useState(true);
   
@@ -59,7 +63,44 @@ const NovaManutencao = () => {
 
   useEffect(() => {
     fetchParcelas();
-  }, []);
+    if (isEditMode && id) {
+      fetchManutencao(id);
+    }
+  }, [id, isEditMode]);
+
+  const fetchManutencao = async (manutencaoId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("manutencao_agricola")
+        .select("*")
+        .eq("id", manutencaoId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setFormData({
+          parcela_id: data.parcela_id,
+          data_execucao: data.data_execucao,
+          tipo: data.tipo,
+          descricao: data.descricao || "",
+          quantidade_produto: data.quantidade_produto?.toString() || "",
+          unidade_produto: data.unidade_produto || "",
+          area_aplicada_ha: data.area_aplicada_ha?.toString() || "",
+          responsavel: data.responsavel || "",
+          custo_estimado: data.custo_estimado?.toString() || "",
+          observacoes: data.observacoes || "",
+        });
+        setProdutos(data.produtos_utilizados || []);
+      }
+    } catch (error) {
+      console.error("Error fetching manutencao:", error);
+      toast.error("Erro ao carregar registo de manutenção");
+      navigate("/manutencao");
+    } finally {
+      setLoadingData(false);
+    }
+  };
 
   const fetchParcelas = async () => {
     try {
@@ -105,34 +146,56 @@ const NovaManutencao = () => {
 
     setLoading(true);
 
+    const payload = {
+      parcela_id: formData.parcela_id,
+      data_execucao: formData.data_execucao,
+      tipo: formData.tipo,
+      descricao: formData.descricao || null,
+      produtos_utilizados: produtos.length > 0 ? produtos : null,
+      quantidade_produto: formData.quantidade_produto ? parseFloat(formData.quantidade_produto) : null,
+      unidade_produto: formData.unidade_produto || null,
+      area_aplicada_ha: formData.area_aplicada_ha ? parseFloat(formData.area_aplicada_ha) : null,
+      responsavel: formData.responsavel || null,
+      custo_estimado: formData.custo_estimado ? parseFloat(formData.custo_estimado) : null,
+      observacoes: formData.observacoes || null,
+    };
+
     try {
-      const { error } = await supabase
-        .from("manutencao_agricola")
-        .insert({
-          parcela_id: formData.parcela_id,
-          data_execucao: formData.data_execucao,
-          tipo: formData.tipo,
-          descricao: formData.descricao || null,
-          produtos_utilizados: produtos.length > 0 ? produtos : null,
-          quantidade_produto: formData.quantidade_produto ? parseFloat(formData.quantidade_produto) : null,
-          unidade_produto: formData.unidade_produto || null,
-          area_aplicada_ha: formData.area_aplicada_ha ? parseFloat(formData.area_aplicada_ha) : null,
-          responsavel: formData.responsavel || null,
-          custo_estimado: formData.custo_estimado ? parseFloat(formData.custo_estimado) : null,
-          observacoes: formData.observacoes || null,
-        });
+      if (isEditMode && id) {
+        const { error } = await supabase
+          .from("manutencao_agricola")
+          .update(payload)
+          .eq("id", id);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success("Manutenção actualizada com sucesso!");
+      } else {
+        const { error } = await supabase
+          .from("manutencao_agricola")
+          .insert(payload);
 
-      toast.success("Manutenção registada com sucesso!");
+        if (error) throw error;
+        toast.success("Manutenção registada com sucesso!");
+      }
+      
       navigate("/manutencao");
     } catch (error) {
-      console.error("Error creating manutencao:", error);
-      toast.error("Erro ao registar manutenção");
+      console.error("Error saving manutencao:", error);
+      toast.error(isEditMode ? "Erro ao actualizar manutenção" : "Erro ao registar manutenção");
     } finally {
       setLoading(false);
     }
   };
+
+  if (loadingData) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -142,9 +205,14 @@ const NovaManutencao = () => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Nova Manutenção</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              {isEditMode ? "Editar Manutenção" : "Nova Manutenção"}
+            </h1>
             <p className="text-muted-foreground">
-              Registar tratamento, fertilização ou prática cultural
+              {isEditMode 
+                ? "Actualizar registo de manutenção agrícola"
+                : "Registar tratamento, fertilização ou prática cultural"
+              }
             </p>
           </div>
         </div>
@@ -347,7 +415,7 @@ const NovaManutencao = () => {
             </Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Registar Manutenção
+              {isEditMode ? "Actualizar Manutenção" : "Registar Manutenção"}
             </Button>
           </div>
         </form>
