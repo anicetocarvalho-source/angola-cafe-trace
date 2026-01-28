@@ -647,6 +647,65 @@ export type Database = {
           },
         ]
       }
+      manutencao_agricola: {
+        Row: {
+          area_aplicada_ha: number | null
+          created_at: string
+          custo_estimado: number | null
+          data_execucao: string
+          descricao: string | null
+          id: string
+          observacoes: string | null
+          parcela_id: string
+          produtos_utilizados: string[] | null
+          quantidade_produto: number | null
+          responsavel: string | null
+          tipo: string
+          unidade_produto: string | null
+          updated_at: string
+        }
+        Insert: {
+          area_aplicada_ha?: number | null
+          created_at?: string
+          custo_estimado?: number | null
+          data_execucao: string
+          descricao?: string | null
+          id?: string
+          observacoes?: string | null
+          parcela_id: string
+          produtos_utilizados?: string[] | null
+          quantidade_produto?: number | null
+          responsavel?: string | null
+          tipo: string
+          unidade_produto?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area_aplicada_ha?: number | null
+          created_at?: string
+          custo_estimado?: number | null
+          data_execucao?: string
+          descricao?: string | null
+          id?: string
+          observacoes?: string | null
+          parcela_id?: string
+          produtos_utilizados?: string[] | null
+          quantidade_produto?: number | null
+          responsavel?: string | null
+          tipo?: string
+          unidade_produto?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manutencao_agricola_parcela_id_fkey"
+            columns: ["parcela_id"]
+            isOneToOne: false
+            referencedRelation: "parcelas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string

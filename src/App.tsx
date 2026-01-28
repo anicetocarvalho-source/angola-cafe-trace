@@ -31,6 +31,8 @@ import Colheitas from "./pages/Colheitas";
 import NovaColheita from "./pages/NovaColheita";
 import Auditoria from "./pages/Auditoria";
 import ExportacaoDetalhes from "./pages/ExportacaoDetalhes";
+import ManutencaoAgricola from "./pages/ManutencaoAgricola";
+import NovaManutencao from "./pages/NovaManutencao";
 
 const queryClient = new QueryClient();
 
@@ -234,6 +236,22 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ExportacaoDetalhes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manutencao"
+            element={
+              <ProtectedRoute>
+                <ManutencaoAgricola />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manutencao/nova"
+            element={
+              <ProtectedRoute>
+                <NovaManutencao />
               </ProtectedRoute>
             }
           />
