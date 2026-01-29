@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -21,10 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Search, Eye, ClipboardList, Calendar, CheckCircle, AlertTriangle } from "lucide-react";
+import { Plus, Search, Eye, ClipboardList, Calendar, CheckCircle, AlertTriangle, Bell, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+import { toast } from "sonner";
 
 type VisitType = "rotina" | "fiscalizacao" | "acompanhamento" | "emergencia";
 type VisitStatus = "agendada" | "em_curso" | "realizada" | "cancelada";
@@ -72,6 +73,23 @@ const Fiscalizacao = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTipo, setFilterTipo] = useState<string>("all");
   const [filterEstado, setFilterEstado] = useState<string>("all");
+  const queryClient = useQueryClient();
+
+  const checkDeadlinesMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke("check-action-deadlines");
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["acoes-stats"] });
+      toast.success(`Verificação concluída: ${data.notificationsCreated} notificações criadas`);
+    },
+    onError: (error) => {
+      toast.error("Erro ao verificar prazos");
+      console.error(error);
+    },
+  });
 
   const { data: visitas, isLoading } = useQuery({
     queryKey: ["visitas-tecnicas"],
@@ -139,12 +157,26 @@ const Fiscalizacao = () => {
               Gestão de visitas técnicas e ações de controlo
             </p>
           </div>
-          <Button asChild>
-            <Link to="/fiscalizacao/nova">
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Visita
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => checkDeadlinesMutation.mutate()}
+              disabled={checkDeadlinesMutation.isPending}
+            >
+              {checkDeadlinesMutation.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Bell className="h-4 w-4 mr-2" />
+              )}
+              Verificar Prazos
+            </Button>
+            <Button asChild>
+              <Link to="/fiscalizacao/nova">
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Visita
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
