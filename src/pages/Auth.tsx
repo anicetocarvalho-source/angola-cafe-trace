@@ -186,11 +186,28 @@ const Auth = () => {
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="text-xs"
+                        className="text-xs h-9"
                         disabled={loading}
-                        onClick={() => {
-                          setEmail(user.email);
-                          setPassword("Teste123!");
+                        onClick={async () => {
+                          setLoading(true);
+                          try {
+                            const { data, error } = await supabase.auth.signInWithPassword({
+                              email: user.email,
+                              password: "Teste123!",
+                            });
+                            if (error) throw error;
+                            if (data.user) {
+                              await supabase
+                                .from("profiles")
+                                .update({ ultimo_login_at: new Date().toISOString() })
+                                .eq("id", data.user.id);
+                            }
+                            toast.success(`Login como ${user.label} efectuado com sucesso!`);
+                          } catch (error: any) {
+                            toast.error(error.message || "Erro ao fazer login");
+                          } finally {
+                            setLoading(false);
+                          }
                         }}
                       >
                         {user.label}
