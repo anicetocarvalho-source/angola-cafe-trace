@@ -16,13 +16,24 @@ import {
   TrendingUp,
   QrCode
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import heroImage from "@/assets/hero-coffee-angola.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
   const features = [
     {
       icon: Coffee,
@@ -106,15 +117,21 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 min-h-[600px]">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroImage})` }}
+      <section ref={heroRef} className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 min-h-[600px]">
+        {/* Background Image with Parallax */}
+        <motion.div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
+          style={{ 
+            backgroundImage: `url(${heroImage})`,
+            y: backgroundY
+          }}
         />
         {/* Overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/50" />
-        <div className="relative max-w-7xl mx-auto">
+        <motion.div 
+          className="relative max-w-7xl mx-auto"
+          style={{ y: textY, opacity }}
+        >
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <motion.div 
               className="flex-1 text-center lg:text-left"
@@ -180,7 +197,7 @@ const Index = () => {
               </div>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Stats Section */}
