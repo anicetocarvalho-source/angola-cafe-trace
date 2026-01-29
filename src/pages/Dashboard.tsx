@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Coffee, MapPin, CheckCircle2, AlertTriangle, TrendingUp, Package } from "lucide-react";
+import { ComplianceMetrics } from "@/components/dashboard/ComplianceMetrics";
 
 const Dashboard = () => {
   const { user, roles, hasRole } = useAuth();
@@ -168,6 +169,11 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Compliance Metrics Section */}
+      <div className="mt-8">
+        <ComplianceMetrics />
       </div>
     </div>
   );
