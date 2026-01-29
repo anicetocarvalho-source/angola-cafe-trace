@@ -16,6 +16,7 @@ import {
   TrendingUp,
   QrCode
 } from "lucide-react";
+import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-coffee-angola.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -115,7 +116,12 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/50" />
         <div className="relative max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="flex-1 text-center lg:text-left">
+            <motion.div 
+              className="flex-1 text-center lg:text-left"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <Badge variant="secondary" className="mb-4 text-sm px-4 py-1">
                 Sistema Nacional de Rastreabilidade
               </Badge>
@@ -129,7 +135,12 @@ const Index = () => {
                 Plataforma integrada de gestão da cadeia de valor do café - da produção à exportação.
                 Conformidade EUDR, certificações internacionais e transparência total.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
                 <Button size="lg" variant="secondary" className="text-lg px-8 gap-2" onClick={() => window.location.href = "/verificar"}>
                   <QrCode className="h-5 w-5" />
                   Verificar Lote
@@ -138,21 +149,36 @@ const Index = () => {
                   Acesso ao Sistema
                   <ArrowRight className="h-5 w-5" />
                 </Button>
-              </div>
-            </div>
-            <div className="flex-1 hidden lg:flex justify-center">
+              </motion.div>
+            </motion.div>
+            <motion.div 
+              className="flex-1 hidden lg:flex justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            >
               <div className="relative">
                 <div className="w-72 h-72 rounded-full bg-primary-foreground/10 flex items-center justify-center">
                   <Coffee className="w-32 h-32 text-primary-foreground" />
                 </div>
-                <div className="absolute -top-4 -right-4 bg-secondary text-secondary-foreground rounded-full p-3 shadow-lg">
+                <motion.div 
+                  className="absolute -top-4 -right-4 bg-secondary text-secondary-foreground rounded-full p-3 shadow-lg"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.5, type: "spring" }}
+                >
                   <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <div className="absolute -bottom-4 -left-4 bg-accent text-accent-foreground rounded-full p-3 shadow-lg">
+                </motion.div>
+                <motion.div 
+                  className="absolute -bottom-4 -left-4 bg-accent text-accent-foreground rounded-full p-3 shadow-lg"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.6, type: "spring" }}
+                >
                   <Activity className="w-8 h-8" />
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -161,29 +187,37 @@ const Index = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-card border-b">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center">
-            <div className="p-4">
-              <div className="text-4xl font-bold text-primary mb-2">18</div>
-              <div className="text-muted-foreground text-sm">Províncias Cobertas</div>
-            </div>
-            <div className="p-4">
-              <div className="text-4xl font-bold text-primary mb-2">5.000+</div>
-              <div className="text-muted-foreground text-sm">Produtores Registados</div>
-            </div>
-            <div className="p-4">
-              <div className="text-4xl font-bold text-primary mb-2">15k+</div>
-              <div className="text-muted-foreground text-sm">Hectares Mapeados</div>
-            </div>
-            <div className="p-4">
-              <div className="text-4xl font-bold text-primary mb-2">100%</div>
-              <div className="text-muted-foreground text-sm">Rastreabilidade</div>
-            </div>
-            <div className="p-4">
+            {[
+              { value: "18", label: "Províncias Cobertas" },
+              { value: "5.000+", label: "Produtores Registados" },
+              { value: "15k+", label: "Hectares Mapeados" },
+              { value: "100%", label: "Rastreabilidade" },
+            ].map((stat, index) => (
+              <motion.div 
+                key={index}
+                className="p-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <div className="text-4xl font-bold text-primary mb-2">{stat.value}</div>
+                <div className="text-muted-foreground text-sm">{stat.label}</div>
+              </motion.div>
+            ))}
+            <motion.div 
+              className="p-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               <div className="flex items-center justify-center gap-1 text-secondary mb-2">
                 <TrendingUp className="w-6 h-6" />
                 <span className="text-4xl font-bold">EUDR</span>
               </div>
               <div className="text-muted-foreground text-sm">Conformidade UE</div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -204,27 +238,35 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
-              <Card key={index} className="group border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <feature.icon className="w-6 h-6 text-primary" />
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+              >
+                <Card className="group border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 h-full">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <feature.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <Badge 
+                        variant={feature.badge === "Novo" ? "default" : "outline"} 
+                        className={feature.badge === "Novo" ? "bg-secondary text-secondary-foreground" : ""}
+                      >
+                        {feature.badge}
+                      </Badge>
                     </div>
-                    <Badge 
-                      variant={feature.badge === "Novo" ? "default" : "outline"} 
-                      className={feature.badge === "Novo" ? "bg-secondary text-secondary-foreground" : ""}
-                    >
-                      {feature.badge}
-                    </Badge>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -246,24 +288,32 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {modules.map((module, index) => (
-              <Card key={index} className="h-full">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
-                    <module.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">{module.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {module.items.map((item, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <CheckCircle2 className="w-4 h-4 text-secondary shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className="h-full">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
+                      <module.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">{module.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      {module.items.map((item, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle2 className="w-4 h-4 text-secondary shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
