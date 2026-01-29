@@ -20,7 +20,7 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const { user, signOut, roles, hasRole } = useAuth();
+  const { user, signOut, roles, hasRole, loading } = useAuth();
   const location = useLocation();
 
   const allNavigation = [
@@ -42,8 +42,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Admin", href: "/admin", icon: Settings, roles: ["admin_inca"] },
   ];
 
+  // Wait for roles to load before filtering navigation
+  // If still loading, show all items with "all" roles only temporarily
   const navigation = allNavigation.filter((item) => {
     if (item.roles.includes("all")) return true;
+    // If loading, don't filter out role-specific items yet - wait for roles
+    if (loading) return false;
     return item.roles.some((role) => hasRole(role));
   });
 
