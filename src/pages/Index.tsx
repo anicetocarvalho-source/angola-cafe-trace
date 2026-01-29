@@ -244,26 +244,42 @@ const Index = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
+                whileHover={{ 
+                  y: -8,
+                  transition: { duration: 0.3, ease: "easeOut" }
+                }}
+                className="cursor-pointer"
               >
-                <Card className="group border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 h-full">
-                  <CardContent className="p-6">
+                <Card className="group border-border hover:border-primary hover:shadow-xl transition-all duration-300 h-full overflow-hidden relative">
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <CardContent className="p-6 relative z-10">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <feature.icon className="w-6 h-6 text-primary" />
-                      </div>
+                      <motion.div 
+                        className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:shadow-lg transition-all duration-300"
+                        whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <feature.icon className="w-6 h-6 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                      </motion.div>
                       <Badge 
                         variant={feature.badge === "Novo" ? "default" : "outline"} 
-                        className={feature.badge === "Novo" ? "bg-secondary text-secondary-foreground" : ""}
+                        className={`${feature.badge === "Novo" ? "bg-secondary text-secondary-foreground" : ""} group-hover:scale-105 transition-transform duration-300`}
                       >
                         {feature.badge}
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
+                    <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
                       {feature.title}
                     </h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300">
                       {feature.description}
                     </p>
+                    {/* Arrow indicator */}
+                    <div className="mt-4 flex items-center text-primary opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                      <span className="text-sm font-medium">Saber mais</span>
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
