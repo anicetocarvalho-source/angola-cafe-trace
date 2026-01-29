@@ -1,115 +1,215 @@
-import { Coffee, MapPin, Shield, BarChart3, Users, PackageCheck } from "lucide-react";
+import { 
+  Coffee, 
+  MapPin, 
+  Shield, 
+  BarChart3, 
+  Users, 
+  PackageCheck,
+  Activity,
+  Bell,
+  ClipboardCheck,
+  Leaf,
+  Globe,
+  Smartphone,
+  ArrowRight,
+  CheckCircle2,
+  TrendingUp,
+  QrCode
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   const features = [
     {
       icon: Coffee,
       title: "Rastreabilidade Completa",
-      description: "Da plantação à chávena, acompanhe cada etapa do percurso do café angolano."
+      description: "Acompanhe cada etapa do percurso do café - da colheita à exportação com registos imutáveis.",
+      badge: "Core"
     },
     {
       icon: Shield,
-      title: "Certificação & Qualidade",
-      description: "Garantia de conformidade com normas EUDR, UTZ, Rainforest Alliance e DOC."
+      title: "Certificação & EUDR",
+      description: "Conformidade garantida com EUDR, UTZ, Rainforest Alliance, Fair Trade e DOC Angola.",
+      badge: "Compliance"
     },
     {
-      icon: MapPin,
-      title: "Geolocalização",
-      description: "Mapeamento preciso de explorações, parcelas e pontos de controlo."
+      icon: ClipboardCheck,
+      title: "Fiscalização INCA",
+      description: "Visitas técnicas, ações de controlo, e monitorização de conformidade em tempo real.",
+      badge: "Novo"
+    },
+    {
+      icon: Activity,
+      title: "Sensores IoT",
+      description: "Monitorização de temperatura, humidade e condições ambientais com alertas automáticos.",
+      badge: "Novo"
     },
     {
       icon: BarChart3,
-      title: "Análise de Mercado (SIM)",
-      description: "Dados em tempo real sobre preços, produção e tendências de exportação."
+      title: "Sistema de Informação de Mercado",
+      description: "Preços actualizados, tendências de mercado e análises para tomada de decisão.",
+      badge: "SIM"
+    },
+    {
+      icon: Bell,
+      title: "Notificações Inteligentes",
+      description: "Alertas automáticos para prazos, não-conformidades e actualizações críticas.",
+      badge: "Novo"
+    },
+    {
+      icon: MapPin,
+      title: "Geolocalização Avançada",
+      description: "Mapeamento interactivo de explorações, parcelas e rotas logísticas.",
+      badge: "GIS"
     },
     {
       icon: Users,
-      title: "Multi-Perfil",
-      description: "Acesso personalizado para produtores, cooperativas, processadores e exportadores."
+      title: "Multi-Perfil & Permissões",
+      description: "Acesso personalizado para produtores, técnicos, cooperativas e exportadores.",
+      badge: "RBAC"
+    },
+    {
+      icon: QrCode,
+      title: "Verificação Pública",
+      description: "Consumidores podem verificar origem, qualidade e certificações via QR code.",
+      badge: "Transparência"
+    }
+  ];
+
+  const modules = [
+    {
+      icon: Leaf,
+      title: "Gestão de Explorações",
+      items: ["Registo de explorações e parcelas", "Manutenção agrícola", "Colheitas e campanhas", "Validação técnica"]
     },
     {
       icon: PackageCheck,
-      title: "Verificação Pública",
-      description: "QR code para consumidores verificarem a origem e qualidade do seu café."
+      title: "Gestão de Lotes",
+      items: ["Rastreabilidade por QR/RFID", "Secagem e processamento", "Análises de qualidade", "Certificação SCA"]
+    },
+    {
+      icon: ClipboardCheck,
+      title: "Fiscalização INCA",
+      items: ["Visitas técnicas programadas", "Ações de controlo", "Relatórios de conformidade", "Alertas de prazos"]
+    },
+    {
+      icon: Globe,
+      title: "Exportação & EUDR",
+      items: ["Gestão de embarques", "Documentação aduaneira", "Pacotes EUDR", "Certificados de origem"]
     }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-hero py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-gradient-hero py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDEzNGg3MnYxNEgzNnptMC00M2g3MnYxNEgzNnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30" />
         
-        <div className="relative max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center mb-6">
-            <Coffee className="w-16 h-16 text-primary-foreground" />
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-            Café Angola
-          </h1>
-          <p className="text-xl sm:text-2xl text-primary-foreground/90 mb-4 font-medium">
-            Qualidade & Rastreabilidade
-          </p>
-          <p className="text-lg text-primary-foreground/80 mb-8 max-w-3xl mx-auto">
-            Plataforma nacional de rastreabilidade e controlo de qualidade do café angolano.
-            Da produção à exportação, garantindo transparência e excelência.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8" onClick={() => window.location.href = "/verificar"}>
-              Verificar Lote
-            </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => window.location.href = "/auth"}>
-              Acesso ao Sistema
-            </Button>
+        <div className="relative max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="flex-1 text-center lg:text-left">
+              <Badge variant="secondary" className="mb-4 text-sm px-4 py-1">
+                Sistema Nacional de Rastreabilidade
+              </Badge>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
+                INCA Coffee Trace
+              </h1>
+              <p className="text-xl sm:text-2xl text-primary-foreground/90 mb-4 font-medium">
+                Qualidade & Rastreabilidade do Café Angolano
+              </p>
+              <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl">
+                Plataforma integrada de gestão da cadeia de valor do café - da produção à exportação.
+                Conformidade EUDR, certificações internacionais e transparência total.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Button size="lg" variant="secondary" className="text-lg px-8 gap-2" onClick={() => window.location.href = "/verificar"}>
+                  <QrCode className="h-5 w-5" />
+                  Verificar Lote
+                </Button>
+                <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 gap-2" onClick={() => window.location.href = "/auth"}>
+                  Acesso ao Sistema
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+            <div className="flex-1 hidden lg:flex justify-center">
+              <div className="relative">
+                <div className="w-72 h-72 rounded-full bg-primary-foreground/10 flex items-center justify-center">
+                  <Coffee className="w-32 h-32 text-primary-foreground" />
+                </div>
+                <div className="absolute -top-4 -right-4 bg-secondary text-secondary-foreground rounded-full p-3 shadow-lg">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <div className="absolute -bottom-4 -left-4 bg-accent text-accent-foreground rounded-full p-3 shadow-lg">
+                  <Activity className="w-8 h-8" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-card">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-card border-b">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold text-primary mb-2">18+</div>
-              <div className="text-muted-foreground">Províncias</div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center">
+            <div className="p-4">
+              <div className="text-4xl font-bold text-primary mb-2">18</div>
+              <div className="text-muted-foreground text-sm">Províncias Cobertas</div>
             </div>
-            <div>
+            <div className="p-4">
               <div className="text-4xl font-bold text-primary mb-2">5.000+</div>
-              <div className="text-muted-foreground">Produtores</div>
+              <div className="text-muted-foreground text-sm">Produtores Registados</div>
             </div>
-            <div>
+            <div className="p-4">
               <div className="text-4xl font-bold text-primary mb-2">15k+</div>
-              <div className="text-muted-foreground">Hectares</div>
+              <div className="text-muted-foreground text-sm">Hectares Mapeados</div>
             </div>
-            <div>
+            <div className="p-4">
               <div className="text-4xl font-bold text-primary mb-2">100%</div>
-              <div className="text-muted-foreground">Rastreável</div>
+              <div className="text-muted-foreground text-sm">Rastreabilidade</div>
+            </div>
+            <div className="p-4">
+              <div className="flex items-center justify-center gap-1 text-secondary mb-2">
+                <TrendingUp className="w-6 h-6" />
+                <span className="text-4xl font-bold">EUDR</span>
+              </div>
+              <div className="text-muted-foreground text-sm">Conformidade UE</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Main Features Grid */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">Funcionalidades</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Sistema Integrado de Rastreabilidade
+              Plataforma Completa de Gestão
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Uma solução completa para garantir a qualidade, origem e conformidade do café angolano
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Sistema integrado para garantir qualidade, rastreabilidade e conformidade do café angolano
               nos mercados nacional e internacional.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
-              <Card key={index} className="border-border hover:shadow-medium transition-all duration-300">
+              <Card key={index} className="group border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <feature.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <Badge 
+                      variant={feature.badge === "Novo" ? "default" : "outline"} 
+                      className={feature.badge === "Novo" ? "bg-secondary text-secondary-foreground" : ""}
+                    >
+                      {feature.badge}
+                    </Badge>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground mb-2">
                     {feature.title}
@@ -124,22 +224,166 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Modules Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">Módulos</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              Arquitectura Modular
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Cada módulo foi desenhado para responder às necessidades específicas
+              dos diferentes intervenientes na cadeia de valor do café.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {modules.map((module, index) => (
+              <Card key={index} className="h-full">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
+                    <module.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-lg">{module.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {module.items.map((item, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <CheckCircle2 className="w-4 h-4 text-secondary shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Technology Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <Badge variant="outline" className="mb-4">Tecnologia</Badge>
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+                Inovação ao Serviço da Qualidade
+              </h2>
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Activity className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Sensores IoT</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Monitorização contínua de temperatura, humidade e condições de armazenamento
+                      com alertas automáticos para desvios.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Bell className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Notificações Inteligentes</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Sistema automatizado de alertas para prazos de ações, visitas técnicas
+                      e não-conformidades detectadas.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Smartphone className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Acesso Mobile</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Interface responsiva optimizada para trabalho de campo,
+                      com suporte a captura de fotos e leitura de QR codes.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <MapPin className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Mapeamento GIS</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Visualização geográfica interactiva de explorações, parcelas,
+                      rotas logísticas e pontos de controlo.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="relative hidden lg:block">
+              <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl p-8">
+                <div className="grid grid-cols-2 gap-4">
+                  <Card className="col-span-2">
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                        <CheckCircle2 className="w-5 h-5 text-secondary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">Taxa de Conformidade</p>
+                        <p className="text-2xl font-bold text-secondary">94.7%</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-xs text-muted-foreground mb-1">Sensores Activos</p>
+                      <p className="text-xl font-bold text-primary">127</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-xs text-muted-foreground mb-1">Lotes Rastreados</p>
+                      <p className="text-xl font-bold text-primary">3.2k</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="col-span-2">
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                        <Globe className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">Exportações EUDR-Ready</p>
+                        <p className="text-lg font-bold">100% Conformes</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-hero">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-            Pronto para Começar?
+          <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-6">
+            Junte-se à Revolução Digital do Café Angolano
           </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Registe-se no sistema INCA Coffee Trace e faça parte da revolução digital
-            da cafeicultura angolana.
+          <p className="text-lg text-primary-foreground/80 mb-8">
+            Registe-se no sistema INCA Coffee Trace e garanta a rastreabilidade,
+            qualidade e conformidade do seu café para os mercados mais exigentes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8" onClick={() => window.location.href = "/auth"}>
-              Registar Entidade
+            <Button size="lg" variant="secondary" className="text-lg px-8 gap-2" onClick={() => window.location.href = "/auth"}>
+              Criar Conta
+              <ArrowRight className="h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              Saber Mais
+            <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => window.location.href = "/sim"}>
+              Explorar Mercado
             </Button>
           </div>
         </div>
@@ -148,28 +392,37 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-primary text-primary-foreground py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
                 <Coffee className="w-8 h-8" />
                 <span className="text-xl font-bold">INCA Coffee Trace</span>
               </div>
-              <p className="text-primary-foreground/80">
-                Sistema Nacional de Rastreabilidade e Qualidade do Café
+              <p className="text-primary-foreground/80 text-sm">
+                Sistema Nacional de Rastreabilidade e Qualidade do Café de Angola.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Links Úteis</h4>
-              <ul className="space-y-2 text-primary-foreground/80">
-                <li><a href="#" className="hover:text-primary-foreground transition-colors">Sobre o INCA</a></li>
+              <h4 className="font-semibold mb-4">Plataforma</h4>
+              <ul className="space-y-2 text-primary-foreground/80 text-sm">
+                <li><a href="/verificar" className="hover:text-primary-foreground transition-colors">Verificar Lote</a></li>
+                <li><a href="/sim" className="hover:text-primary-foreground transition-colors">Dados de Mercado</a></li>
+                <li><a href="/mapa" className="hover:text-primary-foreground transition-colors">Mapa de Explorações</a></li>
+                <li><a href="/auth" className="hover:text-primary-foreground transition-colors">Acesso ao Sistema</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Recursos</h4>
+              <ul className="space-y-2 text-primary-foreground/80 text-sm">
                 <li><a href="#" className="hover:text-primary-foreground transition-colors">Documentação</a></li>
                 <li><a href="#" className="hover:text-primary-foreground transition-colors">Certificações</a></li>
-                <li><a href="#" className="hover:text-primary-foreground transition-colors">Suporte</a></li>
+                <li><a href="#" className="hover:text-primary-foreground transition-colors">Conformidade EUDR</a></li>
+                <li><a href="#" className="hover:text-primary-foreground transition-colors">Suporte Técnico</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Contacto</h4>
-              <ul className="space-y-2 text-primary-foreground/80">
+              <ul className="space-y-2 text-primary-foreground/80 text-sm">
                 <li>Instituto Nacional do Café de Angola</li>
                 <li>Luanda, Angola</li>
                 <li>info@inca.gov.ao</li>
@@ -177,8 +430,12 @@ const Index = () => {
               </ul>
             </div>
           </div>
-          <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-primary-foreground/60">
+          <div className="border-t border-primary-foreground/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-primary-foreground/60 text-sm">
             <p>&copy; 2024 INCA - Instituto Nacional do Café de Angola. Todos os direitos reservados.</p>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-primary-foreground transition-colors">Termos de Uso</a>
+              <a href="#" className="hover:text-primary-foreground transition-colors">Privacidade</a>
+            </div>
           </div>
         </div>
       </footer>
