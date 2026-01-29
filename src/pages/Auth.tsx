@@ -164,6 +164,43 @@ const Auth = () => {
                     Entrar
                   </Button>
                 </form>
+
+                {/* Quick Login for Testing */}
+                <div className="mt-6 pt-4 border-t">
+                  <p className="text-xs text-muted-foreground text-center mb-3">
+                    Login Rápido (Ambiente de Testes)
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { label: "Admin", email: "admin@inca.ao", role: "admin_inca" },
+                      { label: "Técnico", email: "tecnico@inca.ao", role: "tecnico_inca" },
+                      { label: "Produtor", email: "produtor@inca.ao", role: "produtor" },
+                      { label: "Cooperativa", email: "cooperativa@inca.ao", role: "cooperativa" },
+                      { label: "Processador", email: "processador@inca.ao", role: "processador" },
+                      { label: "Transportador", email: "transportador@inca.ao", role: "transportador" },
+                      { label: "Exportador", email: "exportador@inca.ao", role: "exportador" },
+                      { label: "Comprador", email: "comprador@inca.ao", role: "comprador" },
+                    ].map((user) => (
+                      <Button
+                        key={user.email}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="text-xs"
+                        disabled={loading}
+                        onClick={() => {
+                          setEmail(user.email);
+                          setPassword("Teste123!");
+                        }}
+                      >
+                        {user.label}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    Password: <code className="bg-muted px-1 rounded">Teste123!</code>
+                  </p>
+                </div>
               </TabsContent>
 
               <TabsContent value="signup">
