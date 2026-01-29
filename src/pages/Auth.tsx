@@ -172,14 +172,14 @@ const Auth = () => {
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { label: "Admin", email: "admin@inca.ao", role: "admin_inca" },
-                      { label: "Técnico", email: "tecnico@inca.ao", role: "tecnico_inca" },
-                      { label: "Produtor", email: "produtor@inca.ao", role: "produtor" },
-                      { label: "Cooperativa", email: "cooperativa@inca.ao", role: "cooperativa" },
-                      { label: "Processador", email: "processador@inca.ao", role: "processador" },
-                      { label: "Transportador", email: "transportador@inca.ao", role: "transportador" },
-                      { label: "Exportador", email: "exportador@inca.ao", role: "exportador" },
-                      { label: "Comprador", email: "comprador@inca.ao", role: "comprador" },
+                      { label: "Admin", email: "anicetojjc@gmail.com", role: "admin_inca" },
+                      { label: "Técnico", email: "tecnico@teste.ao", role: "tecnico_inca" },
+                      { label: "Produtor", email: "produtor@teste.ao", role: "produtor" },
+                      { label: "Cooperativa", email: "cooperativa@teste.ao", role: "cooperativa" },
+                      { label: "Processador", email: "processador@teste.ao", role: "processador" },
+                      { label: "Transportador", email: "transportador@teste.ao", role: "transportador" },
+                      { label: "Exportador", email: "exportador@teste.ao", role: "exportador" },
+                      { label: "Comprador", email: "comprador@teste.ao", role: "comprador" },
                     ].map((user) => (
                       <Button
                         key={user.email}

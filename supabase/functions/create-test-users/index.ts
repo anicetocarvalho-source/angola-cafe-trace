@@ -13,6 +13,7 @@ interface TestUser {
 }
 
 const testUsers: TestUser[] = [
+  { email: "admin@inca.ao", password: "Teste123!", nome: "Administrador INCA", role: "admin_inca" },
   { email: "tecnico@teste.ao", password: "Teste123!", nome: "Técnico INCA", role: "tecnico_inca" },
   { email: "produtor@teste.ao", password: "Teste123!", nome: "Produtor Teste", role: "produtor" },
   { email: "cooperativa@teste.ao", password: "Teste123!", nome: "Cooperativa Teste", role: "cooperativa" },
@@ -29,15 +30,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify the caller is an admin
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }), 
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
     // Create admin client with service role for user creation
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -45,42 +37,55 @@ Deno.serve(async (req) => {
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // Create regular client to verify caller's role
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
+    // Check if any users already exist - if so, require admin auth
+    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+    const hasExistingUsers = existingUsers?.users && existingUsers.users.length > 0;
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-    
-    if (claimsError || !claimsData?.claims) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized - invalid token' }), 
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    if (hasExistingUsers) {
+      // Verify the caller is an admin
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader?.startsWith('Bearer ')) {
+        return new Response(
+          JSON.stringify({ error: 'Unauthorized - users already exist, admin auth required' }), 
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Create regular client to verify caller's role
+      const supabaseClient = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_ANON_KEY')!,
+        { global: { headers: { Authorization: authHeader } } }
       );
+
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+      
+      if (userError || !user) {
+        return new Response(
+          JSON.stringify({ error: 'Unauthorized - invalid token' }), 
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Check if caller is admin_inca
+      const { data: roleData, error: roleError } = await supabaseAdmin
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin_inca')
+        .single();
+
+      if (roleError || !roleData) {
+        console.log("Role check failed:", roleError);
+        return new Response(
+          JSON.stringify({ error: 'Forbidden - admin_inca role required' }), 
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log("Admin verified, creating test users...");
+    } else {
+      console.log("No users exist, allowing initial setup without auth...");
     }
-
-    const userId = claimsData.claims.sub;
-
-    // Check if caller is admin_inca
-    const { data: roleData, error: roleError } = await supabaseAdmin
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .eq('role', 'admin_inca')
-      .single();
-
-    if (roleError || !roleData) {
-      console.log("Role check failed:", roleError);
-      return new Response(
-        JSON.stringify({ error: 'Forbidden - admin_inca role required' }), 
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    console.log("Admin verified, creating test users...");
 
     const results: { email: string; success: boolean; error?: string }[] = [];
 
