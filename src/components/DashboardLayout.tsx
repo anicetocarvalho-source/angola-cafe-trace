@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck } from "lucide-react";
@@ -22,6 +22,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, signOut, roles, hasRole, loading } = useAuth();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const allNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3, roles: ["all"] },
@@ -51,7 +52,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     return item.roles.some((role) => hasRole(role));
   });
 
-  const NavLinks = () => (
+  const NavLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
     <>
       {navigation.map((item) => {
         const Icon = item.icon;
@@ -60,6 +61,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <Link
             key={item.name}
             to={item.href}
+            onClick={onNavigate}
             className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
               isActive
                 ? "bg-primary text-primary-foreground"
@@ -79,7 +81,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-card shadow-soft">
         <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8">
-          <Sheet>
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild className="lg:hidden">
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
@@ -91,7 +93,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <span className="ml-2 text-lg font-semibold">INCA</span>
               </div>
               <nav className="flex flex-col gap-2 p-4">
-                <NavLinks />
+                <NavLinks onNavigate={() => setMobileMenuOpen(false)} />
               </nav>
             </SheetContent>
           </Sheet>
@@ -141,7 +143,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Sidebar - Desktop */}
         <aside className="hidden lg:flex lg:w-64 lg:flex-col border-r bg-card">
           <nav className="flex flex-col gap-2 p-4">
-            <NavLinks />
+            <NavLinks onNavigate={() => {}} />
           </nav>
 
           {roles.length > 0 && (
