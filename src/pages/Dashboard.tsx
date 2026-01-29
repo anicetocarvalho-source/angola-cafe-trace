@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Coffee, MapPin, CheckCircle2, AlertTriangle, TrendingUp, Package } from "lucide-react";
+import { Coffee, MapPin, CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react";
 import { ComplianceMetrics } from "@/components/dashboard/ComplianceMetrics";
+import { RecentNotifications } from "@/components/dashboard/RecentNotifications";
+import { UrgentActions } from "@/components/dashboard/UrgentActions";
+import { IoTSensorStatus } from "@/components/dashboard/IoTSensorStatus";
+import { MarketDataWidget } from "@/components/dashboard/MarketDataWidget";
+import { ProducerDashboard } from "@/components/dashboard/ProducerDashboard";
 
 const Dashboard = () => {
   const { user, roles, hasRole } = useAuth();
@@ -22,7 +26,6 @@ const Dashboard = () => {
 
   const fetchStats = async () => {
     try {
-      // Fetch lots stats
       const { data: lotes } = await supabase
         .from("lotes")
         .select("estado");
@@ -30,7 +33,6 @@ const Dashboard = () => {
       const approved = lotes?.filter(l => l.estado === "aprovado").length || 0;
       const pending = lotes?.filter(l => l.estado === "pendente").length || 0;
 
-      // Fetch explorations stats
       const { count: exploracoesCount } = await supabase
         .from("exploracoes")
         .select("*", { count: "exact", head: true });
@@ -53,6 +55,7 @@ const Dashboard = () => {
         <p className="text-muted-foreground">Visão geral do sistema INCA Coffee Trace</p>
       </div>
 
+      {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -99,6 +102,19 @@ const Dashboard = () => {
         </Card>
       </div>
 
+      {/* Notifications and Urgent Actions Row */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <RecentNotifications />
+        <UrgentActions />
+      </div>
+
+      {/* IoT and Market Data Row */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <IoTSensorStatus />
+        <MarketDataWidget />
+      </div>
+
+      {/* Activity and Quality Row */}
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
@@ -172,70 +188,7 @@ const Dashboard = () => {
       </div>
 
       {/* Compliance Metrics Section */}
-      <div className="mt-8">
-        <ComplianceMetrics />
-      </div>
-    </div>
-  );
-
-  const renderProdutorDashboard = () => (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard do Produtor</h1>
-        <p className="text-muted-foreground">Gestão das suas explorações e lotes</p>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Meus Lotes</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalLotes}</div>
-            <p className="text-xs text-muted-foreground">Total registado</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Explorações</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalExploracoes}</div>
-            <p className="text-xs text-muted-foreground">Registadas</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aguardam Validação</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-accent" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.lotesPendentes}</div>
-            <p className="text-xs text-muted-foreground">Pendentes</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Acções Rápidas</CardTitle>
-          <CardDescription>Comece a registar os seus dados</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Button className="w-full justify-start" onClick={() => window.location.href = "/exploracoes/nova"}>
-            <MapPin className="h-4 w-4 mr-2" />
-            Registar Nova Exploração
-          </Button>
-          <Button className="w-full justify-start" variant="outline" onClick={() => window.location.href = "/lotes/novo"}>
-            <Coffee className="h-4 w-4 mr-2" />
-            Criar Novo Lote
-          </Button>
-        </CardContent>
-      </Card>
+      <ComplianceMetrics />
     </div>
   );
 
@@ -270,7 +223,7 @@ const Dashboard = () => {
       {hasRole("admin_inca") || hasRole("tecnico_inca") ? (
         renderAdminDashboard()
       ) : hasRole("produtor") ? (
-        renderProdutorDashboard()
+        <ProducerDashboard />
       ) : (
         renderDefaultDashboard()
       )}
