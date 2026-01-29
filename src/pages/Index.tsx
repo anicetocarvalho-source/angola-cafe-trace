@@ -128,7 +128,7 @@ const Index = () => {
                   <QrCode className="h-5 w-5" />
                   Verificar Lote
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 gap-2" onClick={() => window.location.href = "/auth"}>
+                <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 gap-2" onClick={() => window.location.href = "/auth"}>
                   Acesso ao Sistema
                   <ArrowRight className="h-5 w-5" />
                 </Button>
@@ -382,7 +382,7 @@ const Index = () => {
               Criar Conta
               <ArrowRight className="h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => window.location.href = "/sim"}>
+            <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => window.location.href = "/sim"}>
               Explorar Mercado
             </Button>
           </div>
