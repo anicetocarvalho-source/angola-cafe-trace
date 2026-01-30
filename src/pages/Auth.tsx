@@ -172,7 +172,7 @@ const Auth = () => {
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { label: "Admin", email: "admin@inca.ao", role: "admin_inca" },
+                      { label: "Admin", email: "anicetojjc@gmail.com", role: "admin_inca" },
                       { label: "Técnico", email: "tecnico@teste.ao", role: "tecnico_inca" },
                       { label: "Produtor", email: "produtor@teste.ao", role: "produtor" },
                       { label: "Cooperativa", email: "cooperativa@teste.ao", role: "cooperativa" },
