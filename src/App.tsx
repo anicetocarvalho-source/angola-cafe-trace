@@ -40,6 +40,7 @@ import Transformacao from "./pages/Transformacao";
 import Logistica from "./pages/Logistica";
 import Comercializacao from "./pages/Comercializacao";
 import Armazenamento from "./pages/Armazenamento";
+import SIMPublico from "./pages/SIMPublico";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/verificar" element={<Verificar />} />
           <Route path="/verificar/:referencia" element={<Verificar />} />
+          <Route path="/sim-publico" element={<SIMPublico />} />
           <Route
             path="/dashboard"
             element={
