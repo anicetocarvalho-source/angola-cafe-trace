@@ -39,6 +39,7 @@ import VisitaDetalhes from "./pages/VisitaDetalhes";
 import Transformacao from "./pages/Transformacao";
 import Logistica from "./pages/Logistica";
 import Comercializacao from "./pages/Comercializacao";
+import Armazenamento from "./pages/Armazenamento";
 
 const queryClient = new QueryClient();
 
@@ -314,6 +315,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Comercializacao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/armazenamento"
+            element={
+              <ProtectedRoute>
+                <Armazenamento />
               </ProtectedRoute>
             }
           />

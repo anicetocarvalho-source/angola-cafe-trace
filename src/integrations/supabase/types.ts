@@ -64,6 +64,62 @@ export type Database = {
           },
         ]
       }
+      armazenamento: {
+        Row: {
+          armazem_nome: string
+          created_at: string
+          data_movimento: string
+          humidade_percent: number | null
+          id: string
+          localizacao_armazem: string | null
+          lote_id: string
+          observacoes: string | null
+          quantidade_kg: number
+          responsavel: string | null
+          temperatura_c: number | null
+          tipo_movimento: string
+          updated_at: string
+        }
+        Insert: {
+          armazem_nome: string
+          created_at?: string
+          data_movimento?: string
+          humidade_percent?: number | null
+          id?: string
+          localizacao_armazem?: string | null
+          lote_id: string
+          observacoes?: string | null
+          quantidade_kg: number
+          responsavel?: string | null
+          temperatura_c?: number | null
+          tipo_movimento: string
+          updated_at?: string
+        }
+        Update: {
+          armazem_nome?: string
+          created_at?: string
+          data_movimento?: string
+          humidade_percent?: number | null
+          id?: string
+          localizacao_armazem?: string | null
+          lote_id?: string
+          observacoes?: string | null
+          quantidade_kg?: number
+          responsavel?: string | null
+          temperatura_c?: number | null
+          tipo_movimento?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "armazenamento_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
