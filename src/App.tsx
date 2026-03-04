@@ -36,6 +36,9 @@ import NovaManutencao from "./pages/NovaManutencao";
 import Fiscalizacao from "./pages/Fiscalizacao";
 import NovaVisita from "./pages/NovaVisita";
 import VisitaDetalhes from "./pages/VisitaDetalhes";
+import Transformacao from "./pages/Transformacao";
+import Logistica from "./pages/Logistica";
+import Comercializacao from "./pages/Comercializacao";
 
 const queryClient = new QueryClient();
 
@@ -287,6 +290,30 @@ const App = () => (
             element={
               <ProtectedRoute requiredRole="tecnico_inca">
                 <VisitaDetalhes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transformacao"
+            element={
+              <ProtectedRoute>
+                <Transformacao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistica"
+            element={
+              <ProtectedRoute>
+                <Logistica />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/comercializacao"
+            element={
+              <ProtectedRoute>
+                <Comercializacao />
               </ProtectedRoute>
             }
           />
