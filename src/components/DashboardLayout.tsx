@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake } from "lucide-react";
+import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
 import { Link, useLocation } from "react-router-dom";
@@ -41,6 +41,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Transformação", href: "/transformacao", icon: FlaskConical, roles: ["processador", "cooperativa", "admin_inca", "tecnico_inca"] },
     { name: "Logística", href: "/logistica", icon: Truck, roles: ["transportador", "admin_inca", "tecnico_inca"] },
     { name: "Comercialização", href: "/comercializacao", icon: Handshake, roles: ["exportador", "comprador", "admin_inca", "tecnico_inca"] },
+    { name: "Armazenamento", href: "/armazenamento", icon: Warehouse, roles: ["processador", "cooperativa", "exportador", "admin_inca", "tecnico_inca"] },
     { name: "Fiscalização", href: "/fiscalizacao", icon: ClipboardCheck, roles: ["tecnico_inca", "admin_inca"] },
     { name: "Auditoria", href: "/auditoria", icon: History, roles: ["admin_inca"] },
     { name: "Admin", href: "/admin", icon: Settings, roles: ["admin_inca"] },
