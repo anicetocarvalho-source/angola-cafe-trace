@@ -17,6 +17,7 @@ import {
   TrendingUp, TrendingDown, DollarSign, Coffee, Globe,
   BarChart3, Calendar, MapPin, ArrowRight, LogIn, Leaf, FileText,
 } from "lucide-react";
+import RegionalComparison from "@/components/sim/RegionalComparison";
 
 interface MarketData {
   id: string;
@@ -394,6 +395,9 @@ const SIMPublico = () => {
             </Card>
           )}
         </div>
+
+        {/* Regional Comparison */}
+        <RegionalComparison marketData={marketData} />
 
         {/* Data Table Summary */}
         <Card>
