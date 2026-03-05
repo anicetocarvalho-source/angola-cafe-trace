@@ -162,6 +162,10 @@ const Index = () => {
                   <QrCode className="h-5 w-5" />
                   Verificar Lote
                 </Button>
+                <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 gap-2" onClick={() => window.location.href = "/sim-publico"}>
+                  <BarChart3 className="h-5 w-5" />
+                  Dados de Mercado
+                </Button>
                 <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 gap-2" onClick={() => window.location.href = "/auth"}>
                   Acesso ao Sistema
                   <ArrowRight className="h-5 w-5" />
@@ -471,7 +475,7 @@ const Index = () => {
               Criar Conta
               <ArrowRight className="h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => window.location.href = "/sim"}>
+            <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => window.location.href = "/sim-publico"}>
               Explorar Mercado
             </Button>
           </div>
@@ -495,7 +499,7 @@ const Index = () => {
               <h4 className="font-semibold mb-4">Plataforma</h4>
               <ul className="space-y-2 text-primary-foreground/80 text-sm">
                 <li><a href="/verificar" className="hover:text-primary-foreground transition-colors">Verificar Lote</a></li>
-                <li><a href="/sim" className="hover:text-primary-foreground transition-colors">Dados de Mercado</a></li>
+                <li><a href="/sim-publico" className="hover:text-primary-foreground transition-colors">Dados de Mercado (Público)</a></li>
                 <li><a href="/mapa" className="hover:text-primary-foreground transition-colors">Mapa de Explorações</a></li>
                 <li><a href="/auth" className="hover:text-primary-foreground transition-colors">Acesso ao Sistema</a></li>
               </ul>
