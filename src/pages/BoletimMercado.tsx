@@ -107,10 +107,10 @@ const BoletimMercado = () => {
 
   const indicators = Object.entries(latestByIndicator);
   const priceIndicators = indicators.filter(([, v]) =>
-    v.indicador.toLowerCase().includes("preco") || v.indicador.toLowerCase().includes("preço") || v.indicador.toLowerCase().includes("price")
+    v.indicador === "preco_spot" || v.indicador === "preco_futuro"
   );
   const productionIndicators = indicators.filter(([, v]) =>
-    v.indicador.toLowerCase().includes("produc") || v.indicador.toLowerCase().includes("volume")
+    v.indicador === "producao" || v.indicador === "exportacao" || v.indicador === "consumo"
   );
   const otherIndicators = indicators.filter(([k]) =>
     !priceIndicators.some(([pk]) => pk === k) && !productionIndicators.some(([pk]) => pk === k)
