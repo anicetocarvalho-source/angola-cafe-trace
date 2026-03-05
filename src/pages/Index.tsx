@@ -116,9 +116,10 @@ const Index = () => {
             <span className="text-lg font-bold text-white tracking-tight">INCA Coffee Trace</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-white/80">
+            <a href="#funcionalidades" className="hover:text-white transition-colors">Funcionalidades</a>
+            <a href="#modulos" className="hover:text-white transition-colors">Módulos</a>
+            <a href="#tecnologia" className="hover:text-white transition-colors">Tecnologia</a>
             <a href="/verificar" className="hover:text-white transition-colors">Verificar Lote</a>
-            <a href="/sim-publico" className="hover:text-white transition-colors">Mercado</a>
-            <a href="/boletim-mercado" className="hover:text-white transition-colors">Boletim</a>
           </div>
           <Button 
             size="sm" 
@@ -214,7 +215,7 @@ const Index = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      <section id="funcionalidades" className="py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             className="text-center mb-16"
@@ -271,7 +272,7 @@ const Index = () => {
       </section>
 
       {/* Modules Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/40">
+      <section id="modulos" className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/40 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-5 gap-12 items-start">
             <motion.div 
@@ -329,7 +330,7 @@ const Index = () => {
       </section>
 
       {/* Technology / Dashboard Preview */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      <section id="tecnologia" className="py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
