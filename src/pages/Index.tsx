@@ -15,10 +15,12 @@ import {
   CheckCircle2,
   TrendingUp,
   QrCode,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  X
 } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
 import heroImage from "@/assets/hero-coffee-angola.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   const heroRef = useRef<HTMLElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
@@ -34,6 +37,13 @@ const Index = () => {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  const navLinks = [
+    { href: "#funcionalidades", label: "Funcionalidades" },
+    { href: "#modulos", label: "Módulos" },
+    { href: "#tecnologia", label: "Tecnologia" },
+    { href: "/verificar", label: "Verificar Lote" },
+  ];
 
   const features = [
     {
@@ -116,19 +126,60 @@ const Index = () => {
             <span className="text-lg font-bold text-white tracking-tight">INCA Coffee Trace</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-white/80">
-            <a href="#funcionalidades" className="hover:text-white transition-colors">Funcionalidades</a>
-            <a href="#modulos" className="hover:text-white transition-colors">Módulos</a>
-            <a href="#tecnologia" className="hover:text-white transition-colors">Tecnologia</a>
-            <a href="/verificar" className="hover:text-white transition-colors">Verificar Lote</a>
+            {navLinks.map((link) => (
+              <a key={link.href} href={link.href} className="hover:text-white transition-colors">{link.label}</a>
+            ))}
           </div>
-          <Button 
-            size="sm" 
-            className="bg-white/15 backdrop-blur-sm text-white border border-white/25 hover:bg-white/25 rounded-xl"
-            onClick={() => window.location.href = "/auth"}
-          >
-            Acesso ao Sistema
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              size="sm" 
+              className="hidden sm:inline-flex bg-white/15 backdrop-blur-sm text-white border border-white/25 hover:bg-white/25 rounded-xl"
+              onClick={() => window.location.href = "/auth"}
+            >
+              Acesso ao Sistema
+            </Button>
+            <button
+              className="md:hidden p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden mt-3 bg-black/60 backdrop-blur-xl rounded-2xl border border-white/15 p-4 space-y-1"
+            >
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-2.5 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <div className="pt-2 border-t border-white/10">
+                <a
+                  href="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-2.5 text-sm text-accent font-medium hover:bg-white/10 rounded-xl transition-colors"
+                >
+                  Acesso ao Sistema
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section */}
