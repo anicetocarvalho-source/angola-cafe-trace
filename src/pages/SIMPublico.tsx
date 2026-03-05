@@ -15,7 +15,7 @@ import {
 } from "recharts";
 import {
   TrendingUp, TrendingDown, DollarSign, Coffee, Globe,
-  BarChart3, Calendar, MapPin, ArrowRight, LogIn, Leaf,
+  BarChart3, Calendar, MapPin, ArrowRight, LogIn, Leaf, FileText,
 } from "lucide-react";
 
 interface MarketData {
@@ -466,6 +466,12 @@ const SIMPublico = () => {
                 <Link to="/auth">
                   Criar Conta
                   <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/boletim-mercado">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Boletim Mensal
                 </Link>
               </Button>
               <Button variant="outline" asChild>
