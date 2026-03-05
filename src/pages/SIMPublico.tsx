@@ -96,7 +96,7 @@ const SIMPublico = () => {
   const priceData = (() => {
     if (!marketData) return [];
     const priceItems = marketData.filter(d =>
-      d.indicador.toLowerCase().includes("preco") || d.indicador.toLowerCase().includes("preço") || d.indicador.toLowerCase().includes("price")
+      d.indicador === "preco_spot" || d.indicador === "preco_futuro"
     );
     const byDate: Record<string, any> = {};
     priceItems.forEach(d => {
@@ -116,7 +116,7 @@ const SIMPublico = () => {
   const productionData = (() => {
     if (!marketData) return [];
     const prodItems = marketData.filter(d =>
-      d.indicador.toLowerCase().includes("produc") || d.indicador.toLowerCase().includes("volume")
+      d.indicador === "producao" || d.indicador === "exportacao" || d.indicador === "consumo"
     );
     const byDate: Record<string, any> = {};
     prodItems.forEach(d => {
@@ -137,7 +137,7 @@ const SIMPublico = () => {
     if (!marketData) return [];
     const prodByRegion: Record<string, number> = {};
     marketData.filter(d => d.localizacao && d.valor && (
-      d.indicador.toLowerCase().includes("produc") || d.indicador.toLowerCase().includes("volume")
+      d.indicador === "producao"
     )).forEach(d => {
       prodByRegion[d.localizacao!] = (prodByRegion[d.localizacao!] || 0) + (d.valor || 0);
     });
