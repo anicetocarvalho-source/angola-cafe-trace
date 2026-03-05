@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +15,11 @@ import {
   Coffee, FileText, Download, TrendingUp, TrendingDown,
   MapPin, Calendar, ArrowLeft, BarChart3, Leaf, LogIn,
 } from "lucide-react";
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, Legend,
+} from "recharts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface MarketData {
   id: string;
@@ -55,6 +60,22 @@ const BoletimMercado = () => {
         .from("sim_mercado")
         .select("*")
         .gte("data_referencia", format(prevMonthStart, "yyyy-MM-dd"))
+        .lte("data_referencia", format(monthEnd, "yyyy-MM-dd"))
+        .order("data_referencia", { ascending: true });
+      if (error) throw error;
+      return data as MarketData[];
+    },
+  });
+
+  // Fetch 6 months of history for trend charts
+  const sixMonthsAgo = startOfMonth(subMonths(monthStart, 5));
+  const { data: historyData } = useQuery({
+    queryKey: ["boletim-history", selectedMonth],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sim_mercado")
+        .select("*")
+        .gte("data_referencia", format(sixMonthsAgo, "yyyy-MM-dd"))
         .lte("data_referencia", format(monthEnd, "yyyy-MM-dd"))
         .order("data_referencia", { ascending: true });
       if (error) throw error;
@@ -115,6 +136,43 @@ const BoletimMercado = () => {
   const otherIndicators = indicators.filter(([k]) =>
     !priceIndicators.some(([pk]) => pk === k) && !productionIndicators.some(([pk]) => pk === k)
   );
+
+  const CHART_COLORS = ["hsl(var(--primary))", "hsl(var(--secondary))", "hsl(var(--accent))", "#e67e22", "#8e44ad", "#2ecc71"];
+
+  // Build chart data: group by month, then by region for each indicator type
+  const buildChartData = useCallback((indicadorFilter: string) => {
+    if (!historyData) return { chartData: [], regions: [] as string[] };
+    const filtered = historyData.filter(d => d.indicador === indicadorFilter);
+    const regions = [...new Set(filtered.map(d => d.localizacao || "Nacional"))];
+    
+    // Group by month
+    const byMonth: Record<string, Record<string, number | null>> = {};
+    filtered.forEach(d => {
+      const monthKey = format(parseISO(d.data_referencia), "MMM yy", { locale: pt });
+      const region = d.localizacao || "Nacional";
+      if (!byMonth[monthKey]) byMonth[monthKey] = {};
+      // Keep latest value per month per region
+      byMonth[monthKey][region] = d.valor;
+    });
+
+    const chartData = Object.entries(byMonth).map(([month, values]) => ({
+      month,
+      ...values,
+    }));
+
+    return { chartData, regions };
+  }, [historyData]);
+
+  const chartConfigs = useMemo(() => [
+    { key: "preco_spot", title: "Preço Spot (USD/kg)", icon: <TrendingUp className="h-4 w-4" /> },
+    { key: "preco_futuro", title: "Preço Futuro (USD/kg)", icon: <TrendingUp className="h-4 w-4" /> },
+    { key: "preco_interno", title: "Preço Interno (AKZ/kg)", icon: <TrendingUp className="h-4 w-4" /> },
+    { key: "producao", title: "Produção (ton)", icon: <BarChart3 className="h-4 w-4" /> },
+    { key: "exportacao", title: "Exportação (ton)", icon: <BarChart3 className="h-4 w-4" /> },
+    { key: "estoque", title: "Estoque (ton)", icon: <BarChart3 className="h-4 w-4" /> },
+    { key: "qualidade_sca", title: "Qualidade SCA (pontos)", icon: <Leaf className="h-4 w-4" /> },
+    { key: "consumo", title: "Consumo (ton)", icon: <Coffee className="h-4 w-4" /> },
+  ], []);
 
   const monthLabel = format(monthStart, "MMMM yyyy", { locale: pt });
   const prevMonthLabel = format(prevMonthStart, "MMMM yyyy", { locale: pt });
@@ -334,6 +392,73 @@ const BoletimMercado = () => {
               getVariation={getVariation}
               formatValue={formatValue}
             />
+
+            {/* Trend Charts */}
+            {historyData && historyData.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    Evolução Temporal (6 meses)
+                  </CardTitle>
+                  <CardDescription>Tendências dos indicadores por região ao longo do tempo</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="preco_spot">
+                    <TabsList className="flex flex-wrap h-auto gap-1 mb-4">
+                      {chartConfigs.map(cfg => {
+                        const { chartData } = buildChartData(cfg.key);
+                        if (chartData.length === 0) return null;
+                        return (
+                          <TabsTrigger key={cfg.key} value={cfg.key} className="text-xs gap-1">
+                            {cfg.icon} {cfg.title.split(" (")[0]}
+                          </TabsTrigger>
+                        );
+                      })}
+                    </TabsList>
+                    {chartConfigs.map(cfg => {
+                      const { chartData, regions } = buildChartData(cfg.key);
+                      if (chartData.length === 0) return null;
+                      return (
+                        <TabsContent key={cfg.key} value={cfg.key}>
+                          <div className="h-[350px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                                <XAxis dataKey="month" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                                <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                                <Tooltip
+                                  contentStyle={{
+                                    backgroundColor: 'hsl(var(--background))',
+                                    border: '1px solid hsl(var(--border))',
+                                    borderRadius: '8px',
+                                    fontSize: '12px',
+                                  }}
+                                />
+                                <Legend />
+                                {regions.map((region, i) => (
+                                  <Line
+                                    key={region}
+                                    type="monotone"
+                                    dataKey={region}
+                                    name={region}
+                                    stroke={CHART_COLORS[i % CHART_COLORS.length]}
+                                    strokeWidth={2}
+                                    dot={{ r: 3 }}
+                                    connectNulls
+                                  />
+                                ))}
+                              </LineChart>
+                            </ResponsiveContainer>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2 text-center">{cfg.title}</p>
+                        </TabsContent>
+                      );
+                    })}
+                  </Tabs>
+                </CardContent>
+              </Card>
+            )}
 
             {indicators.length === 0 && (
               <Card>
