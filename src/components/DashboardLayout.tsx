@@ -303,15 +303,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
 
           {/* Sidebar footer */}
-          <div className="border-t p-2">
+          <div className="border-t border-border/60 p-3 space-y-3">
             {!sidebarCollapsed && roles.length > 0 && (
-              <div className="mb-2 px-2">
-                <div className="text-[10px] text-muted-foreground mb-1.5 uppercase tracking-wider font-medium">Perfis</div>
-                <div className="flex flex-wrap gap-1">
+              <div className="rounded-lg bg-muted/50 p-2.5">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Perfil</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
                   {roles.map((role, index) => (
                     <span
                       key={index}
-                      className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/80 text-secondary-foreground font-medium"
+                      className="text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-semibold border border-primary/20"
                     >
                       {role.role.replace("_", " ").toUpperCase()}
                     </span>
@@ -319,23 +322,24 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 </div>
               </div>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className={cn("w-full", sidebarCollapsed && "px-0 justify-center")}
+              className={cn(
+                "w-full flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
+                sidebarCollapsed && "justify-center px-2"
+              )}
             >
               {sidebarCollapsed ? (
                 <ChevronsRight className="h-4 w-4" />
               ) : (
                 <>
-                  <ChevronsLeft className="h-4 w-4 mr-2" />
-                  <span className="text-xs">Recolher</span>
+                  <ChevronsLeft className="h-4 w-4" />
+                  <span className="text-xs font-medium">Recolher</span>
                 </>
               )}
-            </Button>
+            </button>
             {!sidebarCollapsed && (
-              <p className="text-[10px] text-muted-foreground text-center mt-1">v2.0</p>
+              <p className="text-[10px] text-muted-foreground/60 text-center font-medium tracking-wide">v2.0</p>
             )}
           </div>
         </aside>
