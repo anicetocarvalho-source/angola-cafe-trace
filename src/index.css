@@ -1,5 +1,15 @@
 @tailwind base;
 
+/* Ensure Leaflet map controls don't overlay Sheet/Dialog portals */
+.leaflet-pane,
+.leaflet-control {
+  z-index: 1 !important;
+}
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 2 !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
