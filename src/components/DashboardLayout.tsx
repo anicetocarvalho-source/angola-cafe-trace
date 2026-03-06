@@ -207,7 +207,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-gradient-to-r from-card via-card to-card/95 shadow-sm backdrop-blur-sm">
         <div className="flex h-14 items-center px-4 sm:px-6">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <Sheet open={mobileMenuOpen} onOpenChange={handleMobileMenuChange}>
             <SheetTrigger asChild className="lg:hidden">
               <Button variant="ghost" size="icon" className="mr-2">
                 <Menu className="h-5 w-5" />
