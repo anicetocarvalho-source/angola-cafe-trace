@@ -527,6 +527,72 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Timeline - História do Café Angolano */}
+      <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20 overflow-hidden">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            className="text-center mb-10 sm:mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">História</p>
+            <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-4">
+              O Percurso do Café Angolano
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
+              De uma tradição secular à era digital — marcos que definiram a identidade cafeeira de Angola.
+            </p>
+          </motion.div>
+
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-4 sm:left-1/2 top-0 bottom-0 w-px bg-border sm:-translate-x-px" />
+
+            {[
+              { year: "1830", title: "Primeiras Plantações", desc: "Início do cultivo do café em Angola, trazido pelos colonizadores portugueses às terras férteis do planalto central.", side: "left" },
+              { year: "1960", title: "4.º Maior Produtor Mundial", desc: "Angola atinge o pico de produção com mais de 200 mil toneladas anuais, tornando-se referência global em café Robusta.", side: "right" },
+              { year: "1975", title: "Independência e Transição", desc: "Com a independência, o sector cafeeiro enfrenta desafios estruturais. A produção diminui significativamente nas décadas seguintes.", side: "left" },
+              { year: "2000", title: "Início da Recuperação", desc: "Programas de revitalização do sector começam a reconstruir a cadeia produtiva com apoio institucional e cooperação internacional.", side: "right" },
+              { year: "2015", title: "Criação do INCA", desc: "O Instituto Nacional do Café é reforçado para liderar a modernização, certificação e promoção do café angolano nos mercados internacionais.", side: "left" },
+              { year: "2024", title: "Era Digital & EUDR", desc: "Lançamento do sistema de rastreabilidade digital, garantindo conformidade com o Regulamento Europeu e acesso a mercados premium.", side: "right" },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                className={`relative flex items-start gap-4 sm:gap-0 mb-8 sm:mb-12 last:mb-0 ${
+                  item.side === "right" ? "sm:flex-row-reverse" : ""
+                }`}
+                initial={{ opacity: 0, x: item.side === "left" ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+              >
+                {/* Dot */}
+                <div className="absolute left-4 sm:left-1/2 w-3 h-3 rounded-full bg-primary border-2 border-background -translate-x-1.5 sm:-translate-x-1.5 mt-1.5 z-10 shadow-sm" />
+
+                {/* Content */}
+                <div className={`ml-10 sm:ml-0 sm:w-[calc(50%-2rem)] ${item.side === "right" ? "sm:mr-auto sm:pr-0 sm:pl-0" : "sm:ml-auto sm:pl-0 sm:pr-0"}`}>
+                  <Card className="border-border/60 hover:border-primary/30 hover:shadow-soft transition-all duration-300">
+                    <CardContent className="p-4 sm:p-5">
+                      <Badge variant="outline" className="mb-2 text-xs font-bold text-primary border-primary/30">
+                        {item.year}
+                      </Badge>
+                      <h3 className="font-semibold text-foreground text-sm sm:text-base mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 bg-muted/40 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
