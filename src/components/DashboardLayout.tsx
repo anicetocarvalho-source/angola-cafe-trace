@@ -251,7 +251,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <p className="text-[10px] text-muted-foreground">Sistema de Rastreabilidade</p>
                 </div>
               </div>
-              <nav className="flex-1 flex flex-col gap-1 p-3 overflow-y-auto">
+              <nav className="flex-1 min-h-0 flex flex-col gap-1 p-3 overflow-y-auto">
                 <NavLinks isMobile />
               </nav>
               <div className="border-t border-border/60 p-3 space-y-2">
