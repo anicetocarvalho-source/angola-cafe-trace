@@ -1,7 +1,8 @@
 import { ReactNode, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, ChevronsRight, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, User } from "lucide-react";
+import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
@@ -148,17 +149,32 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
-      {filteredGroups.map((group) => (
+      {filteredGroups.map((group, groupIndex) => (
         <div key={group.label} className="mb-1">
-          {(isMobile || !sidebarCollapsed) && (
-            <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1">
-              {group.label}
-            </div>
-          )}
-          {sidebarCollapsed && !isMobile && (
-            <div className="border-t border-border/50 mx-2 my-2" />
-          )}
-          {group.items.map((item) => {
+          <AnimatePresence mode="wait">
+            {(isMobile || !sidebarCollapsed) ? (
+              <motion.div
+                key="label"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2, delay: groupIndex * 0.03 }}
+                className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1"
+              >
+                {group.label}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="separator"
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                exit={{ opacity: 0, scaleX: 0 }}
+                transition={{ duration: 0.2 }}
+                className="border-t border-border/50 mx-2 my-2"
+              />
+            )}
+          </AnimatePresence>
+          {group.items.map((item, itemIndex) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
             const link = (
@@ -167,7 +183,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 to={item.href}
                 onClick={isMobile ? handleNavigation : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative",
+                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 relative",
                   isActive
                     ? "bg-primary/10 text-primary font-semibold cursor-default"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -175,12 +191,31 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 )}
               >
                 {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
+                  <motion.span
+                    layoutId="activeIndicator"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
                 )}
-                <Icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
-                {(isMobile || !sidebarCollapsed) && (
-                  <span className="text-sm truncate">{item.name}</span>
-                )}
+                <motion.div
+                  animate={{ scale: sidebarCollapsed && !isMobile ? 1.1 : 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
+                </motion.div>
+                <AnimatePresence>
+                  {(isMobile || !sidebarCollapsed) && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: "auto" }}
+                      exit={{ opacity: 0, width: 0 }}
+                      transition={{ duration: 0.2, delay: itemIndex * 0.02 }}
+                      className="text-sm truncate overflow-hidden whitespace-nowrap"
+                    >
+                      {item.name}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </Link>
             );
 
@@ -320,11 +355,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       <div className="flex">
         {/* Sidebar - Desktop */}
-        <aside
-          className={cn(
-            "hidden lg:flex lg:flex-col border-r bg-card/50 transition-all duration-300 sticky top-14 h-[calc(100vh-3.5rem)] z-40",
-            sidebarCollapsed ? "lg:w-16" : "lg:w-60"
-          )}
+        <motion.aside
+          animate={{ width: sidebarCollapsed ? 64 : 240 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="hidden lg:flex lg:flex-col border-r bg-card/50 sticky top-14 h-[calc(100vh-3.5rem)] z-40 overflow-hidden"
         >
           <div className="flex-1 overflow-y-auto p-2">
             <nav className="flex flex-col gap-0.5">
@@ -334,21 +368,40 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
           {/* Sidebar footer */}
           <div className="border-t border-border/60 p-2 space-y-2">
-            {!sidebarCollapsed && roles.length > 0 && <ProfileSection />}
-            {sidebarCollapsed && (
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <div className="flex justify-center">
-                    <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center">
-                      <span className="text-[9px] font-bold text-primary-foreground">{userInitials}</span>
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  {roles.map(r => r.role.replace("_", " ").toUpperCase()).join(", ") || user?.email}
-                </TooltipContent>
-              </Tooltip>
-            )}
+            <AnimatePresence mode="wait">
+              {!sidebarCollapsed && roles.length > 0 ? (
+                <motion.div
+                  key="profile-full"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ProfileSection />
+                </motion.div>
+              ) : sidebarCollapsed ? (
+                <motion.div
+                  key="profile-compact"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <div className="flex justify-center">
+                        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center">
+                          <span className="text-[9px] font-bold text-primary-foreground">{userInitials}</span>
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      {roles.map(r => r.role.replace("_", " ").toUpperCase()).join(", ") || user?.email}
+                    </TooltipContent>
+                  </Tooltip>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <button
@@ -358,15 +411,36 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     sidebarCollapsed && "justify-center px-2"
                   )}
                 >
-                  {sidebarCollapsed ? (
-                    <ChevronsRight className="h-4 w-4" />
-                  ) : (
-                    <>
-                      <ChevronsLeft className="h-4 w-4" />
-                      <span className="text-xs font-medium flex-1 text-left">Recolher</span>
-                      <span className="text-[10px] text-muted-foreground/50">v2.0</span>
-                    </>
-                  )}
+                  <motion.div
+                    animate={{ rotate: sidebarCollapsed ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ChevronsLeft className="h-4 w-4" />
+                  </motion.div>
+                  <AnimatePresence>
+                    {!sidebarCollapsed && (
+                      <>
+                        <motion.span
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: "auto" }}
+                          exit={{ opacity: 0, width: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-xs font-medium flex-1 text-left overflow-hidden whitespace-nowrap"
+                        >
+                          Recolher
+                        </motion.span>
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="text-[10px] text-muted-foreground/50"
+                        >
+                          v2.0
+                        </motion.span>
+                      </>
+                    )}
+                  </AnimatePresence>
                 </button>
               </TooltipTrigger>
               {sidebarCollapsed && (
@@ -374,7 +448,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               )}
             </Tooltip>
           </div>
-        </aside>
+        </motion.aside>
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
