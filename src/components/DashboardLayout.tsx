@@ -1,7 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, ChevronsRight, Sun, Moon, LucideIcon } from "lucide-react";
+import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, ChevronsRight, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
@@ -75,17 +75,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     {
       label: "Geral",
       items: [
-        { name: "Dashboard", href: "/dashboard", icon: BarChart3, roles: ["all"] },
-        { name: "Mapa", href: "/mapa", icon: MapPin, roles: ["all"] },
-        { name: "SIM", href: "/sim", icon: BarChart3, roles: ["all"] },
-        { name: "Relatórios", href: "/relatorios", icon: FileText, roles: ["all"] },
+        { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["all"] },
+        { name: "Mapa", href: "/mapa", icon: Map, roles: ["all"] },
+        { name: "SIM", href: "/sim", icon: TrendingUp, roles: ["all"] },
+        { name: "Relatórios", href: "/relatorios", icon: FileBarChart, roles: ["all"] },
       ],
     },
     {
       label: "Produção",
       items: [
-        { name: "Explorações", href: "/exploracoes", icon: MapPin, roles: ["produtor", "cooperativa", "tecnico_inca"] },
-        { name: "Parcelas", href: "/parcelas", icon: MapPin, roles: ["produtor", "cooperativa", "tecnico_inca"] },
+        { name: "Explorações", href: "/exploracoes", icon: Trees, roles: ["produtor", "cooperativa", "tecnico_inca"] },
+        { name: "Parcelas", href: "/parcelas", icon: Grid3x3, roles: ["produtor", "cooperativa", "tecnico_inca"] },
         { name: "Colheitas", href: "/colheitas", icon: Sprout, roles: ["produtor", "cooperativa", "tecnico_inca"] },
         { name: "Manutenção", href: "/manutencao", icon: Leaf, roles: ["produtor", "cooperativa", "tecnico_inca"] },
       ],
@@ -103,14 +103,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       items: [
         { name: "Logística", href: "/logistica", icon: Truck, roles: ["transportador", "tecnico_inca"] },
         { name: "Comercialização", href: "/comercializacao", icon: Handshake, roles: ["exportador", "comprador", "tecnico_inca"] },
-        { name: "Exportação", href: "/exportacao", icon: FileText, roles: ["exportador"] },
+        { name: "Exportação", href: "/exportacao", icon: Ship, roles: ["exportador"] },
       ],
     },
     {
       label: "Controlo & Qualidade",
       items: [
-        { name: "Qualidade", href: "/qualidade", icon: FileText, roles: ["tecnico_inca"] },
-        { name: "Validação", href: "/validacao", icon: FileText, roles: ["tecnico_inca"] },
+        { name: "Qualidade", href: "/qualidade", icon: Award, roles: ["tecnico_inca"] },
+        { name: "Validação", href: "/validacao", icon: ShieldCheck, roles: ["tecnico_inca"] },
         { name: "Fiscalização", href: "/fiscalizacao", icon: ClipboardCheck, roles: ["tecnico_inca"] },
         { name: "IoT", href: "/iot", icon: Activity, roles: ["tecnico_inca"] },
       ],
@@ -149,14 +149,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {filteredGroups.map((group) => (
-        <div key={group.label} className="mb-2">
+        <div key={group.label} className="mb-1">
           {(isMobile || !sidebarCollapsed) && (
             <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1">
               {group.label}
             </div>
           )}
           {sidebarCollapsed && !isMobile && (
-            <div className="border-t border-border/40 mx-2 my-1" />
+            <div className="border-t border-border/50 mx-2 my-2" />
           )}
           {group.items.map((item) => {
             const Icon = item.icon;
@@ -167,19 +167,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 to={item.href}
                 onClick={isMobile ? handleNavigation : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative group",
+                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                    ? "bg-primary/10 text-primary font-semibold cursor-default"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                   !isMobile && sidebarCollapsed && "justify-center px-2"
                 )}
               >
                 {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-foreground rounded-r-full" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
                 )}
-                <Icon className={cn("h-5 w-5 shrink-0", isActive && "drop-shadow-sm")} />
+                <Icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
                 {(isMobile || !sidebarCollapsed) && (
-                  <span className="text-sm font-medium truncate">{item.name}</span>
+                  <span className="text-sm truncate">{item.name}</span>
                 )}
               </Link>
             );
@@ -202,6 +202,33 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     </>
   );
 
+  const ProfileSection = ({ compact = false }: { compact?: boolean }) => (
+    <div className={cn("rounded-lg bg-muted/50 p-2.5", compact && "p-2")}>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center shrink-0">
+          <span className="text-[9px] font-bold text-primary-foreground">{userInitials}</span>
+        </div>
+        {!compact && (
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-foreground truncate">{user?.email}</p>
+          </div>
+        )}
+      </div>
+      {roles.length > 0 && !compact && (
+        <div className="flex flex-wrap gap-1">
+          {roles.map((role, index) => (
+            <span
+              key={index}
+              className="text-[10px] px-1.5 py-0.5 rounded-md bg-primary/10 text-primary font-semibold border border-primary/20"
+            >
+              {role.role.replace("_", " ").toUpperCase()}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -213,7 +240,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0">
+            <SheetContent side="left" className="w-72 p-0 flex flex-col">
               <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
               <div className="flex h-14 items-center border-b px-5 gap-3">
                 <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
@@ -224,11 +251,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <p className="text-[10px] text-muted-foreground">Sistema de Rastreabilidade</p>
                 </div>
               </div>
-              <nav className="flex flex-col gap-1 p-3 overflow-y-auto max-h-[calc(100vh-8rem)]">
+              <nav className="flex-1 flex flex-col gap-1 p-3 overflow-y-auto">
                 <NavLinks isMobile />
               </nav>
-              <div className="absolute bottom-0 left-0 right-0 p-3 border-t bg-card/50">
-                <p className="text-[10px] text-muted-foreground text-center">INCA v2.0 • Coffee Trace</p>
+              <div className="border-t border-border/60 p-3 space-y-2">
+                <ProfileSection />
+                <p className="text-[10px] text-muted-foreground/50 text-center font-medium tracking-wide">INCA v2.0</p>
               </div>
             </SheetContent>
           </Sheet>
@@ -297,50 +325,52 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           )}
         >
           <div className="flex-1 overflow-y-auto p-2">
-            <nav className="flex flex-col gap-1">
+            <nav className="flex flex-col gap-0.5">
               <NavLinks />
             </nav>
           </div>
 
           {/* Sidebar footer */}
-          <div className="border-t border-border/60 p-3 space-y-3">
-            {!sidebarCollapsed && roles.length > 0 && (
-              <div className="rounded-lg bg-muted/50 p-2.5">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Perfil</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {roles.map((role, index) => (
-                    <span
-                      key={index}
-                      className="text-[10px] px-2 py-1 rounded-md bg-primary/10 text-primary font-semibold border border-primary/20"
-                    >
-                      {role.role.replace("_", " ").toUpperCase()}
-                    </span>
-                  ))}
-                </div>
-              </div>
+          <div className="border-t border-border/60 p-2 space-y-2">
+            {!sidebarCollapsed && roles.length > 0 && <ProfileSection />}
+            {sidebarCollapsed && (
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <div className="flex justify-center">
+                    <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center">
+                      <span className="text-[9px] font-bold text-primary-foreground">{userInitials}</span>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  {roles.map(r => r.role.replace("_", " ").toUpperCase()).join(", ") || user?.email}
+                </TooltipContent>
+              </Tooltip>
             )}
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className={cn(
-                "w-full flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
-                sidebarCollapsed && "justify-center px-2"
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                  className={cn(
+                    "w-full flex items-center gap-2 rounded-lg px-3 py-1.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
+                    sidebarCollapsed && "justify-center px-2"
+                  )}
+                >
+                  {sidebarCollapsed ? (
+                    <ChevronsRight className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <ChevronsLeft className="h-4 w-4" />
+                      <span className="text-xs font-medium flex-1 text-left">Recolher</span>
+                      <span className="text-[10px] text-muted-foreground/50">v2.0</span>
+                    </>
+                  )}
+                </button>
+              </TooltipTrigger>
+              {sidebarCollapsed && (
+                <TooltipContent side="right">Expandir menu</TooltipContent>
               )}
-            >
-              {sidebarCollapsed ? (
-                <ChevronsRight className="h-4 w-4" />
-              ) : (
-                <>
-                  <ChevronsLeft className="h-4 w-4" />
-                  <span className="text-xs font-medium">Recolher</span>
-                </>
-              )}
-            </button>
-            {!sidebarCollapsed && (
-              <p className="text-[10px] text-muted-foreground/60 text-center font-medium tracking-wide">v2.0</p>
-            )}
+            </Tooltip>
           </div>
         </aside>
 
