@@ -43,6 +43,7 @@ import Comercializacao from "./pages/Comercializacao";
 import Armazenamento from "./pages/Armazenamento";
 import SIMPublico from "./pages/SIMPublico";
 import BoletimMercado from "./pages/BoletimMercado";
+import Perfil from "./pages/Perfil";
 
 const queryClient = new QueryClient();
 
@@ -329,6 +330,14 @@ const App = () => (
             element={
             <ProtectedRoute requiredRole="processador">
                 <Armazenamento />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRoute>
+                <Perfil />
               </ProtectedRoute>
             }
           />
