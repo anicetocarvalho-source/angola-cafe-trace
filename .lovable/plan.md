@@ -1,79 +1,28 @@
 
 
-## Revisao Completa do Sistema INCA Coffee Trace
+## Problem Analysis
 
-Este e um projecto ambicioso que toca praticamente todo o sistema. Proponho dividir em **4 fases** para manter a qualidade e evitar erros. Vamos comecar pela Fase 1 agora.
+The sidebar overlay (Sheet) stays open or overlaps content when navigating between menu items. This happens because:
 
----
+1. **Sheet doesn't auto-close on route change** — `handleNavigation` only fires on click, but if the navigation completes before the Sheet animation finishes (or if the click doesn't properly propagate), the Sheet remains open.
+2. **No `useEffect` watching `location`** — the standard pattern is to close the mobile Sheet whenever the route changes, as a safety net.
+3. **Missing `SheetTitle`** — Radix Dialog requires a title for accessibility; its absence can cause rendering quirks in some browsers.
 
-### Fase 1 — Layout Premium, Transicoes e Dashboards por Perfil
+## Plan
 
-#### 1. Transicoes de Pagina Animadas
+### 1. Auto-close mobile Sheet on route change
 
-Criar um componente `PageTransition` com `framer-motion` que envolve o conteudo de cada pagina, aplicando um fade+slide suave na entrada/saida. Integrar no `DashboardLayout` para que todas as paginas internas tenham transicao automatica baseada na mudanca de rota (`useLocation`).
+Add a `useEffect` in `DashboardLayout.tsx` that watches `location.pathname` and sets `mobileMenuOpen` to `false` whenever the route changes. This guarantees the Sheet always closes after navigation, regardless of click timing.
 
-#### 2. Layout Premium do DashboardLayout
+### 2. Add SheetTitle for accessibility
 
-Melhorar o layout do painel:
-- Sidebar colapsavel no desktop (mini-mode com apenas icones, expandivel ao hover ou clique)
-- Header mais refinado com gradiente subtil, avatar com iniciais estilizadas, separacao visual entre logo e accoes
-- Indicador visual da rota activa na sidebar (barra lateral colorida + fundo destacado)
-- Footer discreto na sidebar com versao do sistema
+Import `SheetTitle` from the Sheet component and add a visually hidden title inside `SheetContent` to prevent Radix Dialog warnings and potential rendering issues.
 
-#### 3. Dashboards Dedicados por Perfil
+### 3. Ensure proper z-index layering
 
-Actualmente so existem 3 variantes (Admin/Tecnico, Produtor, Default). Criar dashboards dedicados para os restantes perfis:
+The header is `z-50` and the Sheet overlay is also `z-50` (from the Sheet component). The desktop sidebar has no explicit z-index. Add `z-40` to the desktop sidebar `<aside>` to ensure it layers correctly below the header and Sheet overlay.
 
-- **Cooperativa**: KPIs de produtores associados, area total, volumes agregados, colheitas recentes e accoes rapidas
-- **Processador**: KPIs de transformacoes, rendimento medio, lotes processados, stock em armazem
-- **Transportador**: KPIs de movimentos logisticos, rotas activas, condicoes medias de transporte
-- **Exportador**: KPIs de exportacoes, lotes disponiveis, status EUDR, contratos comerciais
-- **Comprador**: KPIs de compras, contratos activos, volumes adquiridos
+### Files to modify
 
-Cada dashboard tera: saudacao personalizada, 4 cards KPI, 2 widgets de contexto e accoes rapidas relevantes.
-
-#### 4. Correcoes de Consistencia nas Rotas
-
-Alinhar `requiredRole` em todas as rotas protegidas:
-- `/qualidade` → requiredRole `tecnico_inca`
-- `/iot` → requiredRole `tecnico_inca`
-- `/logistica` → requiredRole `transportador`
-- `/comercializacao` → requiredRole `exportador`
-- `/armazenamento` → requiredRole `processador`
-- `/exportacao` → requiredRole `exportador`
-- `/transformacao` → requiredRole `processador`
-
-(O `ProtectedRoute` ja permite admin_inca aceder a tudo, por isso estas restricoes apenas afectam os perfis incorrectos.)
-
-#### 5. Loading States Consistentes
-
-Substituir os `<p>A carregar...</p>` em Exploracoes, Lotes e outras paginas por componentes `Skeleton` ou spinner consistente com o padrao ja usado no ProducerDashboard.
-
----
-
-### Fases Futuras (apos aprovar e implementar Fase 1)
-
-- **Fase 2**: Breadcrumbs em todas as paginas, filtros avancados e paginacao nas tabelas
-- **Fase 3**: Dark mode toggle integrado no header, responsive polish em todas as paginas internas
-- **Fase 4**: Notificacoes em tempo real, melhorias de performance e audit final
-
----
-
-### Ficheiros Afectados na Fase 1
-
-| Ficheiro | Alteracao |
-|---|---|
-| `src/components/DashboardLayout.tsx` | Sidebar colapsavel, header premium, transicao de pagina |
-| `src/components/PageTransition.tsx` | Novo componente de transicao animada |
-| `src/pages/Dashboard.tsx` | Routing para dashboards por perfil |
-| `src/components/dashboard/CooperativaDashboard.tsx` | Novo |
-| `src/components/dashboard/ProcessadorDashboard.tsx` | Novo |
-| `src/components/dashboard/TransportadorDashboard.tsx` | Novo |
-| `src/components/dashboard/ExportadorDashboard.tsx` | Novo |
-| `src/components/dashboard/CompradorDashboard.tsx` | Novo |
-| `src/App.tsx` | Correcao de requiredRole nas rotas |
-| `src/pages/Exploracoes.tsx` | Loading skeleton |
-| `src/pages/Lotes.tsx` | Loading skeleton |
-
-Aproximadamente 11 ficheiros, 5 novos componentes de dashboard.
+- **`src/components/DashboardLayout.tsx`** — add `useEffect` for location-based Sheet close, add `SheetTitle`, add `z-40` to desktop sidebar, import `useEffect` from React.
 
