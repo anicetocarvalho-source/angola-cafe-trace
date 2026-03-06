@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Eye, ClipboardList, Calendar, CheckCircle, AlertTriangle, Bell, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { toast } from "sonner";
@@ -150,6 +151,7 @@ const Fiscalizacao = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Fiscalização INCA</h1>

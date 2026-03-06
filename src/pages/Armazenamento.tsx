@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { Plus, Warehouse, ArrowDownToLine, ArrowUpFromLine, Thermometer, Droplets } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const Armazenamento = () => {
   const [addOpen, setAddOpen] = useState(false);
@@ -97,6 +98,7 @@ const Armazenamento = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Armazenamento</h1>

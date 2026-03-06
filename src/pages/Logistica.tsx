@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { Plus, Truck, MapPin, Thermometer, Droplets } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const Logistica = () => {
   const [addOpen, setAddOpen] = useState(false);
@@ -65,6 +66,7 @@ const Logistica = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Logística e Transporte</h1>

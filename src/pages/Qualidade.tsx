@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import DataTablePagination from "@/components/DataTablePagination";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Award, FileCheck, Plus } from "lucide-react";
+import { Award, FileCheck, Plus, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -26,9 +30,14 @@ interface QualidadeCert {
   };
 }
 
+const PAGE_SIZE = 15;
+
 const Qualidade = () => {
   const [certificacoes, setCertificacoes] = useState<QualidadeCert[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [tipoFilter, setTipoFilter] = useState("all");
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     fetchCertificacoes();
@@ -73,9 +82,20 @@ const Qualidade = () => {
     );
   };
 
+  const filtered = useMemo(() => {
+    return certificacoes.filter((c) => {
+      const matchSearch = (c.lotes?.referencia_lote || "").toLowerCase().includes(searchTerm.toLowerCase());
+      const matchTipo = tipoFilter === "all" || c.tipo === tipoFilter;
+      return matchSearch && matchTipo;
+    });
+  }, [certificacoes, searchTerm, tipoFilter]);
+
+  const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Controlo de Qualidade</h1>
@@ -140,20 +160,43 @@ const Qualidade = () => {
         <Card>
           <CardHeader>
             <CardTitle>Análises de Qualidade</CardTitle>
-            <CardDescription>
-              Histórico de análises e certificações emitidas
-            </CardDescription>
+            <CardDescription>{filtered.length} análises encontradas</CardDescription>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Pesquisar por lote..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }} className="pl-10" />
+              </div>
+              <Select value={tipoFilter} onValueChange={(v) => { setTipoFilter(v); setPage(0); }}>
+                <SelectTrigger className="w-[160px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos tipos</SelectItem>
+                  <SelectItem value="fisico">Físico</SelectItem>
+                  <SelectItem value="sensorial">Sensorial</SelectItem>
+                  <SelectItem value="quimico">Químico</SelectItem>
+                  <SelectItem value="residuos">Resíduos</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-center text-muted-foreground py-8">A carregar...</p>
-            ) : certificacoes.length === 0 ? (
+              <div className="space-y-3 py-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="h-5 w-1/4 rounded bg-muted animate-pulse" />
+                    <div className="h-5 w-1/4 rounded bg-muted animate-pulse" />
+                    <div className="h-5 w-1/6 rounded bg-muted animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            ) : paginated.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">
                   Ainda não há análises de qualidade registadas
                 </p>
               </div>
             ) : (
+              <>
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
@@ -166,7 +209,7 @@ const Qualidade = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {certificacoes.map((cert) => (
+                    {paginated.map((cert) => (
                       <TableRow key={cert.id}>
                         <TableCell className="font-medium">
                           {cert.lotes?.referencia_lote || "N/A"}
@@ -194,6 +237,8 @@ const Qualidade = () => {
                   </TableBody>
                 </Table>
               </div>
+              <DataTablePagination currentPage={page} totalItems={filtered.length} pageSize={PAGE_SIZE} onPageChange={setPage} />
+              </>
             )}
           </CardContent>
         </Card>

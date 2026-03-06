@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
 import InteractiveMap from "@/components/InteractiveMap";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface Exploracao {
   id: string;
@@ -97,6 +98,7 @@ const Mapa = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div>
           <h1 className="text-3xl font-bold text-foreground">Mapa de Explorações</h1>
           <p className="text-muted-foreground">Visualização geográfica das explorações de café em Angola</p>

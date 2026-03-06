@@ -25,6 +25,17 @@ const routeLabels: Record<string, string> = {
   nova: "Nova",
   novo: "Novo",
   editar: "Editar",
+  logistica: "Logística",
+  armazenamento: "Armazenamento",
+  comercializacao: "Comercialização",
+  transformacao: "Transformação",
+  fiscalizacao: "Fiscalização",
+  manutencao: "Manutenção",
+  "manutencao-agricola": "Manutenção Agrícola",
+  "boletim-mercado": "Boletim de Mercado",
+  "nova-analise": "Nova Análise",
+  "nova-exportacao": "Nova Exportação",
+  verificar: "Verificar",
 };
 
 export default function Breadcrumbs() {

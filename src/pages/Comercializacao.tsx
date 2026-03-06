@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { Plus, Handshake, DollarSign } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const Comercializacao = () => {
   const [addOpen, setAddOpen] = useState(false);
@@ -86,6 +87,7 @@ const Comercializacao = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Comercialização</h1>

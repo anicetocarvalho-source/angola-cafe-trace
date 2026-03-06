@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -18,11 +18,15 @@ import {
 import { Plus, Search, Edit, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
+import DataTablePagination from "@/components/DataTablePagination";
+
+const PAGE_SIZE = 15;
 
 export default function Colheitas() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [page, setPage] = useState(0);
 
   const { data: harvests, isLoading } = useQuery({
     queryKey: ['harvests', searchTerm, statusFilter],
@@ -48,10 +52,14 @@ export default function Colheitas() {
     },
   });
 
-  const filteredHarvests = harvests?.filter((harvest) =>
-    harvest.parcela?.codigo_parcela.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    harvest.parcela?.exploracao?.designacao.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredHarvests = useMemo(() => {
+    return harvests?.filter((harvest) =>
+      harvest.parcela?.codigo_parcela.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      harvest.parcela?.exploracao?.designacao.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
+  }, [harvests, searchTerm]);
+
+  const paginated = filteredHarvests.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: any; label: string }> = {
@@ -93,7 +101,7 @@ export default function Colheitas() {
                 <Input
                   placeholder="Pesquisar por parcela ou exploração..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }}
                   className="pl-10"
                 />
               </div>
@@ -101,28 +109,28 @@ export default function Colheitas() {
                 <Button
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setStatusFilter('all')}
+                  onClick={() => { setStatusFilter('all'); setPage(0); }}
                 >
                   Todas
                 </Button>
                 <Button
                   variant={statusFilter === 'planned' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setStatusFilter('planned')}
+                  onClick={() => { setStatusFilter('planned'); setPage(0); }}
                 >
                   Planeadas
                 </Button>
                 <Button
                   variant={statusFilter === 'in_progress' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setStatusFilter('in_progress')}
+                  onClick={() => { setStatusFilter('in_progress'); setPage(0); }}
                 >
                   Em Curso
                 </Button>
                 <Button
                   variant={statusFilter === 'completed' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setStatusFilter('completed')}
+                  onClick={() => { setStatusFilter('completed'); setPage(0); }}
                 >
                   Concluídas
                 </Button>
@@ -144,8 +152,8 @@ export default function Colheitas() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredHarvests && filteredHarvests.length > 0 ? (
-                  filteredHarvests.map((harvest) => (
+                {paginated.length > 0 ? (
+                  paginated.map((harvest) => (
                     <TableRow key={harvest.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -195,6 +203,7 @@ export default function Colheitas() {
                 )}
               </TableBody>
             </Table>
+            <DataTablePagination currentPage={page} totalItems={filteredHarvests.length} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>
       </div>

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Dialog,
   DialogContent,
@@ -143,6 +144,7 @@ const Validacao = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div>
           <h1 className="text-3xl font-bold text-foreground">Validação & Qualidade</h1>
           <p className="text-muted-foreground">
