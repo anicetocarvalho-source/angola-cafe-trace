@@ -8,6 +8,7 @@ import {
   Activity,
   Bell,
   ClipboardCheck,
+  Award,
   Leaf,
   Globe,
   Smartphone,
@@ -588,6 +589,69 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Partners & Certifications Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-border/40">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-14"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">Parceiros & Certificações</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              Reconhecido Internacionalmente
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Trabalhamos com as principais instituições e normas internacionais para garantir a excelência do café angolano.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.08 } },
+            }}
+          >
+            {[
+              { name: "EUDR", subtitle: "EU Deforestation Regulation", icon: Shield },
+              { name: "ISO 22000", subtitle: "Segurança Alimentar", icon: Award },
+              { name: "Rainforest Alliance", subtitle: "Certificação Sustentável", icon: Leaf },
+              { name: "UTZ Certified", subtitle: "Agricultura Responsável", icon: CheckCircle2 },
+              { name: "INCA", subtitle: "Instituto Nacional do Café", icon: Coffee },
+              { name: "ICO", subtitle: "International Coffee Org.", icon: Globe },
+            ].map((partner, i) => (
+              <motion.div
+                key={i}
+                variants={{
+                  hidden: { opacity: 0, y: 20, scale: 0.9 },
+                  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
+                }}
+                whileHover={{ y: -4, scale: 1.05 }}
+                className="cursor-default"
+              >
+                <Card className="h-full border-border/60 hover:border-primary/30 hover:shadow-soft transition-all duration-300">
+                  <CardContent className="p-5 flex flex-col items-center text-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-muted/60 flex items-center justify-center">
+                      <partner.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-foreground">{partner.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{partner.subtitle}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
