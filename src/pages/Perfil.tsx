@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { User, Phone, Mail, Shield, Calendar, Loader2, Save } from "lucide-react";
+import { User, Phone, Mail, Shield, Calendar, Loader2, Save, Camera, Trash2 } from "lucide-react";
 import { z } from "zod";
 
 const profileSchema = z.object({
@@ -19,12 +19,17 @@ const profileSchema = z.object({
   telemovel: z.string().trim().max(20, "O telemóvel deve ter menos de 20 caracteres").regex(/^(\+?\d[\d\s-]*)?$/, "Formato de telemóvel inválido").optional().or(z.literal("")),
 });
 
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
 const Perfil = () => {
   const { user, roles } = useAuth();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [nome, setNome] = useState("");
   const [telemovel, setTelemovel] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user?.id],
@@ -48,14 +53,76 @@ const Perfil = () => {
     }
   }, [profile]);
 
+  const avatarUrl = profile?.avatar_url
+    ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/avatars/${profile.avatar_url}`
+    : null;
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user?.id) return;
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      toast.error("Formato inválido. Use JPG, PNG ou WebP.");
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("A imagem deve ter no máximo 2MB.");
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const filePath = `${user.id}/avatar.${ext}`;
+
+      // Remove old avatar if exists
+      if (profile?.avatar_url) {
+        await supabase.storage.from("avatars").remove([profile.avatar_url]);
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: filePath })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+      toast.success("Foto de perfil actualizada");
+    } catch {
+      toast.error("Erro ao carregar a foto");
+    } finally {
+      setUploadingAvatar(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user?.id || !profile?.avatar_url) return;
+    setUploadingAvatar(true);
+    try {
+      await supabase.storage.from("avatars").remove([profile.avatar_url]);
+      await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
+      queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+      toast.success("Foto de perfil removida");
+    } catch {
+      toast.error("Erro ao remover a foto");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const updateMutation = useMutation({
     mutationFn: async (values: { nome: string; telemovel: string | null }) => {
       const { error } = await supabase
         .from("profiles")
-        .update({
-          nome: values.nome,
-          telemovel: values.telemovel,
-        })
+        .update({ nome: values.nome, telemovel: values.telemovel })
         .eq("id", user!.id);
       if (error) throw error;
     },
@@ -71,7 +138,6 @@ const Perfil = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
-
     const result = profileSchema.safeParse({ nome, telemovel });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -81,12 +147,15 @@ const Perfil = () => {
       setErrors(fieldErrors);
       return;
     }
-
     updateMutation.mutate({
       nome: result.data.nome,
       telemovel: result.data.telemovel || null,
     });
   };
+
+  const userInitials = profile?.nome
+    ? profile.nome.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase()
+    : user?.email?.substring(0, 2).toUpperCase() || "?";
 
   return (
     <DashboardLayout>
@@ -114,51 +183,116 @@ const Perfil = () => {
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="nome">Nome</Label>
-                    <Input
-                      id="nome"
-                      value={nome}
-                      onChange={(e) => setNome(e.target.value)}
-                      placeholder="O seu nome completo"
-                      maxLength={100}
-                    />
-                    {errors.nome && <p className="text-sm text-destructive">{errors.nome}</p>}
+                <div className="space-y-6">
+                  {/* Avatar Upload */}
+                  <div className="flex items-center gap-4">
+                    <div className="relative group">
+                      <div className="h-20 w-20 rounded-full overflow-hidden bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center shadow-md ring-2 ring-border">
+                        {avatarUrl ? (
+                          <img
+                            src={avatarUrl}
+                            alt="Foto de perfil"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-xl font-bold text-primary-foreground">
+                            {userInitials}
+                          </span>
+                        )}
+                      </div>
+                      {uploadingAvatar && (
+                        <div className="absolute inset-0 rounded-full bg-background/70 flex items-center justify-center">
+                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="text-sm font-medium text-foreground">Foto de Perfil</p>
+                      <p className="text-xs text-muted-foreground">JPG, PNG ou WebP. Máx. 2MB.</p>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploadingAvatar}
+                        >
+                          <Camera className="h-3.5 w-3.5 mr-1.5" />
+                          {avatarUrl ? "Alterar" : "Carregar"}
+                        </Button>
+                        {avatarUrl && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemoveAvatar}
+                            disabled={uploadingAvatar}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                            Remover
+                          </Button>
+                        )}
+                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleAvatarUpload}
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="telemovel">Telemóvel</Label>
-                    <Input
-                      id="telemovel"
-                      value={telemovel}
-                      onChange={(e) => setTelemovel(e.target.value)}
-                      placeholder="+244 9XX XXX XXX"
-                      maxLength={20}
-                    />
-                    {errors.telemovel && <p className="text-sm text-destructive">{errors.telemovel}</p>}
-                  </div>
+                  <Separator />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      value={user?.email || ""}
-                      disabled
-                      className="bg-muted"
-                    />
-                    <p className="text-xs text-muted-foreground">O email não pode ser alterado</p>
-                  </div>
+                  {/* Form Fields */}
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="nome">Nome</Label>
+                      <Input
+                        id="nome"
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                        placeholder="O seu nome completo"
+                        maxLength={100}
+                      />
+                      {errors.nome && <p className="text-sm text-destructive">{errors.nome}</p>}
+                    </div>
 
-                  <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
-                    {updateMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : (
-                      <Save className="h-4 w-4 mr-2" />
-                    )}
-                    Guardar Alterações
-                  </Button>
-                </form>
+                    <div className="space-y-2">
+                      <Label htmlFor="telemovel">Telemóvel</Label>
+                      <Input
+                        id="telemovel"
+                        value={telemovel}
+                        onChange={(e) => setTelemovel(e.target.value)}
+                        placeholder="+244 9XX XXX XXX"
+                        maxLength={20}
+                      />
+                      {errors.telemovel && <p className="text-sm text-destructive">{errors.telemovel}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        value={user?.email || ""}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <p className="text-xs text-muted-foreground">O email não pode ser alterado</p>
+                    </div>
+
+                    <Button type="submit" disabled={updateMutation.isPending} className="w-full sm:w-auto">
+                      {updateMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : (
+                        <Save className="h-4 w-4 mr-2" />
+                      )}
+                      Guardar Alterações
+                    </Button>
+                  </form>
+                </div>
               )}
             </CardContent>
           </Card>
