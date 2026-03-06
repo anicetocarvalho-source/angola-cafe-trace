@@ -1,7 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, ChevronsRight, Sun, Moon } from "lucide-react";
+import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, ChevronsRight, Sun, Moon, LucideIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
@@ -34,34 +34,84 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const allNavigation = [
-    { name: "Dashboard", href: "/dashboard", icon: BarChart3, roles: ["all"] },
-    { name: "Explorações", href: "/exploracoes", icon: MapPin, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
-    { name: "Parcelas", href: "/parcelas", icon: MapPin, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
-    { name: "Lotes", href: "/lotes", icon: Coffee, roles: ["all"] },
-    { name: "Mapa", href: "/mapa", icon: MapPin, roles: ["all"] },
-    { name: "Qualidade", href: "/qualidade", icon: FileText, roles: ["tecnico_inca", "admin_inca"] },
-    { name: "Validação", href: "/validacao", icon: FileText, roles: ["tecnico_inca", "admin_inca"] },
-    { name: "Exportação", href: "/exportacao", icon: FileText, roles: ["exportador", "admin_inca"] },
-    { name: "SIM", href: "/sim", icon: BarChart3, roles: ["all"] },
-    { name: "Relatórios", href: "/relatorios", icon: FileText, roles: ["all"] },
-    { name: "IoT", href: "/iot", icon: Activity, roles: ["tecnico_inca", "admin_inca"] },
-    { name: "Colheitas", href: "/colheitas", icon: Sprout, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
-    { name: "Manutenção", href: "/manutencao", icon: Leaf, roles: ["produtor", "cooperativa", "admin_inca", "tecnico_inca"] },
-    { name: "Transformação", href: "/transformacao", icon: FlaskConical, roles: ["processador", "cooperativa", "admin_inca", "tecnico_inca"] },
-    { name: "Logística", href: "/logistica", icon: Truck, roles: ["transportador", "admin_inca", "tecnico_inca"] },
-    { name: "Comercialização", href: "/comercializacao", icon: Handshake, roles: ["exportador", "comprador", "admin_inca", "tecnico_inca"] },
-    { name: "Armazenamento", href: "/armazenamento", icon: Warehouse, roles: ["processador", "cooperativa", "exportador", "admin_inca", "tecnico_inca"] },
-    { name: "Fiscalização", href: "/fiscalizacao", icon: ClipboardCheck, roles: ["tecnico_inca", "admin_inca"] },
-    { name: "Auditoria", href: "/auditoria", icon: History, roles: ["admin_inca"] },
-    { name: "Admin", href: "/admin", icon: Settings, roles: ["admin_inca"] },
+  interface NavItem {
+    name: string;
+    href: string;
+    icon: LucideIcon;
+    roles: string[];
+  }
+
+  interface NavGroup {
+    label: string;
+    items: NavItem[];
+  }
+
+  const navGroups: NavGroup[] = [
+    {
+      label: "Geral",
+      items: [
+        { name: "Dashboard", href: "/dashboard", icon: BarChart3, roles: ["all"] },
+        { name: "Mapa", href: "/mapa", icon: MapPin, roles: ["all"] },
+        { name: "SIM", href: "/sim", icon: BarChart3, roles: ["all"] },
+        { name: "Relatórios", href: "/relatorios", icon: FileText, roles: ["all"] },
+      ],
+    },
+    {
+      label: "Produção",
+      items: [
+        { name: "Explorações", href: "/exploracoes", icon: MapPin, roles: ["produtor", "cooperativa", "tecnico_inca"] },
+        { name: "Parcelas", href: "/parcelas", icon: MapPin, roles: ["produtor", "cooperativa", "tecnico_inca"] },
+        { name: "Colheitas", href: "/colheitas", icon: Sprout, roles: ["produtor", "cooperativa", "tecnico_inca"] },
+        { name: "Manutenção", href: "/manutencao", icon: Leaf, roles: ["produtor", "cooperativa", "tecnico_inca"] },
+      ],
+    },
+    {
+      label: "Processamento",
+      items: [
+        { name: "Lotes", href: "/lotes", icon: Coffee, roles: ["all"] },
+        { name: "Transformação", href: "/transformacao", icon: FlaskConical, roles: ["processador", "cooperativa", "tecnico_inca"] },
+        { name: "Armazenamento", href: "/armazenamento", icon: Warehouse, roles: ["processador", "cooperativa", "exportador", "tecnico_inca"] },
+      ],
+    },
+    {
+      label: "Cadeia de Valor",
+      items: [
+        { name: "Logística", href: "/logistica", icon: Truck, roles: ["transportador", "tecnico_inca"] },
+        { name: "Comercialização", href: "/comercializacao", icon: Handshake, roles: ["exportador", "comprador", "tecnico_inca"] },
+        { name: "Exportação", href: "/exportacao", icon: FileText, roles: ["exportador"] },
+      ],
+    },
+    {
+      label: "Controlo & Qualidade",
+      items: [
+        { name: "Qualidade", href: "/qualidade", icon: FileText, roles: ["tecnico_inca"] },
+        { name: "Validação", href: "/validacao", icon: FileText, roles: ["tecnico_inca"] },
+        { name: "Fiscalização", href: "/fiscalizacao", icon: ClipboardCheck, roles: ["tecnico_inca"] },
+        { name: "IoT", href: "/iot", icon: Activity, roles: ["tecnico_inca"] },
+      ],
+    },
+    {
+      label: "Administração",
+      items: [
+        { name: "Auditoria", href: "/auditoria", icon: History, roles: ["admin_inca"] },
+        { name: "Admin", href: "/admin", icon: Settings, roles: ["admin_inca"] },
+      ],
+    },
   ];
 
-  const navigation = allNavigation.filter((item) => {
-    if (item.roles.includes("all")) return true;
-    if (loading) return false;
-    return item.roles.some((role) => hasRole(role));
-  });
+  const isAdmin = hasRole("admin_inca");
+
+  const filteredGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        if (item.roles.includes("all")) return true;
+        if (loading) return false;
+        if (isAdmin) return true;
+        return item.roles.some((role) => hasRole(role));
+      }),
+    }))
+    .filter((group) => group.items.length > 0);
 
   const handleNavigation = () => {
     setMobileMenuOpen(false);
@@ -73,45 +123,57 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
-      {navigation.map((item) => {
-        const Icon = item.icon;
-        const isActive = location.pathname === item.href;
-        const link = (
-          <Link
-            key={item.name}
-            to={item.href}
-            onClick={isMobile ? handleNavigation : undefined}
-            className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 relative group",
-              isActive
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              !isMobile && sidebarCollapsed && "justify-center px-2"
-            )}
-          >
-            {isActive && (
-              <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-foreground rounded-r-full" />
-            )}
-            <Icon className={cn("h-5 w-5 shrink-0", isActive && "drop-shadow-sm")} />
-            {(isMobile || !sidebarCollapsed) && (
-              <span className="text-sm font-medium truncate">{item.name}</span>
-            )}
-          </Link>
-        );
+      {filteredGroups.map((group) => (
+        <div key={group.label} className="mb-2">
+          {(isMobile || !sidebarCollapsed) && (
+            <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1">
+              {group.label}
+            </div>
+          )}
+          {sidebarCollapsed && !isMobile && (
+            <div className="border-t border-border/40 mx-2 my-1" />
+          )}
+          {group.items.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.href;
+            const link = (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={isMobile ? handleNavigation : undefined}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative group",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  !isMobile && sidebarCollapsed && "justify-center px-2"
+                )}
+              >
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-foreground rounded-r-full" />
+                )}
+                <Icon className={cn("h-5 w-5 shrink-0", isActive && "drop-shadow-sm")} />
+                {(isMobile || !sidebarCollapsed) && (
+                  <span className="text-sm font-medium truncate">{item.name}</span>
+                )}
+              </Link>
+            );
 
-        if (!isMobile && sidebarCollapsed) {
-          return (
-            <Tooltip key={item.name} delayDuration={0}>
-              <TooltipTrigger asChild>{link}</TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
-                {item.name}
-              </TooltipContent>
-            </Tooltip>
-          );
-        }
+            if (!isMobile && sidebarCollapsed) {
+              return (
+                <Tooltip key={item.name} delayDuration={0}>
+                  <TooltipTrigger asChild>{link}</TooltipTrigger>
+                  <TooltipContent side="right" className="font-medium">
+                    {item.name}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            }
 
-        return <div key={item.name}>{link}</div>;
-      })}
+            return <div key={item.name}>{link}</div>;
+          })}
+        </div>
+      ))}
     </>
   );
 
