@@ -379,16 +379,27 @@ const Index = () => {
               </Button>
             </motion.div>
             
-            <div className="lg:col-span-3 grid sm:grid-cols-2 gap-4">
+            <motion.div
+              className="lg:col-span-3 grid sm:grid-cols-2 gap-4"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.15 } },
+              }}
+            >
               {modules.map((module, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 40, scale: 0.95 },
+                    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+                  }}
+                  whileHover={{ y: -6 }}
+                  className="cursor-pointer"
                 >
-                  <Card className="h-full border-border/60">
+                  <Card className="h-full border-border/60 hover:border-primary/40 hover:shadow-medium transition-all duration-300">
                     <CardHeader className="pb-3">
                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
                         <module.icon className="w-5 h-5 text-primary" />
@@ -408,7 +419,7 @@ const Index = () => {
                   </Card>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
