@@ -355,11 +355,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       <div className="flex">
         {/* Sidebar - Desktop */}
-        <aside
-          className={cn(
-            "hidden lg:flex lg:flex-col border-r bg-card/50 transition-all duration-300 sticky top-14 h-[calc(100vh-3.5rem)] z-40",
-            sidebarCollapsed ? "lg:w-16" : "lg:w-60"
-          )}
+        <motion.aside
+          animate={{ width: sidebarCollapsed ? 64 : 240 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="hidden lg:flex lg:flex-col border-r bg-card/50 sticky top-14 h-[calc(100vh-3.5rem)] z-40 overflow-hidden"
         >
           <div className="flex-1 overflow-y-auto p-2">
             <nav className="flex flex-col gap-0.5">
@@ -369,21 +368,40 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
           {/* Sidebar footer */}
           <div className="border-t border-border/60 p-2 space-y-2">
-            {!sidebarCollapsed && roles.length > 0 && <ProfileSection />}
-            {sidebarCollapsed && (
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <div className="flex justify-center">
-                    <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center">
-                      <span className="text-[9px] font-bold text-primary-foreground">{userInitials}</span>
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  {roles.map(r => r.role.replace("_", " ").toUpperCase()).join(", ") || user?.email}
-                </TooltipContent>
-              </Tooltip>
-            )}
+            <AnimatePresence mode="wait">
+              {!sidebarCollapsed && roles.length > 0 ? (
+                <motion.div
+                  key="profile-full"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ProfileSection />
+                </motion.div>
+              ) : sidebarCollapsed ? (
+                <motion.div
+                  key="profile-compact"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <div className="flex justify-center">
+                        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center">
+                          <span className="text-[9px] font-bold text-primary-foreground">{userInitials}</span>
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      {roles.map(r => r.role.replace("_", " ").toUpperCase()).join(", ") || user?.email}
+                    </TooltipContent>
+                  </Tooltip>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <button
@@ -393,15 +411,36 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     sidebarCollapsed && "justify-center px-2"
                   )}
                 >
-                  {sidebarCollapsed ? (
-                    <ChevronsRight className="h-4 w-4" />
-                  ) : (
-                    <>
-                      <ChevronsLeft className="h-4 w-4" />
-                      <span className="text-xs font-medium flex-1 text-left">Recolher</span>
-                      <span className="text-[10px] text-muted-foreground/50">v2.0</span>
-                    </>
-                  )}
+                  <motion.div
+                    animate={{ rotate: sidebarCollapsed ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ChevronsLeft className="h-4 w-4" />
+                  </motion.div>
+                  <AnimatePresence>
+                    {!sidebarCollapsed && (
+                      <>
+                        <motion.span
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: "auto" }}
+                          exit={{ opacity: 0, width: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-xs font-medium flex-1 text-left overflow-hidden whitespace-nowrap"
+                        >
+                          Recolher
+                        </motion.span>
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="text-[10px] text-muted-foreground/50"
+                        >
+                          v2.0
+                        </motion.span>
+                      </>
+                    )}
+                  </AnimatePresence>
                 </button>
               </TooltipTrigger>
               {sidebarCollapsed && (
@@ -409,7 +448,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               )}
             </Tooltip>
           </div>
-        </aside>
+        </motion.aside>
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
