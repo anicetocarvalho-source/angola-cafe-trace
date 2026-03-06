@@ -240,7 +240,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0 flex flex-col">
+            <SheetContent side="left" className="w-72 p-0 flex flex-col h-full max-h-screen">
               <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
               <div className="flex h-14 items-center border-b px-5 gap-3">
                 <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
