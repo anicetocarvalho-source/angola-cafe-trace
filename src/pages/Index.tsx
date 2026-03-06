@@ -18,7 +18,8 @@ import {
   QrCode,
   ChevronRight,
   Menu,
-  X
+  X,
+  HelpCircle
 } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence, useInView, useMotionValue, useSpring, MotionValue } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
@@ -26,6 +27,7 @@ import heroImage from "@/assets/hero-coffee-angola.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const AnimatedCounter = ({ target, format, delay = 0 }: { target: number; format: (n: number) => string; delay?: number }) => {
   const ref = useRef<HTMLSpanElement>(null);
@@ -665,6 +667,79 @@ const Index = () => {
                 </Card>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            className="text-center mb-10 sm:mb-14"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <HelpCircle className="w-6 h-6 text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">FAQ</p>
+            <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-4">
+              Perguntas Frequentes
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
+              Respostas às dúvidas mais comuns sobre a plataforma de rastreabilidade do café angolano.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Accordion type="single" collapsible className="space-y-3">
+              {[
+                {
+                  q: "O que é o INCA Coffee Trace?",
+                  a: "É o Sistema Nacional de Rastreabilidade e Qualidade do Café de Angola, desenvolvido pelo Instituto Nacional do Café (INCA). Permite registar e acompanhar todo o percurso do café — desde a exploração agrícola até à exportação — garantindo transparência, qualidade e conformidade com normas internacionais."
+                },
+                {
+                  q: "Como funciona a conformidade com o EUDR?",
+                  a: "A plataforma gera automaticamente os pacotes de due diligence exigidos pelo Regulamento Europeu contra a Desflorestação (EUDR). Através do mapeamento georreferenciado das parcelas, registos de colheita e cadeia de custódia, os exportadores podem comprovar que o café não provém de áreas desmatadas após dezembro de 2020."
+                },
+                {
+                  q: "Quem pode utilizar a plataforma?",
+                  a: "A plataforma é destinada a todos os intervenientes da cadeia de valor do café angolano: produtores, cooperativas, processadores, transportadores, exportadores e técnicos do INCA. Cada perfil tem acesso às funcionalidades específicas ao seu papel na cadeia."
+                },
+                {
+                  q: "Como posso verificar a origem de um lote de café?",
+                  a: "Basta digitalizar o QR code presente na embalagem do café ou inserir a referência do lote na página de verificação pública. O sistema apresenta toda a informação de rastreabilidade — origem, processo, análises de qualidade e certificações — sem necessitar de conta na plataforma."
+                },
+                {
+                  q: "A plataforma funciona offline no campo?",
+                  a: "A interface é responsiva e optimizada para dispositivos móveis, permitindo captura de fotos, leitura de QR codes e registo de dados em campo. Os dados são sincronizados automaticamente quando a ligação à internet é restabelecida."
+                },
+                {
+                  q: "Que certificações são suportadas?",
+                  a: "A plataforma suporta as principais certificações internacionais: Rainforest Alliance, UTZ, Fair Trade, ISO 22000 e conformidade EUDR. Os relatórios de qualidade seguem os protocolos SCA (Specialty Coffee Association) com pontuação sensorial padronizada."
+                },
+              ].map((faq, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="border border-border/60 rounded-xl px-5 sm:px-6 data-[state=open]:border-primary/30 data-[state=open]:shadow-soft transition-all duration-300"
+                >
+                  <AccordionTrigger className="text-left text-sm sm:text-base font-semibold text-foreground hover:text-primary py-4 sm:py-5 hover:no-underline">
+                    {faq.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-5">
+                    {faq.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </motion.div>
         </div>
       </section>
