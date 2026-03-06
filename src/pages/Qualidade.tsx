@@ -96,14 +96,14 @@ const Qualidade = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <Breadcrumbs />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Controlo de Qualidade</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Controlo de Qualidade</h1>
+            <p className="text-muted-foreground text-sm">
               Análises laboratoriais e certificações
             </p>
           </div>
-          <Button onClick={() => window.location.href = "/nova-analise"}>
+          <Button onClick={() => window.location.href = "/nova-analise"} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Nova Análise
           </Button>
@@ -167,7 +167,7 @@ const Qualidade = () => {
                 <Input placeholder="Pesquisar por lote..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }} className="pl-10" />
               </div>
               <Select value={tipoFilter} onValueChange={(v) => { setTipoFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-[160px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos tipos</SelectItem>
                   <SelectItem value="fisico">Físico</SelectItem>
@@ -197,7 +197,7 @@ const Qualidade = () => {
               </div>
             ) : (
               <>
-              <div className="rounded-md border">
+              <div className="rounded-md border overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>

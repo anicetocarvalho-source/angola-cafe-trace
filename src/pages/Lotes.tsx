@@ -78,12 +78,12 @@ const Lotes = () => {
       <div className="space-y-6">
         <Breadcrumbs />
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Gestão de Lotes</h1>
-            <p className="text-muted-foreground">Registo e acompanhamento de lotes de café</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Gestão de Lotes</h1>
+            <p className="text-muted-foreground text-sm">Registo e acompanhamento de lotes de café</p>
           </div>
-          <Button onClick={() => navigate("/lotes/novo")}>
+          <Button onClick={() => navigate("/lotes/novo")} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Novo Lote
           </Button>
@@ -104,7 +104,7 @@ const Lotes = () => {
                 />
               </div>
               <Select value={estadoFilter} onValueChange={(v) => { setEstadoFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos estados</SelectItem>
                   <SelectItem value="pendente">Pendente</SelectItem>
@@ -115,7 +115,7 @@ const Lotes = () => {
                 </SelectContent>
               </Select>
               <Select value={tipoFilter} onValueChange={(v) => { setTipoFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-[160px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos tipos</SelectItem>
                   <SelectItem value="cereja">Cereja</SelectItem>
@@ -156,7 +156,7 @@ const Lotes = () => {
               </div>
             ) : (
               <>
-                <div className="rounded-md border">
+                <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>

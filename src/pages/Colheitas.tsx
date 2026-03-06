@@ -80,14 +80,14 @@ export default function Colheitas() {
       <div className="space-y-6">
         <Breadcrumbs />
         
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Gestão de Colheitas</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Gestão de Colheitas</h1>
+            <p className="text-muted-foreground mt-1 text-sm">
               Planeamento e registo de colheitas
             </p>
           </div>
-          <Button onClick={() => navigate('/colheitas/nova')}>
+          <Button onClick={() => navigate('/colheitas/nova')} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Nova Colheita
           </Button>
@@ -95,7 +95,7 @@ export default function Colheitas() {
 
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -105,7 +105,7 @@ export default function Colheitas() {
                   className="pl-10"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
@@ -138,6 +138,7 @@ export default function Colheitas() {
             </div>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -203,6 +204,7 @@ export default function Colheitas() {
                 )}
               </TableBody>
             </Table>
+            </div>
             <DataTablePagination currentPage={page} totalItems={filteredHarvests.length} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>
