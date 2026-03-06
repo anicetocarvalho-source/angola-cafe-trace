@@ -1,127 +1,79 @@
 
 
-## Análise: Estado Actual vs Requisitos do Documento
+## Revisao Completa do Sistema INCA Coffee Trace
 
-### Resumo Executivo
-
-O documento descreve dois sistemas integrados: (1) Sistema Digital de Qualidade e Rastreabilidade do Café e (2) Sistema de Informação ao Mercado (SIM). A implementação actual cobre a estrutura base de ambos, mas várias funcionalidades críticas estão incompletas ou ausentes.
+Este e um projecto ambicioso que toca praticamente todo o sistema. Proponho dividir em **4 fases** para manter a qualidade e evitar erros. Vamos comecar pela Fase 1 agora.
 
 ---
 
-### O QUE JÁ ESTÁ IMPLEMENTADO
+### Fase 1 — Layout Premium, Transicoes e Dashboards por Perfil
 
-**Sistema de Rastreabilidade (parcialmente completo)**
-- Cadastro de produtores, explorações e parcelas com georreferenciação
-- Gestão de lotes com identificador único, QR Code automático e referência
-- Registo de colheitas, secagem e manutenção agrícola
-- Controlo de qualidade (SCA score, humidade, defeitos, certificações)
-- Workflow de validação INCA (aprovar/reprovar lotes e explorações)
-- Portal público de verificação via referência do lote
-- Gestão de exportações com documentação (BL, booking, certificados)
-- Conformidade EUDR (campo eudr_pacote_id, verificação básica)
-- Perfis de acesso diferenciados (8 roles com RLS)
-- Fiscalização e visitas técnicas com acções de controlo
-- Auditoria com logs de alterações
-- IoT (sensores e leituras)
-- Mapa de explorações
-- Relatórios com exportação PDF
-- Notificações e alertas de prazos
+#### 1. Transicoes de Pagina Animadas
 
-**SIM (implementação básica)**
-- Página com dados mock de preços e volumes
-- Tabela sim_mercado na base de dados
-- Indicadores de bolsa (ICE Arábica/Robusta)
+Criar um componente `PageTransition` com `framer-motion` que envolve o conteudo de cada pagina, aplicando um fade+slide suave na entrada/saida. Integrar no `DashboardLayout` para que todas as paginas internas tenham transicao automatica baseada na mudanca de rota (`useLocation`).
 
----
+#### 2. Layout Premium do DashboardLayout
 
-### O QUE FALTA IMPLEMENTAR
+Melhorar o layout do painel:
+- Sidebar colapsavel no desktop (mini-mode com apenas icones, expandivel ao hover ou clique)
+- Header mais refinado com gradiente subtil, avatar com iniciais estilizadas, separacao visual entre logo e accoes
+- Indicador visual da rota activa na sidebar (barra lateral colorida + fundo destacado)
+- Footer discreto na sidebar com versao do sistema
 
-#### Prioridade Alta - Funcionalidades Core
+#### 3. Dashboards Dedicados por Perfil
 
-1. **SIM com dados reais da base de dados**
-   - A página SIM usa dados mock hardcoded; deveria consultar a tabela `sim_mercado`
-   - Faltam gráficos de séries temporais com recharts (evolução de preços)
-   - Faltam filtros por período, região e tipo de café
-   - Falta análise de tendências e sazonalidade
+Actualmente so existem 3 variantes (Admin/Tecnico, Produtor, Default). Criar dashboards dedicados para os restantes perfis:
 
-2. **Módulo de Armazenamento**
-   - Não existe página nem tabela para gestão de armazéns
-   - Falta: entrada/saída de stock por lote, condições de armazenamento, histórico
+- **Cooperativa**: KPIs de produtores associados, area total, volumes agregados, colheitas recentes e accoes rapidas
+- **Processador**: KPIs de transformacoes, rendimento medio, lotes processados, stock em armazem
+- **Transportador**: KPIs de movimentos logisticos, rotas activas, condicoes medias de transporte
+- **Exportador**: KPIs de exportacoes, lotes disponiveis, status EUDR, contratos comerciais
+- **Comprador**: KPIs de compras, contratos activos, volumes adquiridos
 
-3. **Módulo de Transformação (UI)**
-   - Tabela `transformacoes` existe mas não há página/formulário
-   - Falta: registo de fermentação, beneficiamento, rendimento
+Cada dashboard tera: saudacao personalizada, 4 cards KPI, 2 widgets de contexto e accoes rapidas relevantes.
 
-4. **Logística e Transporte (UI completa)**
-   - Tabela `logistica` existe mas sem interface para transportadores
-   - Falta: registo de checkpoints, timeline visual, condições de transporte
+#### 4. Correcoes de Consistencia nas Rotas
 
-5. **Comercialização (UI)**
-   - Tabela `comercializacao` existe mas sem interface
-   - Falta: registo de contratos, preços, compradores
+Alinhar `requiredRole` em todas as rotas protegidas:
+- `/qualidade` → requiredRole `tecnico_inca`
+- `/iot` → requiredRole `tecnico_inca`
+- `/logistica` → requiredRole `transportador`
+- `/comercializacao` → requiredRole `exportador`
+- `/armazenamento` → requiredRole `processador`
+- `/exportacao` → requiredRole `exportador`
+- `/transformacao` → requiredRole `processador`
 
-#### Prioridade Média - Funcionalidades Estratégicas
+(O `ProtectedRoute` ja permite admin_inca aceder a tudo, por isso estas restricoes apenas afectam os perfis incorrectos.)
 
-6. **SIM - Dashboards analíticos avançados**
-   - Dashboards executivos com KPIs
-   - Boletins de mercado periódicos (mensal/trimestral)
-   - Análise comparativa por região e qualidade
-   - Impacto da certificação nos preços
-   - Custos logísticos e comerciais
+#### 5. Loading States Consistentes
 
-7. **SIM - Portal Público de Informação de Mercado**
-   - Página pública (sem login) com estatísticas agregadas do sector
-   - Volumes de produção/exportação, destinos, tendências
-
-8. **Relatórios avançados**
-   - Relatório de produção por região
-   - Relatório de qualidade e certificações
-   - Relatório de conformidade EUDR
-   - Relatório de exportações
-   - Boletins de mercado em PDF
-
-9. **Verificação pública melhorada**
-   - Adicionar timeline de processamento ao portal
-   - Mostrar certificações associadas
-   - Mapa simplificado da origem
-
-#### Prioridade Baixa - Funcionalidades Futuras
-
-10. **API REST pública** - para integração com MINDCOM, AIPEX e parceiros
-11. **App móvel offline-first** - recolha de dados no campo (fora do scope React web)
-12. **Blockchain** - registos imutáveis (feature flag existe, implementação pendente)
-13. **Interoperabilidade** - integração com RNPA/IDF, sistemas de certificação
-14. **Encriptação AES-256 e WORM logs** - segurança avançada
+Substituir os `<p>A carregar...</p>` em Exploracoes, Lotes e outras paginas por componentes `Skeleton` ou spinner consistente com o padrao ja usado no ProducerDashboard.
 
 ---
 
-### Plano de Implementação Recomendado
+### Fases Futuras (apos aprovar e implementar Fase 1)
 
-**Fase 1 - SIM funcional** (maior impacto imediato)
-- Ligar página SIM à tabela `sim_mercado` com dados reais
-- Adicionar gráficos de séries temporais (recharts)
-- Adicionar filtros e análise de tendências
-- Criar portal público SIM (sem login)
-
-**Fase 2 - Completar cadeia de valor**
-- Criar UI para Transformação
-- Criar UI para Logística/Transporte
-- Criar UI para Comercialização
-- Criar módulo de Armazenamento (tabela + UI)
-
-**Fase 3 - Relatórios e Boletins**
-- Relatórios avançados por tipo (produção, qualidade, EUDR, exportação)
-- Boletins de mercado em PDF
-- Dashboard executivo para decisores
-
-**Fase 4 - Integrações e segurança**
-- API REST documentada
-- Melhorias de segurança
-- Feature flags para blockchain/RFID
+- **Fase 2**: Breadcrumbs em todas as paginas, filtros avancados e paginacao nas tabelas
+- **Fase 3**: Dark mode toggle integrado no header, responsive polish em todas as paginas internas
+- **Fase 4**: Notificacoes em tempo real, melhorias de performance e audit final
 
 ---
 
-### Conclusão
+### Ficheiros Afectados na Fase 1
 
-A implementação actual cobre aproximadamente **60-65%** dos requisitos do documento. A base de dados está bem estruturada e suporta a maioria dos módulos descritos. As maiores lacunas são: (1) o SIM que usa dados mock em vez de dados reais, (2) ausência de UI para transformação, logística, comercialização e armazenamento, e (3) relatórios/boletins avançados.
+| Ficheiro | Alteracao |
+|---|---|
+| `src/components/DashboardLayout.tsx` | Sidebar colapsavel, header premium, transicao de pagina |
+| `src/components/PageTransition.tsx` | Novo componente de transicao animada |
+| `src/pages/Dashboard.tsx` | Routing para dashboards por perfil |
+| `src/components/dashboard/CooperativaDashboard.tsx` | Novo |
+| `src/components/dashboard/ProcessadorDashboard.tsx` | Novo |
+| `src/components/dashboard/TransportadorDashboard.tsx` | Novo |
+| `src/components/dashboard/ExportadorDashboard.tsx` | Novo |
+| `src/components/dashboard/CompradorDashboard.tsx` | Novo |
+| `src/App.tsx` | Correcao de requiredRole nas rotas |
+| `src/pages/Exploracoes.tsx` | Loading skeleton |
+| `src/pages/Lotes.tsx` | Loading skeleton |
+
+Aproximadamente 11 ficheiros, 5 novos componentes de dashboard.
 
