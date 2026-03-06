@@ -72,12 +72,12 @@ const Logistica = () => {
         <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Logística e Transporte</h1>
-            <p className="text-muted-foreground">Gestão de movimentos logísticos e cadeia de custódia</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Logística e Transporte</h1>
+            <p className="text-muted-foreground text-sm">Gestão de movimentos logísticos e cadeia de custódia</p>
           </div>
           <Dialog open={addOpen} onOpenChange={setAddOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Novo Transporte</Button>
+              <Button className="w-full sm:w-auto"><Plus className="h-4 w-4 mr-2" />Novo Transporte</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>Registar Transporte</DialogTitle></DialogHeader>
@@ -115,6 +115,7 @@ const Logistica = () => {
             <CardDescription>{logistica?.length || 0} registos</CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -164,6 +165,7 @@ const Logistica = () => {
                 )}
               </TableBody>
             </Table>
+            </div>
             <DataTablePagination currentPage={page} totalItems={logistica?.length || 0} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>

@@ -93,12 +93,12 @@ const Comercializacao = () => {
         <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Comercialização</h1>
-            <p className="text-muted-foreground">Gestão de contratos e vendas de café</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Comercialização</h1>
+            <p className="text-muted-foreground text-sm">Gestão de contratos e vendas de café</p>
           </div>
           <Dialog open={addOpen} onOpenChange={setAddOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Novo Contrato</Button>
+              <Button className="w-full sm:w-auto"><Plus className="h-4 w-4 mr-2" />Novo Contrato</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>Registar Contrato de Venda</DialogTitle></DialogHeader>
@@ -125,7 +125,7 @@ const Comercializacao = () => {
                   <Label>Ref. Contrato</Label>
                   <Input placeholder="Ex: CT-2026-001" value={form.contrato_ref} onChange={e => setForm(p => ({ ...p, contrato_ref: e.target.value }))} />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div><Label>Preço/kg</Label><Input type="number" step="0.01" value={form.preco_unitario} onChange={e => setForm(p => ({ ...p, preco_unitario: e.target.value }))} /></div>
                   <div><Label>Qtd. (kg)</Label><Input type="number" value={form.quantidade_kg} onChange={e => setForm(p => ({ ...p, quantidade_kg: e.target.value }))} /></div>
                   <div><Label>Moeda</Label>
@@ -165,6 +165,7 @@ const Comercializacao = () => {
             <CardDescription>{vendas?.length || 0} registos</CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -204,6 +205,7 @@ const Comercializacao = () => {
                 )}
               </TableBody>
             </Table>
+            </div>
             <DataTablePagination currentPage={page} totalItems={vendas?.length || 0} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>

@@ -104,12 +104,12 @@ const Armazenamento = () => {
         <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Armazenamento</h1>
-            <p className="text-muted-foreground">Gestão de stock, entradas e saídas por lote</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Armazenamento</h1>
+            <p className="text-muted-foreground text-sm">Gestão de stock, entradas e saídas por lote</p>
           </div>
           <Dialog open={addOpen} onOpenChange={setAddOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Novo Movimento</Button>
+              <Button className="w-full sm:w-auto"><Plus className="h-4 w-4 mr-2" />Novo Movimento</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>Registar Movimento de Armazém</DialogTitle></DialogHeader>
@@ -208,6 +208,7 @@ const Armazenamento = () => {
             <CardDescription>{registos?.length || 0} registos</CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -254,6 +255,7 @@ const Armazenamento = () => {
                 )}
               </TableBody>
             </Table>
+            </div>
             <DataTablePagination currentPage={page} totalItems={registos?.length || 0} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>
