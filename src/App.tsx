@@ -133,7 +133,7 @@ const App = () => (
           <Route
             path="/qualidade"
             element={
-              <ProtectedRoute>
+            <ProtectedRoute requiredRole="tecnico_inca">
                 <Qualidade />
               </ProtectedRoute>
             }
@@ -157,7 +157,7 @@ const App = () => (
           <Route
             path="/exportacao"
             element={
-              <ProtectedRoute>
+            <ProtectedRoute requiredRole="exportador">
                 <Exportacao />
               </ProtectedRoute>
             }
@@ -205,7 +205,7 @@ const App = () => (
           <Route
             path="/iot"
             element={
-              <ProtectedRoute>
+            <ProtectedRoute requiredRole="tecnico_inca">
                 <IoT />
               </ProtectedRoute>
             }
@@ -301,7 +301,7 @@ const App = () => (
           <Route
             path="/transformacao"
             element={
-              <ProtectedRoute>
+            <ProtectedRoute requiredRole="processador">
                 <Transformacao />
               </ProtectedRoute>
             }
@@ -309,7 +309,7 @@ const App = () => (
           <Route
             path="/logistica"
             element={
-              <ProtectedRoute>
+            <ProtectedRoute requiredRole="transportador">
                 <Logistica />
               </ProtectedRoute>
             }
@@ -317,7 +317,7 @@ const App = () => (
           <Route
             path="/comercializacao"
             element={
-              <ProtectedRoute>
+            <ProtectedRoute requiredRole="exportador">
                 <Comercializacao />
               </ProtectedRoute>
             }
@@ -325,7 +325,7 @@ const App = () => (
           <Route
             path="/armazenamento"
             element={
-              <ProtectedRoute>
+            <ProtectedRoute requiredRole="processador">
                 <Armazenamento />
               </ProtectedRoute>
             }

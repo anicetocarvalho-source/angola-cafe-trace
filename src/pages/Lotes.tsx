@@ -98,7 +98,17 @@ const Lotes = () => {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-center text-muted-foreground py-8">A carregar...</p>
+              <div className="space-y-3 py-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="h-5 w-1/5 rounded bg-muted animate-pulse" />
+                    <div className="h-5 w-1/6 rounded bg-muted animate-pulse" />
+                    <div className="h-5 w-1/6 rounded bg-muted animate-pulse" />
+                    <div className="h-5 w-1/6 rounded bg-muted animate-pulse" />
+                    <div className="h-5 w-1/6 rounded bg-muted animate-pulse" />
+                  </div>
+                ))}
+              </div>
             ) : lotes.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">
