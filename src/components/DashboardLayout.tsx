@@ -28,11 +28,36 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMobileMenuOpen(false);
+    setNotificationsOpen(false);
+    setUserMenuOpen(false);
   }, [location.pathname]);
+
+  const closeAllMenus = () => {
+    setMobileMenuOpen(false);
+    setNotificationsOpen(false);
+    setUserMenuOpen(false);
+  };
+
+  const handleMobileMenuChange = (open: boolean) => {
+    if (open) { setNotificationsOpen(false); setUserMenuOpen(false); }
+    setMobileMenuOpen(open);
+  };
+
+  const handleNotificationsChange = (open: boolean) => {
+    if (open) { setMobileMenuOpen(false); setUserMenuOpen(false); }
+    setNotificationsOpen(open);
+  };
+
+  const handleUserMenuChange = (open: boolean) => {
+    if (open) { setMobileMenuOpen(false); setNotificationsOpen(false); }
+    setUserMenuOpen(open);
+  };
 
   interface NavItem {
     name: string;
@@ -182,7 +207,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-gradient-to-r from-card via-card to-card/95 shadow-sm backdrop-blur-sm">
         <div className="flex h-14 items-center px-4 sm:px-6">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <Sheet open={mobileMenuOpen} onOpenChange={handleMobileMenuChange}>
             <SheetTrigger asChild className="lg:hidden">
               <Button variant="ghost" size="icon" className="mr-2">
                 <Menu className="h-5 w-5" />
@@ -229,8 +254,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             </Button>
             <QRScanner />
-            <NotificationCenter />
-            <DropdownMenu>
+            <NotificationCenter open={notificationsOpen} onOpenChange={handleNotificationsChange} />
+            <DropdownMenu open={userMenuOpen} onOpenChange={handleUserMenuChange}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2 px-2">
                   <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center shadow-sm">
