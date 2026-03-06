@@ -25,12 +25,20 @@ interface Notification {
   created_at: string;
 }
 
-export default function NotificationCenter() {
+interface NotificationCenterProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export default function NotificationCenter({ open: controlledOpen, onOpenChange }: NotificationCenterProps = {}) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
 
   const loadNotifications = useCallback(async () => {
     if (!user?.id) return;
