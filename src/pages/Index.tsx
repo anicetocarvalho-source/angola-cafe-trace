@@ -141,13 +141,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation Bar */}
-      <nav className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-5">
+      <nav className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-3 sm:py-5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
-              <Coffee className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+              <Coffee className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-white tracking-tight">INCA Coffee Trace</span>
+            <span className="text-base sm:text-lg font-bold text-white tracking-tight">INCA Coffee Trace</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-white/80">
             {navLinks.map((link) => (
@@ -163,7 +163,7 @@ const Index = () => {
               Acesso ao Sistema
             </Button>
             <button
-              className="md:hidden p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white"
+              className="md:hidden p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white active:bg-white/20 touch-manipulation"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Menu"
             >
@@ -172,33 +172,38 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Full screen overlay */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden mt-3 bg-black/60 backdrop-blur-xl rounded-2xl border border-white/15 p-4 space-y-1"
+              transition={{ duration: 0.25 }}
+              className="md:hidden mt-3 bg-black/70 backdrop-blur-2xl rounded-2xl border border-white/15 p-5 space-y-1"
             >
-              {navLinks.map((link) => (
-                <a
+              {navLinks.map((link, i) => (
+                <motion.a
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-2.5 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex items-center justify-between px-4 py-3.5 text-base text-white/85 hover:text-white active:bg-white/10 rounded-xl transition-colors touch-manipulation"
                 >
                   {link.label}
-                </a>
+                  <ChevronRight className="w-4 h-4 text-white/40" />
+                </motion.a>
               ))}
-              <div className="pt-2 border-t border-white/10">
+              <div className="pt-3 mt-2 border-t border-white/10">
                 <a
                   href="/auth"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-2.5 text-sm text-accent font-medium hover:bg-white/10 rounded-xl transition-colors"
+                  className="flex items-center justify-center gap-2 px-4 py-3.5 text-base font-semibold text-accent bg-accent/10 rounded-xl active:bg-accent/20 transition-colors touch-manipulation"
                 >
                   Acesso ao Sistema
+                  <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
             </motion.div>
@@ -207,7 +212,7 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative overflow-hidden min-h-[92vh] flex items-center">
+      <section ref={heroRef} className="relative overflow-hidden min-h-[85vh] sm:min-h-[92vh] flex items-center">
         {/* Background Image with Parallax */}
         <motion.div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
@@ -221,7 +226,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
         
         <motion.div 
-          className="relative w-full px-4 sm:px-6 lg:px-8 pt-24"
+          className="relative w-full px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24"
           style={{ y: textY, opacity }}
         >
           <div className="max-w-7xl mx-auto">
@@ -231,28 +236,28 @@ const Index = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
               >
-                <Badge className="mb-6 text-xs px-3 py-1 bg-white/15 backdrop-blur-sm text-white border-white/25 rounded-full uppercase tracking-widest font-medium">
+                <Badge className="mb-4 sm:mb-6 text-[10px] sm:text-xs px-3 py-1 bg-white/15 backdrop-blur-sm text-white border-white/25 rounded-full uppercase tracking-widest font-medium">
                   Sistema Nacional de Rastreabilidade
                 </Badge>
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-5 leading-[1.05] tracking-tight">
+                <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold text-white mb-4 sm:mb-5 leading-[1.1] sm:leading-[1.05] tracking-tight">
                   Qualidade &<br />
                   <span className="text-accent">Rastreabilidade</span><br />
                   do Café Angolano
                 </h1>
-                <p className="text-lg sm:text-xl text-white/75 mb-10 max-w-xl leading-relaxed">
+                <p className="text-base sm:text-xl text-white/75 mb-7 sm:mb-10 max-w-xl leading-relaxed">
                   Da produção à exportação — conformidade EUDR, certificações internacionais e transparência total numa única plataforma.
                 </p>
               </motion.div>
               
               <motion.div 
-                className="flex flex-wrap gap-3"
+                className="flex flex-col sm:flex-row gap-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
                 <Button 
                   size="lg" 
-                  className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-7 rounded-xl gap-2 shadow-lg shadow-accent/25"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 text-sm sm:text-base px-6 sm:px-7 h-12 sm:h-11 rounded-xl gap-2 shadow-lg shadow-accent/25 touch-manipulation"
                   onClick={() => window.location.href = "/verificar"}
                 >
                   <QrCode className="h-5 w-5" />
@@ -260,7 +265,7 @@ const Index = () => {
                 </Button>
                 <Button 
                   size="lg" 
-                  className="bg-white/10 backdrop-blur-sm text-white border border-white/25 hover:bg-white/20 text-base px-7 rounded-xl gap-2"
+                  className="bg-white/10 backdrop-blur-sm text-white border border-white/25 hover:bg-white/20 text-sm sm:text-base px-6 sm:px-7 h-12 sm:h-11 rounded-xl gap-2 touch-manipulation"
                   onClick={() => window.location.href = "/sim-publico"}
                 >
                   <BarChart3 className="h-5 w-5" />
@@ -271,7 +276,7 @@ const Index = () => {
 
             {/* Floating Stats on Hero */}
             <motion.div 
-              className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl"
+              className="mt-8 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 max-w-2xl"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
@@ -279,7 +284,7 @@ const Index = () => {
             {stats.map((stat, i) => (
                 <motion.div
                   key={i}
-                  className="bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/15 cursor-default"
+                  className="bg-white/10 backdrop-blur-md rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 border border-white/15 cursor-default"
                   whileHover={{
                     scale: 1.08,
                     boxShadow: "0 0 24px 4px hsla(var(--accent) / 0.35)",
@@ -288,10 +293,10 @@ const Index = () => {
                   }}
                   transition={{ type: "spring", stiffness: 350, damping: 20 }}
                 >
-                  <div className="text-2xl sm:text-3xl font-bold text-white">
+                  <div className="text-xl sm:text-3xl font-bold text-white">
                     <AnimatedCounter target={stat.value} format={stat.format} delay={i * 0.15} /><span className="text-accent">{stat.suffix}</span>
                   </div>
-                  <div className="text-xs text-white/60 mt-0.5">{stat.label}</div>
+                  <div className="text-[10px] sm:text-xs text-white/60 mt-0.5">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -300,10 +305,10 @@ const Index = () => {
       </section>
 
       {/* Features Grid */}
-      <section id="funcionalidades" className="py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
+      <section id="funcionalidades" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -366,7 +371,7 @@ const Index = () => {
       </section>
 
       {/* Modules Section */}
-      <section id="modulos" className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/40 scroll-mt-20">
+      <section id="modulos" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 bg-muted/40 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-5 gap-12 items-start">
             <motion.div 
@@ -435,7 +440,7 @@ const Index = () => {
       </section>
 
       {/* Technology / Dashboard Preview */}
-      <section id="tecnologia" className="py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
+      <section id="tecnologia" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -526,7 +531,7 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/40 scroll-mt-20">
+      <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 bg-muted/40 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -602,7 +607,7 @@ const Index = () => {
       </section>
 
       {/* Partners & Certifications Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-border/40">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-t border-border/40">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="text-center mb-14"
@@ -665,7 +670,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-hero relative overflow-hidden">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-hero relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,_hsla(0,0%,100%,0.08)_0%,_transparent_60%)]" />
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <motion.div
@@ -674,16 +679,17 @@ const Index = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-5">
-              Junte-se à Revolução Digital<br />do Café Angolano
+            <h2 className="text-2xl sm:text-4xl font-bold text-primary-foreground mb-4 sm:mb-5">
+              Junte-se à Revolução Digital<br className="hidden sm:block" />
+              do Café Angolano
             </h2>
-            <p className="text-primary-foreground/75 mb-8 max-w-xl mx-auto">
+            <p className="text-sm sm:text-base text-primary-foreground/75 mb-6 sm:mb-8 max-w-xl mx-auto">
               Registe-se e garanta a rastreabilidade, qualidade e conformidade do seu café para os mercados mais exigentes.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button 
                 size="lg" 
-                className="bg-white text-primary hover:bg-white/90 text-base px-8 rounded-xl gap-2 shadow-lg"
+                className="bg-white text-primary hover:bg-white/90 text-sm sm:text-base px-8 h-12 sm:h-11 rounded-xl gap-2 shadow-lg touch-manipulation"
                 onClick={() => window.location.href = "/auth"}
               >
                 Criar Conta
@@ -691,7 +697,7 @@ const Index = () => {
               </Button>
               <Button 
                 size="lg" 
-                className="bg-white/10 text-white border border-white/25 hover:bg-white/20 text-base px-8 rounded-xl gap-2"
+                className="bg-white/10 text-white border border-white/25 hover:bg-white/20 text-sm sm:text-base px-8 h-12 sm:h-11 rounded-xl gap-2 touch-manipulation"
                 onClick={() => window.location.href = "/sim-publico"}
               >
                 Explorar Mercado
@@ -702,13 +708,13 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-14 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-foreground text-background py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-            <div className="md:col-span-1">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
-                <Coffee className="w-6 h-6" />
-                <span className="text-lg font-bold tracking-tight">INCA Coffee Trace</span>
+                <Coffee className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-base sm:text-lg font-bold tracking-tight">INCA Coffee Trace</span>
               </div>
               <p className="text-background/60 text-sm leading-relaxed">
                 Sistema Nacional de Rastreabilidade e Qualidade do Café de Angola.
