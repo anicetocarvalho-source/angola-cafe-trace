@@ -69,12 +69,12 @@ const Exploracoes = () => {
       <div className="space-y-6">
         <Breadcrumbs />
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Explorações Agrícolas</h1>
-            <p className="text-muted-foreground">Gestão de explorações de café</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Explorações Agrícolas</h1>
+            <p className="text-muted-foreground text-sm">Gestão de explorações de café</p>
           </div>
-          <Button onClick={() => navigate("/exploracoes/nova")}>
+          <Button onClick={() => navigate("/exploracoes/nova")} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Nova Exploração
           </Button>
@@ -95,7 +95,7 @@ const Exploracoes = () => {
                 />
               </div>
               <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos estados</SelectItem>
                   <SelectItem value="pendente">Pendente</SelectItem>
@@ -104,7 +104,7 @@ const Exploracoes = () => {
                 </SelectContent>
               </Select>
               <Select value={provinciaFilter} onValueChange={(v) => { setProvinciaFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-[180px]"><SelectValue placeholder="Província" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Província" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas províncias</SelectItem>
                   {provincias.map((p) => (
@@ -143,7 +143,7 @@ const Exploracoes = () => {
               </div>
             ) : (
               <>
-                <div className="rounded-md border">
+                <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
