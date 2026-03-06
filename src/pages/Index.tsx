@@ -19,12 +19,35 @@ import {
   Menu,
   X
 } from "lucide-react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence, useInView, useMotionValue, useSpring, MotionValue } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import heroImage from "@/assets/hero-coffee-angola.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+const AnimatedCounter = ({ target, format, delay = 0 }: { target: number; format: (n: number) => string; delay?: number }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+  const motionVal = useMotionValue(0);
+  const spring = useSpring(motionVal, { duration: 1800, bounce: 0 });
+
+  useEffect(() => {
+    if (isInView) {
+      const timeout = setTimeout(() => motionVal.set(target), delay * 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [isInView, target, delay, motionVal]);
+
+  useEffect(() => {
+    const unsubscribe = spring.on("change", (v) => {
+      if (ref.current) ref.current.textContent = format(v);
+    });
+    return unsubscribe;
+  }, [spring, format]);
+
+  return <span ref={ref}>0</span>;
+};
 
 const Index = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -108,10 +131,10 @@ const Index = () => {
   ];
 
   const stats = [
-    { value: "18", label: "Províncias", suffix: "" },
-    { value: "5.000", label: "Produtores", suffix: "+" },
-    { value: "15k", label: "Hectares", suffix: "+" },
-    { value: "100", label: "Rastreabilidade", suffix: "%" },
+    { value: 18, label: "Províncias", suffix: "", format: (n: number) => Math.round(n).toString() },
+    { value: 5000, label: "Produtores", suffix: "+", format: (n: number) => Math.round(n).toLocaleString("pt-AO") },
+    { value: 15000, label: "Hectares", suffix: "+", format: (n: number) => `${Math.round(n / 1000)}k` },
+    { value: 100, label: "Rastreabilidade", suffix: "%", format: (n: number) => Math.round(n).toString() },
   ];
 
   return (
@@ -252,10 +275,10 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              {stats.map((stat, i) => (
+            {stats.map((stat, i) => (
                 <div key={i} className="bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/15">
                   <div className="text-2xl sm:text-3xl font-bold text-white">
-                    {stat.value}<span className="text-accent">{stat.suffix}</span>
+                    <AnimatedCounter target={stat.value} format={stat.format} delay={i * 0.15} /><span className="text-accent">{stat.suffix}</span>
                   </div>
                   <div className="text-xs text-white/60 mt-0.5">{stat.label}</div>
                 </div>
