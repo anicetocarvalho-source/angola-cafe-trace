@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Coffee, LogOut, Menu, MapPin, BarChart3, FileText, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, ChevronsRight, Sun, Moon } from "lucide-react";
@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +29,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const allNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3, roles: ["all"] },
@@ -123,6 +127,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-72 p-0">
+              <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
               <div className="flex h-14 items-center border-b px-5 gap-3">
                 <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
                   <Coffee className="h-4 w-4 text-primary-foreground" />
@@ -198,7 +203,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Sidebar - Desktop */}
         <aside
           className={cn(
-            "hidden lg:flex lg:flex-col border-r bg-card/50 transition-all duration-300 sticky top-14 h-[calc(100vh-3.5rem)]",
+            "hidden lg:flex lg:flex-col border-r bg-card/50 transition-all duration-300 sticky top-14 h-[calc(100vh-3.5rem)] z-40",
             sidebarCollapsed ? "lg:w-16" : "lg:w-60"
           )}
         >
