@@ -254,8 +254,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             </Button>
             <QRScanner />
-            <NotificationCenter />
-            <DropdownMenu>
+            <NotificationCenter open={notificationsOpen} onOpenChange={handleNotificationsChange} />
+            <DropdownMenu open={userMenuOpen} onOpenChange={handleUserMenuChange}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2 px-2">
                   <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center shadow-sm">
