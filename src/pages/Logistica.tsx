@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -14,9 +14,12 @@ import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { Plus, Truck, MapPin, Thermometer, Droplets } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import DataTablePagination from "@/components/DataTablePagination";
 
 const Logistica = () => {
   const [addOpen, setAddOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 15;
   const [form, setForm] = useState({
     lote_id: "",
     rota: "",
@@ -125,7 +128,7 @@ const Logistica = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {logistica?.map(l => {
+                {logistica?.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(l => {
                   const checkpoints = Array.isArray(l.checkpoints) ? l.checkpoints : [];
                   return (
                     <TableRow key={l.id}>
@@ -161,6 +164,7 @@ const Logistica = () => {
                 )}
               </TableBody>
             </Table>
+            <DataTablePagination currentPage={page} totalItems={logistica?.length || 0} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>
       </div>
