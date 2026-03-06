@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, ChevronsRight, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, User } from "lucide-react";
+import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
