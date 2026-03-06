@@ -276,12 +276,22 @@ const Index = () => {
               transition={{ duration: 0.6, delay: 0.5 }}
             >
             {stats.map((stat, i) => (
-                <div key={i} className="bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/15">
+                <motion.div
+                  key={i}
+                  className="bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/15 cursor-default"
+                  whileHover={{
+                    scale: 1.08,
+                    boxShadow: "0 0 24px 4px hsla(var(--accent) / 0.35)",
+                    borderColor: "hsla(var(--accent) / 0.5)",
+                    backgroundColor: "rgba(255,255,255,0.18)",
+                  }}
+                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                >
                   <div className="text-2xl sm:text-3xl font-bold text-white">
                     <AnimatedCounter target={stat.value} format={stat.format} delay={i * 0.15} /><span className="text-accent">{stat.suffix}</span>
                   </div>
                   <div className="text-xs text-white/60 mt-0.5">{stat.label}</div>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
