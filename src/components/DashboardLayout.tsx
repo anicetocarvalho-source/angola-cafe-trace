@@ -240,23 +240,25 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0 flex flex-col">
+            <SheetContent side="left" className="w-72 p-0">
               <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
-              <div className="flex h-14 items-center border-b px-5 gap-3">
-                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Coffee className="h-4 w-4 text-primary-foreground" />
+              <div className="flex flex-col h-full">
+                <div className="flex h-14 items-center border-b px-5 gap-3 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                    <Coffee className="h-4 w-4 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold">INCA Coffee Trace</span>
+                    <p className="text-[10px] text-muted-foreground">Sistema de Rastreabilidade</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-sm font-bold">INCA Coffee Trace</span>
-                  <p className="text-[10px] text-muted-foreground">Sistema de Rastreabilidade</p>
+                <nav className="flex-1 min-h-0 flex flex-col gap-1 p-3 overflow-y-auto">
+                  <NavLinks isMobile />
+                </nav>
+                <div className="border-t border-border/60 p-3 space-y-2 shrink-0">
+                  <ProfileSection />
+                  <p className="text-[10px] text-muted-foreground/50 text-center font-medium tracking-wide">INCA v2.0</p>
                 </div>
-              </div>
-              <nav className="flex-1 flex flex-col gap-1 p-3 overflow-y-auto">
-                <NavLinks isMobile />
-              </nav>
-              <div className="border-t border-border/60 p-3 space-y-2">
-                <ProfileSection />
-                <p className="text-[10px] text-muted-foreground/50 text-center font-medium tracking-wide">INCA v2.0</p>
               </div>
             </SheetContent>
           </Sheet>
