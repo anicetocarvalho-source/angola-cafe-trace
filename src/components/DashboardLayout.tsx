@@ -34,7 +34,30 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   useEffect(() => {
     setMobileMenuOpen(false);
+    setNotificationsOpen(false);
+    setUserMenuOpen(false);
   }, [location.pathname]);
+
+  const closeAllMenus = () => {
+    setMobileMenuOpen(false);
+    setNotificationsOpen(false);
+    setUserMenuOpen(false);
+  };
+
+  const handleMobileMenuChange = (open: boolean) => {
+    if (open) { setNotificationsOpen(false); setUserMenuOpen(false); }
+    setMobileMenuOpen(open);
+  };
+
+  const handleNotificationsChange = (open: boolean) => {
+    if (open) { setMobileMenuOpen(false); setUserMenuOpen(false); }
+    setNotificationsOpen(open);
+  };
+
+  const handleUserMenuChange = (open: boolean) => {
+    if (open) { setMobileMenuOpen(false); setNotificationsOpen(false); }
+    setUserMenuOpen(open);
+  };
 
   interface NavItem {
     name: string;
