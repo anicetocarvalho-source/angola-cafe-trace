@@ -36,6 +36,7 @@ const routeLabels: Record<string, string> = {
   "nova-analise": "Nova Análise",
   "nova-exportacao": "Nova Exportação",
   verificar: "Verificar",
+  perfil: "Perfil",
 };
 
 export default function Breadcrumbs() {
