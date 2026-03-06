@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { toast } from "sonner";
 import { format, subMonths, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
@@ -158,6 +159,7 @@ const SIM = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>

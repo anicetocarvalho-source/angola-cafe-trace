@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Leaf, Calendar, Trash2, Filter, X, CalendarIcon, Pencil, Download, FileSpreadsheet } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -294,6 +295,7 @@ const ManutencaoAgricola = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Manutenção Agrícola</h1>

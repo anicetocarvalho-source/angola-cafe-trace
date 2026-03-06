@@ -10,6 +10,7 @@ import {
   FileText, TrendingUp, Package, MapPin, Award, Download, Shield, Ship,
   CheckCircle, XCircle, AlertTriangle, Loader2
 } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, LineChart, Line
@@ -376,6 +377,7 @@ const Relatorios = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <Breadcrumbs />
         <div>
           <h1 className="text-3xl font-bold text-foreground">Relatórios & Análises</h1>
           <p className="text-muted-foreground">Dados estatísticos do sistema INCA Coffee Trace</p>
