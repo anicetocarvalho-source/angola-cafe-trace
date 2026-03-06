@@ -86,11 +86,13 @@ export default function Auditoria() {
       <div className="space-y-6">
         <Breadcrumbs />
         
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Auditoria</h1>
-          <p className="text-muted-foreground mt-1">
-            Histórico completo de alterações no sistema
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Auditoria</h1>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Histórico completo de alterações no sistema
+            </p>
+          </div>
         </div>
 
         <Card>
@@ -107,19 +109,27 @@ export default function Auditoria() {
               </div>
               <div className="flex gap-2 w-full md:w-auto">
                 <Select value={tableFilter} onValueChange={setTableFilter}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Filtrar por tabela" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as tabelas</SelectItem>
                     <SelectItem value="lotes">Lotes</SelectItem>
+                    <SelectItem value="exploracoes">Explorações</SelectItem>
                     <SelectItem value="parcelas">Parcelas</SelectItem>
                     <SelectItem value="harvests">Colheitas</SelectItem>
+                    <SelectItem value="transformacoes">Transformações</SelectItem>
+                    <SelectItem value="armazenamento">Armazenamento</SelectItem>
+                    <SelectItem value="logistica">Logística</SelectItem>
+                    <SelectItem value="comercializacao">Comercialização</SelectItem>
+                    <SelectItem value="exportacoes">Exportações</SelectItem>
+                    <SelectItem value="qualidade_certificacoes">Qualidade</SelectItem>
+                    <SelectItem value="secagens">Secagens</SelectItem>
                   </SelectContent>
                 </Select>
 
                 <Select value={actionFilter} onValueChange={setActionFilter}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Filtrar por ação" />
                   </SelectTrigger>
                   <SelectContent>
@@ -133,6 +143,7 @@ export default function Auditoria() {
             </div>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -181,6 +192,7 @@ export default function Auditoria() {
                 )}
               </TableBody>
             </Table>
+            </div>
 
             {logs && logs.count && logs.count > pageSize && (
               <div className="flex justify-between items-center mt-4">
