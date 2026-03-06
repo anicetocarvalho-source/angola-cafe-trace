@@ -16,9 +16,12 @@ import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
 import { Plus, FlaskConical, ArrowRight } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import DataTablePagination from "@/components/DataTablePagination";
 
 const Transformacao = () => {
   const [addOpen, setAddOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 15;
   const [form, setForm] = useState({
     lote_id: "",
     etapa: "fermentacao",
@@ -146,7 +149,7 @@ const Transformacao = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transformacoes?.map(t => (
+                {transformacoes?.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(t => (
                   <TableRow key={t.id}>
                     <TableCell>{format(parseISO(t.data), "dd/MM/yyyy")}</TableCell>
                     <TableCell><Badge variant="outline">{(t as any).lotes?.referencia_lote || "—"}</Badge></TableCell>
@@ -167,6 +170,7 @@ const Transformacao = () => {
                 )}
               </TableBody>
             </Table>
+            <DataTablePagination currentPage={page} totalItems={transformacoes?.length || 0} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>
       </div>

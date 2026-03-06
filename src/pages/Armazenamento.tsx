@@ -15,9 +15,12 @@ import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { Plus, Warehouse, ArrowDownToLine, ArrowUpFromLine, Thermometer, Droplets } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import DataTablePagination from "@/components/DataTablePagination";
 
 const Armazenamento = () => {
   const [addOpen, setAddOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 15;
   const [form, setForm] = useState({
     lote_id: "",
     armazem_nome: "",
@@ -218,7 +221,7 @@ const Armazenamento = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {registos?.map(r => (
+                {registos?.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(r => (
                   <TableRow key={r.id}>
                     <TableCell>{format(parseISO(r.data_movimento), "dd/MM/yyyy")}</TableCell>
                     <TableCell>
@@ -251,6 +254,7 @@ const Armazenamento = () => {
                 )}
               </TableBody>
             </Table>
+            <DataTablePagination currentPage={page} totalItems={registos?.length || 0} pageSize={PAGE_SIZE} onPageChange={setPage} />
           </CardContent>
         </Card>
       </div>
