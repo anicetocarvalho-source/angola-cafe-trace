@@ -483,49 +483,44 @@ const Index = () => {
             </motion.div>
 
             <motion.div 
-              className="hidden lg:block"
+              className="space-y-6"
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div className="bg-muted/50 rounded-2xl p-6 border border-border/60">
-                <div className="grid grid-cols-2 gap-3">
-                  <Card className="col-span-2 border-border/60">
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-secondary/15 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-secondary" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Taxa de Conformidade</p>
-                        <p className="text-2xl font-bold text-secondary">94.7%</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-border/60">
-                    <CardContent className="p-4">
-                      <p className="text-xs text-muted-foreground mb-1">Sensores Activos</p>
-                      <p className="text-xl font-bold text-primary">127</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-border/60">
-                    <CardContent className="p-4">
-                      <p className="text-xs text-muted-foreground mb-1">Lotes Rastreados</p>
-                      <p className="text-xl font-bold text-primary">3.2k</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="col-span-2 border-border/60">
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center">
-                        <Globe className="w-5 h-5 text-accent" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Exportações EUDR-Ready</p>
-                        <p className="text-lg font-bold text-foreground">100% Conformes</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+              {/* Animated Tech Stats */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { value: 94.7, label: "Taxa de Conformidade", suffix: "%", format: (n: number) => n.toFixed(1), icon: CheckCircle2, color: "text-secondary", bgColor: "bg-secondary/15" },
+                  { value: 127, label: "Sensores Activos", suffix: "", format: (n: number) => Math.round(n).toString(), icon: Activity, color: "text-primary", bgColor: "bg-primary/10" },
+                  { value: 3200, label: "Lotes Rastreados", suffix: "", format: (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : Math.round(n).toString(), icon: PackageCheck, color: "text-primary", bgColor: "bg-primary/10" },
+                  { value: 100, label: "EUDR Conformes", suffix: "%", format: (n: number) => Math.round(n).toString(), icon: Globe, color: "text-accent", bgColor: "bg-accent/15" },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+                    whileHover={{ y: -4, boxShadow: "var(--shadow-medium)" }}
+                  >
+                    <Card className="border-border/60 hover:border-primary/30 transition-all duration-300">
+                      <CardContent className="p-4 sm:p-5">
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                          <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg ${stat.bgColor} flex items-center justify-center`}>
+                            <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                          </div>
+                        </div>
+                        <p className={`text-2xl sm:text-3xl font-bold ${stat.color}`}>
+                          <AnimatedCounter target={stat.value} format={stat.format} delay={0.4 + i * 0.15} />
+                          <span>{stat.suffix}</span>
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           </div>
