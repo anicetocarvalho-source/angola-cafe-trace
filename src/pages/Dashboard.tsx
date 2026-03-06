@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 import DashboardLayout from "@/components/DashboardLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminDashboard } from "@/components/dashboard/AdminDashboard";
@@ -10,27 +10,49 @@ import { TransportadorDashboard } from "@/components/dashboard/TransportadorDash
 import { ExportadorDashboard } from "@/components/dashboard/ExportadorDashboard";
 import { CompradorDashboard } from "@/components/dashboard/CompradorDashboard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
   const { user, roles, hasRole } = useAuth();
-  const [stats, setStats] = useState({ totalLotes: 0, lotesAprovados: 0, lotesPendentes: 0, totalExploracoes: 0 });
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const { data: lotes } = await supabase.from("lotes").select("estado");
-        const approved = lotes?.filter(l => l.estado === "aprovado").length || 0;
-        const pending = lotes?.filter(l => l.estado === "pendente").length || 0;
-        const { count } = await supabase.from("exploracoes").select("*", { count: "exact", head: true });
-        setStats({ totalLotes: lotes?.length || 0, lotesAprovados: approved, lotesPendentes: pending, totalExploracoes: count || 0 });
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-      }
-    };
-    fetchStats();
-  }, []);
+  const { data: stats = { totalLotes: 0, lotesAprovados: 0, lotesPendentes: 0, totalExploracoes: 0 }, isLoading } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
+      const [lotesRes, exploracoesRes] = await Promise.all([
+        supabase.from("lotes").select("estado"),
+        supabase.from("exploracoes").select("*", { count: "exact", head: true }),
+      ]);
+      const lotes = lotesRes.data || [];
+      return {
+        totalLotes: lotes.length,
+        lotesAprovados: lotes.filter((l) => l.estado === "aprovado").length,
+        lotesPendentes: lotes.filter((l) => l.estado === "pendente").length,
+        totalExploracoes: exploracoesRes.count || 0,
+      };
+    },
+    staleTime: 30_000, // 30s cache
+  });
 
   const renderDashboard = () => {
+    if (isLoading) {
+      return (
+        <div className="space-y-6">
+          <div>
+            <Skeleton className="h-9 w-64" />
+            <Skeleton className="h-5 w-96 mt-2" />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2"><Skeleton className="h-4 w-24" /></CardHeader>
+                <CardContent><Skeleton className="h-8 w-16" /><Skeleton className="h-4 w-32 mt-2" /></CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     if (hasRole("admin_inca") || hasRole("tecnico_inca")) return <AdminDashboard stats={stats} />;
     if (hasRole("produtor")) return <ProducerDashboard />;
     if (hasRole("cooperativa")) return <CooperativaDashboard />;
@@ -42,8 +64,8 @@ const Dashboard = () => {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Bem-vindo ao INCA Coffee Trace</h1>
-          <p className="text-muted-foreground">Sistema Nacional de Rastreabilidade do Café</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Bem-vindo ao INCA Coffee Trace</h1>
+          <p className="text-muted-foreground text-sm">Sistema Nacional de Rastreabilidade do Café</p>
         </div>
         <Card>
           <CardHeader>
