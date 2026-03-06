@@ -149,17 +149,32 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
-      {filteredGroups.map((group) => (
+      {filteredGroups.map((group, groupIndex) => (
         <div key={group.label} className="mb-1">
-          {(isMobile || !sidebarCollapsed) && (
-            <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1">
-              {group.label}
-            </div>
-          )}
-          {sidebarCollapsed && !isMobile && (
-            <div className="border-t border-border/50 mx-2 my-2" />
-          )}
-          {group.items.map((item) => {
+          <AnimatePresence mode="wait">
+            {(isMobile || !sidebarCollapsed) ? (
+              <motion.div
+                key="label"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2, delay: groupIndex * 0.03 }}
+                className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1"
+              >
+                {group.label}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="separator"
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                exit={{ opacity: 0, scaleX: 0 }}
+                transition={{ duration: 0.2 }}
+                className="border-t border-border/50 mx-2 my-2"
+              />
+            )}
+          </AnimatePresence>
+          {group.items.map((item, itemIndex) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
             const link = (
@@ -168,7 +183,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 to={item.href}
                 onClick={isMobile ? handleNavigation : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative",
+                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 relative",
                   isActive
                     ? "bg-primary/10 text-primary font-semibold cursor-default"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -176,12 +191,31 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 )}
               >
                 {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
+                  <motion.span
+                    layoutId="activeIndicator"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
                 )}
-                <Icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
-                {(isMobile || !sidebarCollapsed) && (
-                  <span className="text-sm truncate">{item.name}</span>
-                )}
+                <motion.div
+                  animate={{ scale: sidebarCollapsed && !isMobile ? 1.1 : 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
+                </motion.div>
+                <AnimatePresence>
+                  {(isMobile || !sidebarCollapsed) && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: "auto" }}
+                      exit={{ opacity: 0, width: 0 }}
+                      transition={{ duration: 0.2, delay: itemIndex * 0.02 }}
+                      className="text-sm truncate overflow-hidden whitespace-nowrap"
+                    >
+                      {item.name}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </Link>
             );
 
