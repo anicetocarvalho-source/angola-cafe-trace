@@ -504,6 +504,82 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/40 scroll-mt-20">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">Testemunhos</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              Vozes do Café Angolano
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Produtores, cooperativas e exportadores partilham as suas experiências com a plataforma.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                name: "Maria João Sebastião",
+                role: "Produtora · Kwanza Sul",
+                quote: "Desde que comecei a usar o sistema, consigo registar cada etapa da minha produção. Os compradores europeus confiam mais no meu café porque podem verificar tudo pelo QR code.",
+                initials: "MJ",
+              },
+              {
+                name: "António Domingos",
+                role: "Cooperativa Café do Planalto · Huambo",
+                quote: "A rastreabilidade deu-nos acesso a mercados premium. O preço do nosso café subiu 30% porque agora temos certificação e dados de qualidade comprovados.",
+                initials: "AD",
+              },
+              {
+                name: "Francisca Lopes",
+                role: "Exportadora · Luanda",
+                quote: "A conformidade EUDR era o nosso maior desafio. Com a plataforma, geramos os pacotes de due diligence em minutos — antes levava semanas.",
+                initials: "FL",
+              },
+            ].map((testimonial, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+              >
+                <Card className="h-full border-border/60 hover:shadow-medium transition-shadow duration-300">
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <div className="mb-4 flex gap-1">
+                      {[...Array(5)].map((_, s) => (
+                        <svg key={s} className="w-4 h-4 text-accent fill-accent" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <blockquote className="text-sm text-muted-foreground leading-relaxed flex-1 italic">
+                      "{testimonial.quote}"
+                    </blockquote>
+                    <div className="flex items-center gap-3 mt-5 pt-4 border-t border-border/60">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                        {testimonial.initials}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{testimonial.name}</p>
+                        <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-hero relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,_hsla(0,0%,100%,0.08)_0%,_transparent_60%)]" />
