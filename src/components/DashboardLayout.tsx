@@ -178,15 +178,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
             const link = (
-              <Link
+              <motion.div
                 key={item.name}
+                whileHover={!isActive ? { x: sidebarCollapsed && !isMobile ? 0 : 4, scale: sidebarCollapsed && !isMobile ? 1.08 : 1 } : {}}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              >
+              <Link
                 to={item.href}
                 onClick={isMobile ? handleNavigation : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 relative",
+                  "group/nav-item flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative",
                   isActive
                     ? "bg-primary/10 text-primary font-semibold cursor-default"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_12px_-3px_hsl(var(--primary)/0.25)]",
                   !isMobile && sidebarCollapsed && "justify-center px-2"
                 )}
               >
@@ -200,8 +204,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <motion.div
                   animate={{ scale: sidebarCollapsed && !isMobile ? 1.1 : 1 }}
                   transition={{ duration: 0.2 }}
+                  className="transition-transform duration-200 group-hover/nav-item:scale-110"
                 >
-                  <Icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
+                  <Icon className={cn("h-4.5 w-4.5 shrink-0 transition-colors duration-200", isActive ? "text-primary" : "group-hover/nav-item:text-primary/80")} />
                 </motion.div>
                 <AnimatePresence>
                   {(isMobile || !sidebarCollapsed) && (
