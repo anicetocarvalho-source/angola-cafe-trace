@@ -222,6 +222,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   )}
                 </AnimatePresence>
               </Link>
+              </motion.div>
             );
 
             if (!isMobile && sidebarCollapsed) {
