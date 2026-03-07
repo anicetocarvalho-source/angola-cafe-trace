@@ -1,39 +1,28 @@
 
 
-# Diagnóstico: Sidebar "duplica" ao navegar + toggles da topbar com comportamento estranho
+## Problem Analysis
 
-## Causa raiz
+The sidebar overlay (Sheet) stays open or overlaps content when navigating between menu items. This happens because:
 
-### 1. `layoutId="activeIndicator"` no framer-motion (linha 199)
-Este é o principal culpado. O `layoutId` cria uma animação partilhada entre todos os elementos com o mesmo ID no DOM. Quando se clica num item da sidebar e a rota muda:
-- O componente `DashboardLayout` re-renderiza com o novo `location.pathname`
-- O framer-motion tenta animar o indicador ativo da posição antiga para a nova
-- Durante essa animação, o indicador "voa" pelo ecrã, criando a ilusão visual de que uma segunda sidebar aparece momentaneamente
+1. **Sheet doesn't auto-close on route change** — `handleNavigation` only fires on click, but if the navigation completes before the Sheet animation finishes (or if the click doesn't properly propagate), the Sheet remains open.
+2. **No `useEffect` watching `location`** — the standard pattern is to close the mobile Sheet whenever the route changes, as a safety net.
+3. **Missing `SheetTitle`** — Radix Dialog requires a title for accessibility; its absence can cause rendering quirks in some browsers.
 
-Como o `PageTransition` também usa `key={location.pathname}` com animações de entrada/saída, ambos os sistemas de animação colidem, causando flickers visuais.
+## Plan
 
-### 2. `AnimatePresence mode="wait"` nos labels dos grupos (linha 154)
-O `mode="wait"` força o framer-motion a esperar que a animação de saída termine antes de iniciar a de entrada. Durante uma navegação, todos os labels dos grupos animam exit → enter, contribuindo para o efeito de "piscar".
+### 1. Auto-close mobile Sheet on route change
 
-### 3. `whileHover` com `motion.div` a envolver os Links (linha 181-225)
-Cada item de nav está envolvido em `motion.div` com animações de hover. Quando o componente re-renderiza (mudança de rota), estes wrappers re-montam e causam micro-animações indesejadas.
+Add a `useEffect` in `DashboardLayout.tsx` that watches `location.pathname` and sets `mobileMenuOpen` to `false` whenever the route changes. This guarantees the Sheet always closes after navigation, regardless of click timing.
 
-## Plano de correção
+### 2. Add SheetTitle for accessibility
 
-### A. Remover `layoutId` do indicador ativo
-Substituir a animação `layoutId="activeIndicator"` por uma simples transição CSS. O indicador aparece/desaparece no local correto sem "voar" entre posições.
+Import `SheetTitle` from the Sheet component and add a visually hidden title inside `SheetContent` to prevent Radix Dialog warnings and potential rendering issues.
 
-### B. Simplificar `AnimatePresence` nos labels
-Remover `mode="wait"` dos `AnimatePresence` dos group labels para evitar o atraso na transição. Usar transições CSS simples em vez de framer-motion para a visibilidade dos labels.
+### 3. Ensure proper z-index layering
 
-### C. Estabilizar os wrappers `motion.div` dos items
-Adicionar `layout={false}` aos `motion.div` dos items de nav para evitar re-cálculos de layout durante a navegação. Manter apenas o `whileHover` sem animações de montagem.
+The header is `z-50` and the Sheet overlay is also `z-50` (from the Sheet component). The desktop sidebar has no explicit z-index. Add `z-40` to the desktop sidebar `<aside>` to ensure it layers correctly below the header and Sheet overlay.
 
-### D. Verificar conflitos na topbar
-Os toggles da topbar (tema, notificações, menu utilizador) usam o `useEffect` na linha 36-40 que fecha tudo ao mudar de rota. Isto está correto, mas o `handleNotificationsChange` e `handleUserMenuChange` forçam o fecho dos outros menus ao abrir um, o que pode causar um flash visual se o Popover/DropdownMenu animarem a saída. Adicionar `forceMount` ou simplificar a lógica de exclusão mútua.
+### Files to modify
 
-## Ficheiro a alterar
-- `src/components/DashboardLayout.tsx` — todas as correções acima
-
-Sem alterações na base de dados.
+- **`src/components/DashboardLayout.tsx`** — add `useEffect` for location-based Sheet close, add `SheetTitle`, add `z-40` to desktop sidebar, import `useEffect` from React.
 
