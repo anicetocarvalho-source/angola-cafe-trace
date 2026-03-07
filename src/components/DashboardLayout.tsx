@@ -151,35 +151,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <>
       {filteredGroups.map((group, groupIndex) => (
         <div key={group.label} className="mb-1">
-          <AnimatePresence mode="wait">
-            {(isMobile || !sidebarCollapsed) ? (
-              <motion.div
-                key="label"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2, delay: groupIndex * 0.03 }}
-                className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1"
-              >
+          {(isMobile || !sidebarCollapsed) ? (
+              <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground px-3 py-1.5 mt-1 transition-opacity duration-200">
                 {group.label}
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                key="separator"
-                initial={{ opacity: 0, scaleX: 0 }}
-                animate={{ opacity: 1, scaleX: 1 }}
-                exit={{ opacity: 0, scaleX: 0 }}
-                transition={{ duration: 0.2 }}
-                className="border-t border-border/50 mx-2 my-2"
-              />
+              <div className="border-t border-border/50 mx-2 my-2 transition-all duration-200" />
             )}
-          </AnimatePresence>
           {group.items.map((item, itemIndex) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
             const link = (
               <motion.div
                 key={item.name}
+                layout={false}
                 whileHover={!isActive ? { x: sidebarCollapsed && !isMobile ? 0 : 4, scale: sidebarCollapsed && !isMobile ? 1.08 : 1 } : {}}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
               >
@@ -195,32 +180,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 )}
               >
                 {isActive && (
-                  <motion.span
-                    layoutId="activeIndicator"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full"
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full transition-all duration-200" />
                 )}
-                <motion.div
-                  animate={{ scale: sidebarCollapsed && !isMobile ? 1.1 : 1 }}
-                  transition={{ duration: 0.2 }}
-                  className="transition-transform duration-200 group-hover/nav-item:scale-110"
-                >
+                <div className={cn("transition-transform duration-200 group-hover/nav-item:scale-110", sidebarCollapsed && !isMobile && "scale-110")}>
                   <Icon className={cn("h-4.5 w-4.5 shrink-0 transition-colors duration-200", isActive ? "text-primary" : "group-hover/nav-item:text-primary/80")} />
-                </motion.div>
-                <AnimatePresence>
-                  {(isMobile || !sidebarCollapsed) && (
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: "auto" }}
-                      exit={{ opacity: 0, width: 0 }}
-                      transition={{ duration: 0.2, delay: itemIndex * 0.02 }}
-                      className="text-sm truncate overflow-hidden whitespace-nowrap"
-                    >
-                      {item.name}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+                </div>
+                {(isMobile || !sidebarCollapsed) && (
+                  <span className="text-sm truncate overflow-hidden whitespace-nowrap transition-opacity duration-200">
+                    {item.name}
+                  </span>
+                )}
               </Link>
               </motion.div>
             );
