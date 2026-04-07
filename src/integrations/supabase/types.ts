@@ -195,6 +195,59 @@ export type Database = {
         }
         Relationships: []
       }
+      checklists: {
+        Row: {
+          alertas_gerados: boolean | null
+          created_at: string
+          data_verificacao: string
+          etapa: string
+          id: string
+          itens: Json
+          limites_pcc: Json | null
+          lote_id: string
+          observacoes: string | null
+          resultado: string
+          tecnico_id: string
+          updated_at: string
+        }
+        Insert: {
+          alertas_gerados?: boolean | null
+          created_at?: string
+          data_verificacao?: string
+          etapa: string
+          id?: string
+          itens?: Json
+          limites_pcc?: Json | null
+          lote_id: string
+          observacoes?: string | null
+          resultado?: string
+          tecnico_id: string
+          updated_at?: string
+        }
+        Update: {
+          alertas_gerados?: boolean | null
+          created_at?: string
+          data_verificacao?: string
+          etapa?: string
+          id?: string
+          itens?: Json
+          limites_pcc?: Json | null
+          lote_id?: string
+          observacoes?: string | null
+          resultado?: string
+          tecnico_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklists_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       colheitas: {
         Row: {
           campanha: string
@@ -289,6 +342,56 @@ export type Database = {
           },
           {
             foreignKeyName: "comercializacao_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      embalagens: {
+        Row: {
+          codigo_lote_final: string | null
+          created_at: string
+          data_embalagem: string
+          id: string
+          lote_id: string
+          observacoes: string | null
+          peso_kg: number
+          responsavel_id: string | null
+          tipo_embalagem: string
+          updated_at: string
+          validade: string | null
+        }
+        Insert: {
+          codigo_lote_final?: string | null
+          created_at?: string
+          data_embalagem?: string
+          id?: string
+          lote_id: string
+          observacoes?: string | null
+          peso_kg: number
+          responsavel_id?: string | null
+          tipo_embalagem: string
+          updated_at?: string
+          validade?: string | null
+        }
+        Update: {
+          codigo_lote_final?: string | null
+          created_at?: string
+          data_embalagem?: string
+          id?: string
+          lote_id?: string
+          observacoes?: string | null
+          peso_kg?: number
+          responsavel_id?: string | null
+          tipo_embalagem?: string
+          updated_at?: string
+          validade?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "embalagens_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
             referencedRelation: "lotes"
@@ -701,11 +804,13 @@ export type Database = {
           estado: Database["public"]["Enums"]["lot_status"] | null
           humidade_percent: number | null
           id: string
+          parent_lote_ids: string[] | null
           qr_code: string | null
           referencia_lote: string
           rfid_uid: string | null
           temperatura_c: number | null
           tipo: Database["public"]["Enums"]["lot_type"]
+          tipo_transformacao: string | null
           updated_at: string
           volume_kg: number
         }
@@ -718,11 +823,13 @@ export type Database = {
           estado?: Database["public"]["Enums"]["lot_status"] | null
           humidade_percent?: number | null
           id?: string
+          parent_lote_ids?: string[] | null
           qr_code?: string | null
           referencia_lote: string
           rfid_uid?: string | null
           temperatura_c?: number | null
           tipo?: Database["public"]["Enums"]["lot_type"]
+          tipo_transformacao?: string | null
           updated_at?: string
           volume_kg: number
         }
@@ -735,11 +842,13 @@ export type Database = {
           estado?: Database["public"]["Enums"]["lot_status"] | null
           humidade_percent?: number | null
           id?: string
+          parent_lote_ids?: string[] | null
           qr_code?: string | null
           referencia_lote?: string
           rfid_uid?: string | null
           temperatura_c?: number | null
           tipo?: Database["public"]["Enums"]["lot_type"]
+          tipo_transformacao?: string | null
           updated_at?: string
           volume_kg?: number
         }
@@ -1098,6 +1207,59 @@ export type Database = {
           valor?: number | null
         }
         Relationships: []
+      }
+      torras: {
+        Row: {
+          created_at: string
+          curva_json: Json | null
+          data_torra: string
+          id: string
+          lote_id: string
+          observacoes: string | null
+          perda_peso_percent: number | null
+          perfil_torra: string
+          responsavel_id: string | null
+          temperatura_max_c: number | null
+          tempo_total_min: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          curva_json?: Json | null
+          data_torra?: string
+          id?: string
+          lote_id: string
+          observacoes?: string | null
+          perda_peso_percent?: number | null
+          perfil_torra: string
+          responsavel_id?: string | null
+          temperatura_max_c?: number | null
+          tempo_total_min?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          curva_json?: Json | null
+          data_torra?: string
+          id?: string
+          lote_id?: string
+          observacoes?: string | null
+          perda_peso_percent?: number | null
+          perfil_torra?: string
+          responsavel_id?: string | null
+          temperatura_max_c?: number | null
+          tempo_total_min?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "torras_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transformacoes: {
         Row: {

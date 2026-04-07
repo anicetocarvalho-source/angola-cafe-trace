@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck } from "lucide-react";
+import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, Package, Flame, ClipboardList } from "lucide-react";
 import { useTheme } from "next-themes";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
@@ -96,6 +96,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       items: [
         { name: "Lotes", href: "/lotes", icon: Coffee, roles: ["all"] },
         { name: "Transformação", href: "/transformacao", icon: FlaskConical, roles: ["processador", "cooperativa", "tecnico_inca"] },
+        { name: "Torra", href: "/torra", icon: Flame, roles: ["processador", "tecnico_inca"] },
+        { name: "Embalagem", href: "/embalagem", icon: Package, roles: ["processador", "tecnico_inca"] },
         { name: "Armazenamento", href: "/armazenamento", icon: Warehouse, roles: ["processador", "cooperativa", "exportador", "tecnico_inca"] },
       ],
     },
@@ -111,6 +113,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       label: "Controlo & Qualidade",
       items: [
         { name: "Qualidade", href: "/qualidade", icon: Award, roles: ["tecnico_inca"] },
+        { name: "Checklists", href: "/checklists", icon: ClipboardList, roles: ["tecnico_inca"] },
         { name: "Validação", href: "/validacao", icon: ShieldCheck, roles: ["tecnico_inca"] },
         { name: "Fiscalização", href: "/fiscalizacao", icon: ClipboardCheck, roles: ["tecnico_inca"] },
         { name: "IoT", href: "/iot", icon: Activity, roles: ["tecnico_inca"] },
