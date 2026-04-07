@@ -44,6 +44,9 @@ import Armazenamento from "./pages/Armazenamento";
 import SIMPublico from "./pages/SIMPublico";
 import BoletimMercado from "./pages/BoletimMercado";
 import Perfil from "./pages/Perfil";
+import Checklists from "./pages/Checklists";
+import Torra from "./pages/Torra";
+import Embalagem from "./pages/Embalagem";
 
 const queryClient = new QueryClient();
 
@@ -330,6 +333,30 @@ const App = () => (
             element={
             <ProtectedRoute requiredRole="processador">
                 <Armazenamento />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checklists"
+            element={
+              <ProtectedRoute requiredRole="tecnico_inca">
+                <Checklists />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/torra"
+            element={
+              <ProtectedRoute requiredRole="processador">
+                <Torra />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/embalagem"
+            element={
+              <ProtectedRoute requiredRole="processador">
+                <Embalagem />
               </ProtectedRoute>
             }
           />
