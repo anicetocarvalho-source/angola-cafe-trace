@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Package, MapPin, Activity, FileText, Calendar } from "lucide-react";
+import { ArrowLeft, Package, MapPin, Activity, FileText, Calendar, Clock } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
+import LoteTimeline from "@/components/LoteTimeline";
 
 interface LoteDetalhado {
   id: string;
@@ -189,11 +190,16 @@ const LoteDetalhes = () => {
         {/* Tabs */}
         <Tabs defaultValue="origem" className="space-y-4">
           <TabsList>
+            <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="origem">Origem</TabsTrigger>
             <TabsTrigger value="processamento">Processamento</TabsTrigger>
             <TabsTrigger value="qualidade">Qualidade</TabsTrigger>
             <TabsTrigger value="documentos">Documentos</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="timeline">
+            <LoteTimeline loteId={lote.id} />
+          </TabsContent>
 
           <TabsContent value="origem">
             <Card>
