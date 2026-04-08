@@ -52,6 +52,28 @@ const LoteTimeline = ({ loteId }: LoteTimelineProps) => {
 
       const timeline: TimelineEvent[] = [];
 
+      // Genealogia — Divisão ou Blend
+      if (lote?.tipo_transformacao && lote?.parent_lote_ids?.length > 0) {
+        const { data: parentLotes } = await supabase
+          .from("lotes")
+          .select("id, referencia_lote")
+          .in("id", lote.parent_lote_ids);
+
+        const parentNames = parentLotes?.map((p: any) => p.referencia_lote).join(", ") || "N/D";
+        const isDivisao = lote.tipo_transformacao === "divisao";
+
+        timeline.push({
+          id: `genealogia-${lote.id}`,
+          type: "genealogia",
+          title: isDivisao ? "Origem: Divisão de Lote" : "Origem: Blend/Agregação",
+          description: `Lotes de origem: ${parentNames}`,
+          date: lote.created_at,
+          icon: isDivisao ? GitBranch : GitMerge,
+          status: lote.tipo_transformacao,
+          parentLoteIds: parentLotes?.map((p: any) => ({ id: p.id, ref: p.referencia_lote })),
+        });
+      }
+
       // Colheita
       if (lote?.colheitas) {
         const c = lote.colheitas as any;
