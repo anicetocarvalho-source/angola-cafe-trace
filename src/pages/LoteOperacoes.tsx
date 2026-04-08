@@ -62,7 +62,8 @@ const LoteOperacoes = () => {
       if (subLotes.some((s) => s.volume_kg <= 0)) throw new Error("Todos os sub-lotes devem ter volume > 0");
 
       const results = [];
-      for (const sub of subLotes) {
+      for (let idx = 0; idx < subLotes.length; idx++) {
+        const sub = subLotes[idx];
         const { data, error } = await supabase
           .from("lotes")
           .insert({
