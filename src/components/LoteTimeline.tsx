@@ -252,6 +252,15 @@ const LoteTimeline = ({ loteId }: LoteTimelineProps) => {
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">{event.description}</p>
+                    {event.parentLoteIds && event.parentLoteIds.length > 0 && (
+                      <div className="flex gap-2 flex-wrap mt-1">
+                        {event.parentLoteIds.map((p) => (
+                          <Link key={p.id} to={`/lotes/${p.id}`} className="text-xs text-primary hover:underline font-mono">
+                            {p.ref}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                     <p className="text-xs text-muted-foreground mt-1">
                       {new Date(event.date).toLocaleDateString("pt-PT", { day: "2-digit", month: "short", year: "numeric" })}
                     </p>
