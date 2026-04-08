@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sprout, Coffee, Sun, FlaskConical, Warehouse, Truck, Ship, Award, Package } from "lucide-react";
+import { Sprout, Coffee, Sun, FlaskConical, Warehouse, Truck, Ship, Award, Package, GitBranch, GitMerge } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface TimelineEvent {
   id: string;
@@ -13,6 +14,7 @@ interface TimelineEvent {
   date: string;
   icon: React.ElementType;
   status?: string;
+  parentLoteIds?: { id: string; ref: string }[];
 }
 
 interface LoteTimelineProps {
@@ -50,6 +52,28 @@ const LoteTimeline = ({ loteId }: LoteTimelineProps) => {
       ]);
 
       const timeline: TimelineEvent[] = [];
+
+      // Genealogia — Divisão ou Blend
+      if (lote?.tipo_transformacao && lote?.parent_lote_ids?.length > 0) {
+        const { data: parentLotes } = await supabase
+          .from("lotes")
+          .select("id, referencia_lote")
+          .in("id", lote.parent_lote_ids);
+
+        const parentNames = parentLotes?.map((p: any) => p.referencia_lote).join(", ") || "N/D";
+        const isDivisao = lote.tipo_transformacao === "divisao";
+
+        timeline.push({
+          id: `genealogia-${lote.id}`,
+          type: "genealogia",
+          title: isDivisao ? "Origem: Divisão de Lote" : "Origem: Blend/Agregação",
+          description: `Lotes de origem: ${parentNames}`,
+          date: lote.created_at,
+          icon: isDivisao ? GitBranch : GitMerge,
+          status: lote.tipo_transformacao,
+          parentLoteIds: parentLotes?.map((p: any) => ({ id: p.id, ref: p.referencia_lote })),
+        });
+      }
 
       // Colheita
       if (lote?.colheitas) {
@@ -187,6 +211,7 @@ const LoteTimeline = ({ loteId }: LoteTimelineProps) => {
     embalagem: "bg-pink-500",
     qualidade: "bg-emerald-500",
     exportacao: "bg-indigo-500",
+    genealogia: "bg-violet-500",
   };
 
   if (loading) {
@@ -227,6 +252,15 @@ const LoteTimeline = ({ loteId }: LoteTimelineProps) => {
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">{event.description}</p>
+                    {event.parentLoteIds && event.parentLoteIds.length > 0 && (
+                      <div className="flex gap-2 flex-wrap mt-1">
+                        {event.parentLoteIds.map((p) => (
+                          <Link key={p.id} to={`/lotes/${p.id}`} className="text-xs text-primary hover:underline font-mono">
+                            {p.ref}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                     <p className="text-xs text-muted-foreground mt-1">
                       {new Date(event.date).toLocaleDateString("pt-PT", { day: "2-digit", month: "short", year: "numeric" })}
                     </p>
