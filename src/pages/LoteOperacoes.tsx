@@ -66,6 +66,7 @@ const LoteOperacoes = () => {
         const { data, error } = await supabase
           .from("lotes")
           .insert({
+            referencia_lote: `TEMP-${Date.now()}-${idx}`,
             volume_kg: sub.volume_kg,
             tipo: sub.tipo as any,
             tipo_transformacao: "divisao",
@@ -119,6 +120,7 @@ const LoteOperacoes = () => {
       const { data, error } = await supabase
         .from("lotes")
         .insert({
+          referencia_lote: `TEMP-BLEND-${Date.now()}`,
           volume_kg: totalVolume,
           tipo: blendTipo as any,
           tipo_transformacao: "blend",
