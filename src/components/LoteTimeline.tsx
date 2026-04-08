@@ -14,6 +14,7 @@ interface TimelineEvent {
   date: string;
   icon: React.ElementType;
   status?: string;
+  parentLoteIds?: { id: string; ref: string }[];
 }
 
 interface LoteTimelineProps {
