@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sprout, Coffee, Sun, FlaskConical, Warehouse, Truck, Ship, Award, Package } from "lucide-react";
+import { Sprout, Coffee, Sun, FlaskConical, Warehouse, Truck, Ship, Award, Package, GitBranch, GitMerge } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface TimelineEvent {
   id: string;
