@@ -210,7 +210,7 @@ const LoteTimeline = ({ loteId }: LoteTimelineProps) => {
     logistica: "bg-cyan-500",
     embalagem: "bg-pink-500",
     qualidade: "bg-emerald-500",
-    exportacao: "bg-indigo-500",
+    genealogia: "bg-violet-500",
   };
 
   if (loading) {
