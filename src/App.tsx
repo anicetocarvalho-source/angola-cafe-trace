@@ -47,6 +47,7 @@ import Perfil from "./pages/Perfil";
 import Checklists from "./pages/Checklists";
 import Torra from "./pages/Torra";
 import Embalagem from "./pages/Embalagem";
+import LoteOperacoes from "./pages/LoteOperacoes";
 
 const queryClient = new QueryClient();
 
@@ -357,6 +358,14 @@ const App = () => (
             element={
               <ProtectedRoute requiredRole="processador">
                 <Embalagem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lotes/operacoes"
+            element={
+              <ProtectedRoute>
+                <LoteOperacoes />
               </ProtectedRoute>
             }
           />
