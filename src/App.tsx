@@ -368,6 +368,7 @@ const App = () => (
                 <LoteOperacoes />
               </ProtectedRoute>
             }
+          />
           <Route
             path="/perfil"
             element={
