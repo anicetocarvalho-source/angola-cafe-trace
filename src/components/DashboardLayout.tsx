@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, Package, Flame, ClipboardList } from "lucide-react";
+import { Coffee, LogOut, Menu, Map, LayoutDashboard, TrendingUp, FileBarChart, Settings, Activity, History, Sprout, Leaf, ClipboardCheck, FlaskConical, Truck, Handshake, Warehouse, ChevronsLeft, Sun, Moon, LucideIcon, Trees, Grid3x3, Ship, Award, ShieldCheck, Package, Flame, ClipboardList, GitBranch } from "lucide-react";
 import { useTheme } from "next-themes";
 import NotificationCenter from "@/components/NotificationCenter";
 import QRScanner from "@/components/QRScanner";
@@ -95,6 +95,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       label: "Processamento",
       items: [
         { name: "Lotes", href: "/lotes", icon: Coffee, roles: ["all"] },
+        { name: "Dividir/Blend", href: "/lotes/operacoes", icon: GitBranch, roles: ["processador", "cooperativa", "tecnico_inca", "admin_inca"] },
         { name: "Transformação", href: "/transformacao", icon: FlaskConical, roles: ["processador", "cooperativa", "tecnico_inca"] },
         { name: "Torra", href: "/torra", icon: Flame, roles: ["processador", "tecnico_inca"] },
         { name: "Embalagem", href: "/embalagem", icon: Package, roles: ["processador", "tecnico_inca"] },
