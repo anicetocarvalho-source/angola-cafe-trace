@@ -205,6 +205,45 @@ const LoteDetalhes = () => {
 
           <TabsContent value="sensorial">
             <div className="space-y-6">
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const scores = {
+                      sca_aroma: (lote as any).sca_aroma,
+                      sca_acidez: (lote as any).sca_acidez,
+                      sca_corpo: (lote as any).sca_corpo,
+                      sca_sabor: (lote as any).sca_sabor,
+                      sca_aftertaste: (lote as any).sca_aftertaste,
+                      sca_uniformidade: (lote as any).sca_uniformidade,
+                      sca_balance: (lote as any).sca_balance,
+                      sca_clean_cup: (lote as any).sca_clean_cup,
+                      sca_sweetness: (lote as any).sca_sweetness,
+                      sca_overall: (lote as any).sca_overall,
+                    };
+                    exportScaPdf({
+                      referencia_lote: lote.referencia_lote,
+                      tipo: lote.tipo,
+                      volume_kg: lote.volume_kg,
+                      estado: lote.estado,
+                      scores,
+                      totalScore: lote.classificacao_sensorial,
+                      notas_sensoriais: (lote as any).notas_sensoriais,
+                      origem: lote.colheitas ? {
+                        exploracao: lote.colheitas.parcelas.exploracoes.designacao,
+                        parcela: lote.colheitas.parcelas.codigo_parcela,
+                        municipio: lote.colheitas.parcelas.exploracoes.municipio,
+                        provincia: lote.colheitas.parcelas.exploracoes.provincia,
+                        campanha: lote.colheitas.campanha,
+                      } : null,
+                    });
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Exportar PDF
+                </Button>
+              </div>
               <SCARadarChart
                 scores={{
                   sca_aroma: (lote as any).sca_aroma,
