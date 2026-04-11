@@ -151,6 +151,21 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     ? user.email.substring(0, 2).toUpperCase()
     : "?";
 
+  const handleRipple = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+    const ripple = document.createElement("span");
+    ripple.className = "ripple";
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    el.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove());
+  };
+
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {filteredGroups.map((group, groupIndex) => (
@@ -174,9 +189,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               >
               <Link
                 to={item.href}
-                onClick={isMobile ? handleNavigation : undefined}
+                onClick={(e) => {
+                  handleRipple(e);
+                  if (isMobile) handleNavigation();
+                }}
                 className={cn(
-                  "group/nav-item flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative",
+                  "ripple-container group/nav-item flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 relative",
                   isActive
                     ? "bg-primary/10 text-primary font-semibold cursor-default"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_12px_-3px_hsl(var(--primary)/0.25)]",
