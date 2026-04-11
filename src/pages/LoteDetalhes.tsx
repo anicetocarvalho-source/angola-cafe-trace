@@ -221,7 +221,27 @@ const LoteDetalhes = () => {
             <LoteGenealogy loteId={lote.id} />
           </TabsContent>
 
-          <TabsContent value="origem">
+          <TabsContent value="sensorial" className="space-y-4">
+            <SCARadarChart lote={lote} />
+            <SCAScoreForm
+              loteId={lote.id}
+              initialValues={{
+                sca_aroma: lote.sca_aroma,
+                sca_acidez: lote.sca_acidez,
+                sca_corpo: lote.sca_corpo,
+                sca_sabor: lote.sca_sabor,
+                sca_aftertaste: lote.sca_aftertaste,
+                sca_uniformidade: lote.sca_uniformidade,
+                sca_balance: lote.sca_balance,
+                sca_clean_cup: lote.sca_clean_cup,
+                sca_sweetness: lote.sca_sweetness,
+                sca_overall: lote.sca_overall,
+              }}
+              initialNotes={lote.notas_sensoriais}
+              onSaved={() => fetchLoteDetails()}
+            />
+          </TabsContent>
+
             <Card>
               <CardHeader>
                 <CardTitle>Rastreabilidade</CardTitle>
