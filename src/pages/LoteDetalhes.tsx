@@ -10,6 +10,8 @@ import { ArrowLeft, Package, MapPin, Activity, FileText, Calendar, Clock, GitBra
 import FileUpload from "@/components/FileUpload";
 import LoteTimeline from "@/components/LoteTimeline";
 import LoteGenealogy from "@/components/LoteGenealogy";
+import SCARadarChart from "@/components/SCARadarChart";
+import SCAScoreForm from "@/components/SCAScoreForm";
 
 interface LoteDetalhado {
   id: string;
@@ -20,6 +22,17 @@ interface LoteDetalhado {
   classificacao_sensorial: number | null;
   humidade_percent: number | null;
   temperatura_c: number | null;
+  sca_aroma: number | null;
+  sca_acidez: number | null;
+  sca_corpo: number | null;
+  sca_sabor: number | null;
+  sca_aftertaste: number | null;
+  sca_uniformidade: number | null;
+  sca_balance: number | null;
+  sca_clean_cup: number | null;
+  sca_sweetness: number | null;
+  sca_overall: number | null;
+  notas_sensoriais: string | null;
   created_at: string;
   colheitas: {
     campanha: string;
@@ -195,6 +208,7 @@ const LoteDetalhes = () => {
             <TabsTrigger value="genealogia">Genealogia</TabsTrigger>
             <TabsTrigger value="origem">Origem</TabsTrigger>
             <TabsTrigger value="processamento">Processamento</TabsTrigger>
+            <TabsTrigger value="sensorial">Sensorial SCA</TabsTrigger>
             <TabsTrigger value="qualidade">Qualidade</TabsTrigger>
             <TabsTrigger value="documentos">Documentos</TabsTrigger>
           </TabsList>
