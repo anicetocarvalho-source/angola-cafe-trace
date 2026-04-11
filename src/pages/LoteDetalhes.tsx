@@ -242,6 +242,7 @@ const LoteDetalhes = () => {
             />
           </TabsContent>
 
+          <TabsContent value="origem">
             <Card>
               <CardHeader>
                 <CardTitle>Rastreabilidade</CardTitle>
