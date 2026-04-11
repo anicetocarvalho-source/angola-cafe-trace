@@ -289,6 +289,49 @@ const NovoLote = () => {
                   />
                 </div>
 
+                <Collapsible open={scaOpen} onOpenChange={setScaOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" type="button" className="w-full justify-between">
+                      Avaliação Sensorial SCA (opcional)
+                      {scaTotal > 0 && <span className="text-xs text-muted-foreground ml-2">Total: {scaTotal.toFixed(1)}/100</span>}
+                      <ChevronDown className={`h-4 w-4 transition-transform ${scaOpen ? "rotate-180" : ""}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4 space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {scaAttributes.map((attr) => (
+                        <FormField
+                          key={attr.key}
+                          control={form.control}
+                          name={attr.key}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{attr.label}</FormLabel>
+                              <FormControl>
+                                <Input type="number" min={0} max={10} step={0.25} placeholder="0-10" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      ))}
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="notas_sensoriais"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Notas Sensoriais</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Ex: chocolate, frutos vermelhos, cítrico..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
+
                 <div className="flex gap-4">
                   <Button type="submit" disabled={loading}>
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
