@@ -192,6 +192,7 @@ const LoteDetalhes = () => {
         <Tabs defaultValue="timeline" className="space-y-4">
           <TabsList>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
+            <TabsTrigger value="genealogia">Genealogia</TabsTrigger>
             <TabsTrigger value="origem">Origem</TabsTrigger>
             <TabsTrigger value="processamento">Processamento</TabsTrigger>
             <TabsTrigger value="qualidade">Qualidade</TabsTrigger>
