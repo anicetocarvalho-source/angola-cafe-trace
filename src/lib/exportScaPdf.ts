@@ -238,7 +238,7 @@ export function exportScaPdf(data: ExportData) {
     return [a.label, score, bar];
   });
 
-  (doc as any).autoTable({
+  autoTable(doc, {
     startY: y,
     head: [["Atributo", "Pontuação", ""]],
     body: tableData,
