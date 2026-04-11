@@ -804,10 +804,21 @@ export type Database = {
           estado: Database["public"]["Enums"]["lot_status"] | null
           humidade_percent: number | null
           id: string
+          notas_sensoriais: string | null
           parent_lote_ids: string[] | null
           qr_code: string | null
           referencia_lote: string
           rfid_uid: string | null
+          sca_acidez: number | null
+          sca_aftertaste: number | null
+          sca_aroma: number | null
+          sca_balance: number | null
+          sca_clean_cup: number | null
+          sca_corpo: number | null
+          sca_overall: number | null
+          sca_sabor: number | null
+          sca_sweetness: number | null
+          sca_uniformidade: number | null
           temperatura_c: number | null
           tipo: Database["public"]["Enums"]["lot_type"]
           tipo_transformacao: string | null
@@ -823,10 +834,21 @@ export type Database = {
           estado?: Database["public"]["Enums"]["lot_status"] | null
           humidade_percent?: number | null
           id?: string
+          notas_sensoriais?: string | null
           parent_lote_ids?: string[] | null
           qr_code?: string | null
           referencia_lote: string
           rfid_uid?: string | null
+          sca_acidez?: number | null
+          sca_aftertaste?: number | null
+          sca_aroma?: number | null
+          sca_balance?: number | null
+          sca_clean_cup?: number | null
+          sca_corpo?: number | null
+          sca_overall?: number | null
+          sca_sabor?: number | null
+          sca_sweetness?: number | null
+          sca_uniformidade?: number | null
           temperatura_c?: number | null
           tipo?: Database["public"]["Enums"]["lot_type"]
           tipo_transformacao?: string | null
@@ -842,10 +864,21 @@ export type Database = {
           estado?: Database["public"]["Enums"]["lot_status"] | null
           humidade_percent?: number | null
           id?: string
+          notas_sensoriais?: string | null
           parent_lote_ids?: string[] | null
           qr_code?: string | null
           referencia_lote?: string
           rfid_uid?: string | null
+          sca_acidez?: number | null
+          sca_aftertaste?: number | null
+          sca_aroma?: number | null
+          sca_balance?: number | null
+          sca_clean_cup?: number | null
+          sca_corpo?: number | null
+          sca_overall?: number | null
+          sca_sabor?: number | null
+          sca_sweetness?: number | null
+          sca_uniformidade?: number | null
           temperatura_c?: number | null
           tipo?: Database["public"]["Enums"]["lot_type"]
           tipo_transformacao?: string | null
