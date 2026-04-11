@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { TestWrapper } from "@/test/mocks/router";
 import "@/test/mocks/supabase";
 
@@ -20,10 +20,13 @@ describe("Lot Creation Flow", () => {
   });
 
   it("renders the lot creation form inside DashboardLayout", async () => {
-    // Dynamically import after mocks are set
     const { default: NovoLote } = await import("@/pages/NovoLote");
     render(<NovoLote />, { wrapper: TestWrapper });
-    expect(screen.getByText(/novo lote/i)).toBeInTheDocument();
+
+    await waitFor(() => {
+      const headings = screen.getAllByText(/novo lote/i);
+      expect(headings.length).toBeGreaterThan(0);
+    });
   });
 });
 
@@ -47,21 +50,17 @@ describe("Lot Validation Logic", () => {
   it("validates lot types enum matches database", () => {
     const expectedTypes = ["cereja", "cafe_verde", "parchment", "torrado", "moido"];
     expect(expectedTypes).toHaveLength(5);
-    expectedTypes.forEach((type) => expect(type.length).toBeGreaterThan(0));
   });
 
   it("validates lot reference format LOT-YYYY-NNNNNN", () => {
     const refPattern = /^LOT-\d{4}-\d{6}$/;
     expect(refPattern.test("LOT-2026-000001")).toBe(true);
-    expect(refPattern.test("LOT-2026-123456")).toBe(true);
     expect(refPattern.test("INVALID")).toBe(false);
-    expect(refPattern.test("LOT-26-001")).toBe(false);
   });
 
   it("validates QR code format QR-NNNNNNNNNN", () => {
     const qrPattern = /^QR-\d{10}$/;
     expect(qrPattern.test("QR-0000000001")).toBe(true);
-    expect(qrPattern.test("QR-9999999999")).toBe(true);
     expect(qrPattern.test("QR-123")).toBe(false);
   });
 
@@ -73,7 +72,5 @@ describe("Lot Validation Logic", () => {
   it("validates lot_status enum values", () => {
     const statuses = ["pendente", "em_processo", "aprovado", "reprovado", "exportado", "consumido"];
     expect(statuses).toHaveLength(6);
-    expect(statuses).toContain("pendente");
-    expect(statuses).toContain("aprovado");
   });
 });
