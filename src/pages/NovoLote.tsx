@@ -7,11 +7,18 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, ChevronDown } from "lucide-react";
+
+const scaField = z.string().optional().refine(
+  (v) => !v || (parseFloat(v) >= 0 && parseFloat(v) <= 10),
+  "Valor entre 0 e 10"
+);
 
 const formSchema = z.object({
   colheita_id: z.string().optional(),
@@ -19,6 +26,17 @@ const formSchema = z.object({
   volume_kg: z.string().min(1, "Volume obrigatório"),
   humidade_percent: z.string().optional(),
   temperatura_c: z.string().optional(),
+  sca_aroma: scaField,
+  sca_acidez: scaField,
+  sca_corpo: scaField,
+  sca_sabor: scaField,
+  sca_aftertaste: scaField,
+  sca_uniformidade: scaField,
+  sca_balance: scaField,
+  sca_clean_cup: scaField,
+  sca_sweetness: scaField,
+  sca_overall: scaField,
+  notas_sensoriais: z.string().optional(),
 });
 
 interface Colheita {
