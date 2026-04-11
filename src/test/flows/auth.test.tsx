@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, act, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+
 import Auth from "@/pages/Auth";
 import { TestWrapper } from "@/test/mocks/router";
 import { mockSupabase } from "@/test/mocks/supabase";
