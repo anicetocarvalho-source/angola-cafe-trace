@@ -7,11 +7,18 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, ChevronDown } from "lucide-react";
+
+const scaField = z.string().optional().refine(
+  (v) => !v || (parseFloat(v) >= 0 && parseFloat(v) <= 10),
+  "Valor entre 0 e 10"
+);
 
 const formSchema = z.object({
   colheita_id: z.string().optional(),
@@ -19,6 +26,17 @@ const formSchema = z.object({
   volume_kg: z.string().min(1, "Volume obrigatório"),
   humidade_percent: z.string().optional(),
   temperatura_c: z.string().optional(),
+  sca_aroma: scaField,
+  sca_acidez: scaField,
+  sca_corpo: scaField,
+  sca_sabor: scaField,
+  sca_aftertaste: scaField,
+  sca_uniformidade: scaField,
+  sca_balance: scaField,
+  sca_clean_cup: scaField,
+  sca_sweetness: scaField,
+  sca_overall: scaField,
+  notas_sensoriais: z.string().optional(),
 });
 
 interface Colheita {
@@ -36,6 +54,7 @@ const NovoLote = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [colheitas, setColheitas] = useState<Colheita[]>([]);
+  const [scaOpen, setScaOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,8 +64,35 @@ const NovoLote = () => {
       volume_kg: "",
       humidade_percent: "",
       temperatura_c: "",
+      sca_aroma: "",
+      sca_acidez: "",
+      sca_corpo: "",
+      sca_sabor: "",
+      sca_aftertaste: "",
+      sca_uniformidade: "",
+      sca_balance: "",
+      sca_clean_cup: "",
+      sca_sweetness: "",
+      sca_overall: "",
+      notas_sensoriais: "",
     },
   });
+
+  const scaAttributes = [
+    { key: "sca_aroma" as const, label: "Aroma" },
+    { key: "sca_acidez" as const, label: "Acidez" },
+    { key: "sca_corpo" as const, label: "Corpo" },
+    { key: "sca_sabor" as const, label: "Sabor" },
+    { key: "sca_aftertaste" as const, label: "Aftertaste" },
+    { key: "sca_uniformidade" as const, label: "Uniformidade" },
+    { key: "sca_balance" as const, label: "Balance" },
+    { key: "sca_clean_cup" as const, label: "Clean Cup" },
+    { key: "sca_sweetness" as const, label: "Sweetness" },
+    { key: "sca_overall" as const, label: "Overall" },
+  ];
+
+  const watchedSca = form.watch(scaAttributes.map((a) => a.key));
+  const scaTotal = watchedSca.reduce((sum, v) => sum + (v ? parseFloat(v) || 0 : 0), 0);
 
   useEffect(() => {
     fetchColheitas();
@@ -79,12 +125,26 @@ const NovoLote = () => {
     setLoading(true);
 
     try {
+      const parseOpt = (v: string | undefined) => v ? parseFloat(v) || null : null;
+
       const insertData: any = {
         tipo: values.tipo,
         volume_kg: parseFloat(values.volume_kg),
-        humidade_percent: values.humidade_percent ? parseFloat(values.humidade_percent) : null,
-        temperatura_c: values.temperatura_c ? parseFloat(values.temperatura_c) : null,
+        humidade_percent: parseOpt(values.humidade_percent),
+        temperatura_c: parseOpt(values.temperatura_c),
         estado: "pendente",
+        sca_aroma: parseOpt(values.sca_aroma),
+        sca_acidez: parseOpt(values.sca_acidez),
+        sca_corpo: parseOpt(values.sca_corpo),
+        sca_sabor: parseOpt(values.sca_sabor),
+        sca_aftertaste: parseOpt(values.sca_aftertaste),
+        sca_uniformidade: parseOpt(values.sca_uniformidade),
+        sca_balance: parseOpt(values.sca_balance),
+        sca_clean_cup: parseOpt(values.sca_clean_cup),
+        sca_sweetness: parseOpt(values.sca_sweetness),
+        sca_overall: parseOpt(values.sca_overall),
+        notas_sensoriais: values.notas_sensoriais || null,
+        classificacao_sensorial: scaTotal > 0 ? scaTotal : null,
       };
 
       if (values.colheita_id && values.colheita_id !== "none") {
@@ -228,6 +288,49 @@ const NovoLote = () => {
                     )}
                   />
                 </div>
+
+                <Collapsible open={scaOpen} onOpenChange={setScaOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" type="button" className="w-full justify-between">
+                      Avaliação Sensorial SCA (opcional)
+                      {scaTotal > 0 && <span className="text-xs text-muted-foreground ml-2">Total: {scaTotal.toFixed(1)}/100</span>}
+                      <ChevronDown className={`h-4 w-4 transition-transform ${scaOpen ? "rotate-180" : ""}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4 space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {scaAttributes.map((attr) => (
+                        <FormField
+                          key={attr.key}
+                          control={form.control}
+                          name={attr.key}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{attr.label}</FormLabel>
+                              <FormControl>
+                                <Input type="number" min={0} max={10} step={0.25} placeholder="0-10" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      ))}
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="notas_sensoriais"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Notas Sensoriais</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Ex: chocolate, frutos vermelhos, cítrico..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
 
                 <div className="flex gap-4">
                   <Button type="submit" disabled={loading}>
