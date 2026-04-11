@@ -42,9 +42,18 @@ function collectAncestorRows(node: TreeNode): TreeNode[][] {
   const rows: TreeNode[][] = [];
   let currentLevel = node.parents;
   while (currentLevel.length > 0) {
-    rows.unshift([...currentLevel]);
-    const nextLevel: TreeNode[] = [];
+    // Deduplicate nodes at the same level by lote id
+    const seen = new Set<string>();
+    const deduped: TreeNode[] = [];
     for (const n of currentLevel) {
+      if (!seen.has(n.lote.id)) {
+        seen.add(n.lote.id);
+        deduped.push(n);
+      }
+    }
+    rows.unshift([...deduped]);
+    const nextLevel: TreeNode[] = [];
+    for (const n of deduped) {
       nextLevel.push(...n.parents);
     }
     currentLevel = nextLevel;
