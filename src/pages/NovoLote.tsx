@@ -59,7 +59,7 @@ const NovoLote = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      colheita_id: "",
+      colheita_id: "none",
       tipo: "cereja",
       volume_kg: "",
       humidade_percent: "",
