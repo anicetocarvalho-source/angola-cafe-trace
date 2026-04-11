@@ -203,6 +203,10 @@ const LoteDetalhes = () => {
             <LoteTimeline loteId={lote.id} />
           </TabsContent>
 
+          <TabsContent value="genealogia">
+            <LoteGenealogy loteId={lote.id} />
+          </TabsContent>
+
           <TabsContent value="origem">
             <Card>
               <CardHeader>
