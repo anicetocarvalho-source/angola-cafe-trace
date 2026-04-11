@@ -218,39 +218,36 @@ function layoutTree(tree: TreeNode): { nodes: PositionedNode[]; lines: SvgLine[]
 
   const totalHeight = allRows.length * (CARD_H + GAP_Y) - GAP_Y;
 
-  // Build SVG lines: parent → child connections
+  // Build SVG lines: parent → child connections (deduplicated)
   const lines: SvgLine[] = [];
+  const lineKeys = new Set<string>();
+
+  function addLine(fromId: string, toId: string) {
+    const key = `${fromId}->${toId}`;
+    if (lineKeys.has(key)) return;
+    lineKeys.add(key);
+    const fromPos = idToPos.get(fromId);
+    const toPos = idToPos.get(toId);
+    if (fromPos && toPos) {
+      lines.push({
+        x1: fromPos.cx,
+        y1: fromPos.cy + CARD_H / 2,
+        x2: toPos.cx,
+        y2: toPos.cy - CARD_H / 2,
+      });
+    }
+  }
 
   function addParentLines(node: TreeNode) {
-    const childPos = idToPos.get(node.lote.id);
-    if (!childPos) return;
     for (const parent of node.parents) {
-      const parentPos = idToPos.get(parent.lote.id);
-      if (parentPos) {
-        lines.push({
-          x1: parentPos.cx,
-          y1: parentPos.cy + CARD_H / 2,
-          x2: childPos.cx,
-          y2: childPos.cy - CARD_H / 2,
-        });
-      }
+      addLine(parent.lote.id, node.lote.id);
       addParentLines(parent);
     }
   }
 
   function addChildLines(node: TreeNode) {
-    const parentPos = idToPos.get(node.lote.id);
-    if (!parentPos) return;
     for (const child of node.children) {
-      const childPos = idToPos.get(child.lote.id);
-      if (childPos) {
-        lines.push({
-          x1: parentPos.cx,
-          y1: parentPos.cy + CARD_H / 2,
-          x2: childPos.cx,
-          y2: childPos.cy - CARD_H / 2,
-        });
-      }
+      addLine(node.lote.id, child.lote.id);
       addChildLines(child);
     }
   }
