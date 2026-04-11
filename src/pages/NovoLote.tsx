@@ -198,12 +198,10 @@ const NovoLote = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Colheita Associada (opcional)</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccione uma colheita" />
-                          </SelectTrigger>
-                        </FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione uma colheita" />
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">Sem colheita associada</SelectItem>
                           {colheitas.map((c) => (
@@ -225,12 +223,10 @@ const NovoLote = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tipo *</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="cereja">Cereja</SelectItem>
                             <SelectItem value="cafe_verde">Café Verde</SelectItem>
