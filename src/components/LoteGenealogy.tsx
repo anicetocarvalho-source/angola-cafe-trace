@@ -304,6 +304,10 @@ const GenealogyDiagram = ({ tree }: { tree: TreeNode }) => {
         {lines.map((line, i) => {
           const midY = (line.y1 + line.y2) / 2;
           const d = `M ${line.x1} ${line.y1} C ${line.x1} ${midY}, ${line.x2} ${midY}, ${line.x2} ${line.y2}`;
+          // Approximate Bézier length for dash animation
+          const dx = line.x2 - line.x1;
+          const dy = line.y2 - line.y1;
+          const len = Math.sqrt(dx * dx + dy * dy) * 1.3;
           return (
             <path
               key={i}
@@ -313,7 +317,11 @@ const GenealogyDiagram = ({ tree }: { tree: TreeNode }) => {
               strokeWidth="2"
               strokeLinecap="round"
               markerEnd="url(#arrowhead)"
-              className="transition-all duration-300"
+              strokeDasharray={len}
+              strokeDashoffset={len}
+              style={{
+                animation: `genealogy-draw 0.8s ease-out ${0.3 + i * 0.15}s forwards`,
+              }}
             />
           );
         })}
