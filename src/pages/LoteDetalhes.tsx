@@ -22,17 +22,6 @@ interface LoteDetalhado {
   classificacao_sensorial: number | null;
   humidade_percent: number | null;
   temperatura_c: number | null;
-  sca_aroma: number | null;
-  sca_acidez: number | null;
-  sca_corpo: number | null;
-  sca_sabor: number | null;
-  sca_aftertaste: number | null;
-  sca_uniformidade: number | null;
-  sca_balance: number | null;
-  sca_clean_cup: number | null;
-  sca_sweetness: number | null;
-  sca_overall: number | null;
-  notas_sensoriais: string | null;
   created_at: string;
   colheitas: {
     campanha: string;
@@ -208,10 +197,47 @@ const LoteDetalhes = () => {
             <TabsTrigger value="genealogia">Genealogia</TabsTrigger>
             <TabsTrigger value="origem">Origem</TabsTrigger>
             <TabsTrigger value="processamento">Processamento</TabsTrigger>
-            <TabsTrigger value="sensorial">Sensorial SCA</TabsTrigger>
             <TabsTrigger value="qualidade">Qualidade</TabsTrigger>
+            <TabsTrigger value="sensorial">Sensorial SCA</TabsTrigger>
             <TabsTrigger value="documentos">Documentos</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="sensorial">
+            <div className="space-y-6">
+              <SCARadarChart
+                scores={{
+                  sca_aroma: (lote as any).sca_aroma,
+                  sca_acidez: (lote as any).sca_acidez,
+                  sca_corpo: (lote as any).sca_corpo,
+                  sca_sabor: (lote as any).sca_sabor,
+                  sca_aftertaste: (lote as any).sca_aftertaste,
+                  sca_uniformidade: (lote as any).sca_uniformidade,
+                  sca_balance: (lote as any).sca_balance,
+                  sca_clean_cup: (lote as any).sca_clean_cup,
+                  sca_sweetness: (lote as any).sca_sweetness,
+                  sca_overall: (lote as any).sca_overall,
+                }}
+                totalScore={lote.classificacao_sensorial}
+              />
+              <SCAScoreForm
+                loteId={lote.id}
+                initialData={{
+                  sca_aroma: (lote as any).sca_aroma,
+                  sca_acidez: (lote as any).sca_acidez,
+                  sca_corpo: (lote as any).sca_corpo,
+                  sca_sabor: (lote as any).sca_sabor,
+                  sca_aftertaste: (lote as any).sca_aftertaste,
+                  sca_uniformidade: (lote as any).sca_uniformidade,
+                  sca_balance: (lote as any).sca_balance,
+                  sca_clean_cup: (lote as any).sca_clean_cup,
+                  sca_sweetness: (lote as any).sca_sweetness,
+                  sca_overall: (lote as any).sca_overall,
+                  notas_sensoriais: (lote as any).notas_sensoriais,
+                }}
+                onSaved={fetchLoteDetails}
+              />
+            </div>
+          </TabsContent>
 
           <TabsContent value="timeline">
             <LoteTimeline loteId={lote.id} />
@@ -219,27 +245,6 @@ const LoteDetalhes = () => {
 
           <TabsContent value="genealogia">
             <LoteGenealogy loteId={lote.id} />
-          </TabsContent>
-
-          <TabsContent value="sensorial" className="space-y-4">
-            <SCARadarChart lote={lote} />
-            <SCAScoreForm
-              loteId={lote.id}
-              initialValues={{
-                sca_aroma: lote.sca_aroma,
-                sca_acidez: lote.sca_acidez,
-                sca_corpo: lote.sca_corpo,
-                sca_sabor: lote.sca_sabor,
-                sca_aftertaste: lote.sca_aftertaste,
-                sca_uniformidade: lote.sca_uniformidade,
-                sca_balance: lote.sca_balance,
-                sca_clean_cup: lote.sca_clean_cup,
-                sca_sweetness: lote.sca_sweetness,
-                sca_overall: lote.sca_overall,
-              }}
-              initialNotes={lote.notas_sensoriais}
-              onSaved={() => fetchLoteDetails()}
-            />
           </TabsContent>
 
           <TabsContent value="origem">
