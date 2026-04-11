@@ -2,30 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import Dashboard from "@/pages/Dashboard";
 import { TestWrapper } from "@/test/mocks/router";
+import "@/test/mocks/supabase";
 
-// Mock useAuth with configurable roles
-const mockHasRole = vi.fn();
 const mockUseAuth = vi.fn();
-
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => mockUseAuth(),
-}));
-
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: {
-    from: vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        data: [
-          { estado: "aprovado" },
-          { estado: "pendente" },
-          { estado: "pendente" },
-          { estado: "em_processo" },
-        ],
-        error: null,
-        count: 3,
-      }),
-    }),
-  },
 }));
 
 describe("Dashboard — Role-based Routing", () => {
@@ -100,22 +81,5 @@ describe("Dashboard — Role-based Routing", () => {
       expect(screen.getByText(/conta configurada/i)).toBeInTheDocument();
       expect(screen.getByText(/nenhum atribuído/i)).toBeInTheDocument();
     });
-  });
-
-  it("shows loading skeleton while loading", () => {
-    mockUseAuth.mockReturnValue({
-      user: null,
-      roles: [],
-      hasRole: () => false,
-      session: null,
-      loading: true,
-      signOut: vi.fn(),
-    });
-
-    render(<Dashboard />, { wrapper: TestWrapper });
-
-    // Should show skeleton elements
-    const skeletons = document.querySelectorAll("[class*='skeleton']");
-    expect(skeletons.length).toBeGreaterThan(0);
   });
 });

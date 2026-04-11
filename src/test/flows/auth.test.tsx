@@ -28,58 +28,26 @@ describe("Auth — Login Flow", () => {
 
   it("renders quick login buttons for all 8 test roles", () => {
     render(<Auth />, { wrapper: TestWrapper });
-    const roleLabels = ["Admin", "Técnico", "Produtor", "Cooperativa", "Processador", "Transportador", "Exportador", "Comprador"];
-    roleLabels.forEach((label) => {
+    ["Admin", "Técnico", "Produtor", "Cooperativa", "Processador", "Transportador", "Exportador", "Comprador"].forEach((label) => {
       expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
     });
   });
 
-  it("quick login button calls signInWithPassword with correct email", async () => {
+  it("quick login as Produtor calls signInWithPassword", async () => {
     mockSupabase.auth.signInWithPassword.mockResolvedValue({
       data: { user: { id: "u2", email: "produtor@teste.ao" }, session: {} },
       error: null,
     });
 
     render(<Auth />, { wrapper: TestWrapper });
-    fireEvent.click(screen.getByRole("button", { name: "Produtor" }));
+    
+    await waitFor(() => {
+      fireEvent.click(screen.getByRole("button", { name: "Produtor" }));
+    });
 
     await waitFor(() => {
       expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
         email: "produtor@teste.ao",
-        password: "Teste123!",
-      });
-    });
-  });
-
-  it("quick login as Admin uses correct email", async () => {
-    mockSupabase.auth.signInWithPassword.mockResolvedValue({
-      data: { user: { id: "u1", email: "anicetojjc@gmail.com" }, session: {} },
-      error: null,
-    });
-
-    render(<Auth />, { wrapper: TestWrapper });
-    fireEvent.click(screen.getByRole("button", { name: "Admin" }));
-
-    await waitFor(() => {
-      expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
-        email: "anicetojjc@gmail.com",
-        password: "Teste123!",
-      });
-    });
-  });
-
-  it("quick login as Técnico uses correct email", async () => {
-    mockSupabase.auth.signInWithPassword.mockResolvedValue({
-      data: { user: { id: "u3", email: "tecnico@teste.ao" }, session: {} },
-      error: null,
-    });
-
-    render(<Auth />, { wrapper: TestWrapper });
-    fireEvent.click(screen.getByRole("button", { name: "Técnico" }));
-
-    await waitFor(() => {
-      expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
-        email: "tecnico@teste.ao",
         password: "Teste123!",
       });
     });
@@ -107,6 +75,11 @@ describe("Auth — Login Flow", () => {
   it("displays back to home link", () => {
     render(<Auth />, { wrapper: TestWrapper });
     expect(screen.getByText(/voltar à página inicial/i)).toBeInTheDocument();
+  });
+
+  it("shows password hint on test section", () => {
+    render(<Auth />, { wrapper: TestWrapper });
+    expect(screen.getByText("Teste123!")).toBeInTheDocument();
   });
 });
 

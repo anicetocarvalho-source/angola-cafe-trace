@@ -13,31 +13,30 @@ export const createMockSession = (user = createMockUser()) => ({
   refresh_token: "mock-refresh",
 });
 
-export const createMockSupabaseClient = () => {
-  const mockFrom = vi.fn().mockReturnValue({
-    select: vi.fn().mockReturnValue({
-      eq: vi.fn().mockReturnValue({
-        data: [],
-        error: null,
-      }),
-      data: [],
-      error: null,
-      order: vi.fn().mockReturnValue({ data: [], error: null }),
-      limit: vi.fn().mockReturnValue({ data: [], error: null }),
-    }),
-    insert: vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        single: vi.fn().mockResolvedValue({ data: { id: "new-id" }, error: null }),
-        data: [{ id: "new-id" }],
-        error: null,
-      }),
-      data: [{ id: "new-id" }],
-      error: null,
-    }),
-    update: vi.fn().mockReturnValue({
-      eq: vi.fn().mockResolvedValue({ data: null, error: null }),
-    }),
+// Deep chainable mock for supabase query builder
+const createChainableMock = (resolvedData: any = { data: [], error: null }) => {
+  const chain: any = {};
+  const methods = ["select", "insert", "update", "delete", "eq", "neq", "gt", "lt", "gte", "lte", "order", "limit", "single", "maybeSingle", "in", "is", "not", "filter", "match", "range", "textSearch", "or", "and"];
+  methods.forEach((m) => {
+    chain[m] = vi.fn().mockReturnValue(chain);
   });
+  // Terminal values
+  chain.data = resolvedData.data;
+  chain.error = resolvedData.error;
+  chain.count = resolvedData.count ?? null;
+  // Make it thenable for await
+  chain.then = (resolve: any) => resolve(resolvedData);
+  return chain;
+};
+
+const mockChannel = vi.fn().mockReturnValue({
+  on: vi.fn().mockReturnThis(),
+  subscribe: vi.fn().mockReturnThis(),
+  unsubscribe: vi.fn(),
+});
+
+export const createMockSupabaseClient = () => {
+  const mockFrom = vi.fn().mockReturnValue(createChainableMock());
 
   const mockAuth = {
     getSession: vi.fn().mockResolvedValue({
@@ -52,10 +51,10 @@ export const createMockSupabaseClient = () => {
     signOut: vi.fn().mockResolvedValue({ error: null }),
   };
 
-  return { from: mockFrom, auth: mockAuth };
+  return { from: mockFrom, auth: mockAuth, channel: mockChannel, removeChannel: vi.fn() };
 };
 
-// Default mock — import in tests and override as needed
+// Default mock
 export const mockSupabase = createMockSupabaseClient();
 
 vi.mock("@/integrations/supabase/client", () => ({
