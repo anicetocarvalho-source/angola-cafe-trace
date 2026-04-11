@@ -125,12 +125,26 @@ const NovoLote = () => {
     setLoading(true);
 
     try {
+      const parseOpt = (v: string | undefined) => v ? parseFloat(v) || null : null;
+
       const insertData: any = {
         tipo: values.tipo,
         volume_kg: parseFloat(values.volume_kg),
-        humidade_percent: values.humidade_percent ? parseFloat(values.humidade_percent) : null,
-        temperatura_c: values.temperatura_c ? parseFloat(values.temperatura_c) : null,
+        humidade_percent: parseOpt(values.humidade_percent),
+        temperatura_c: parseOpt(values.temperatura_c),
         estado: "pendente",
+        sca_aroma: parseOpt(values.sca_aroma),
+        sca_acidez: parseOpt(values.sca_acidez),
+        sca_corpo: parseOpt(values.sca_corpo),
+        sca_sabor: parseOpt(values.sca_sabor),
+        sca_aftertaste: parseOpt(values.sca_aftertaste),
+        sca_uniformidade: parseOpt(values.sca_uniformidade),
+        sca_balance: parseOpt(values.sca_balance),
+        sca_clean_cup: parseOpt(values.sca_clean_cup),
+        sca_sweetness: parseOpt(values.sca_sweetness),
+        sca_overall: parseOpt(values.sca_overall),
+        notas_sensoriais: values.notas_sensoriais || null,
+        classificacao_sensorial: scaTotal > 0 ? scaTotal : null,
       };
 
       if (values.colheita_id && values.colheita_id !== "none") {
