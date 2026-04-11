@@ -54,6 +54,7 @@ const NovoLote = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [colheitas, setColheitas] = useState<Colheita[]>([]);
+  const [scaOpen, setScaOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,8 +64,35 @@ const NovoLote = () => {
       volume_kg: "",
       humidade_percent: "",
       temperatura_c: "",
+      sca_aroma: "",
+      sca_acidez: "",
+      sca_corpo: "",
+      sca_sabor: "",
+      sca_aftertaste: "",
+      sca_uniformidade: "",
+      sca_balance: "",
+      sca_clean_cup: "",
+      sca_sweetness: "",
+      sca_overall: "",
+      notas_sensoriais: "",
     },
   });
+
+  const scaAttributes = [
+    { key: "sca_aroma" as const, label: "Aroma" },
+    { key: "sca_acidez" as const, label: "Acidez" },
+    { key: "sca_corpo" as const, label: "Corpo" },
+    { key: "sca_sabor" as const, label: "Sabor" },
+    { key: "sca_aftertaste" as const, label: "Aftertaste" },
+    { key: "sca_uniformidade" as const, label: "Uniformidade" },
+    { key: "sca_balance" as const, label: "Balance" },
+    { key: "sca_clean_cup" as const, label: "Clean Cup" },
+    { key: "sca_sweetness" as const, label: "Sweetness" },
+    { key: "sca_overall" as const, label: "Overall" },
+  ];
+
+  const watchedSca = form.watch(scaAttributes.map((a) => a.key));
+  const scaTotal = watchedSca.reduce((sum, v) => sum + (v ? parseFloat(v) || 0 : 0), 0);
 
   useEffect(() => {
     fetchColheitas();
