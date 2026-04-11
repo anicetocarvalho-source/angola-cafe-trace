@@ -10,6 +10,8 @@ import { ArrowLeft, Package, MapPin, Activity, FileText, Calendar, Clock, GitBra
 import FileUpload from "@/components/FileUpload";
 import LoteTimeline from "@/components/LoteTimeline";
 import LoteGenealogy from "@/components/LoteGenealogy";
+import SCARadarChart from "@/components/SCARadarChart";
+import SCAScoreForm from "@/components/SCAScoreForm";
 
 interface LoteDetalhado {
   id: string;
