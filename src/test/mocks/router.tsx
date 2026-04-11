@@ -1,6 +1,7 @@
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const createTestQueryClient = () =>
   new QueryClient({
@@ -19,7 +20,9 @@ export const TestWrapper = ({ children, initialEntries = ["/"] }: TestWrapperPro
   const queryClient = createTestQueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+      <TooltipProvider>
+        <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 };
