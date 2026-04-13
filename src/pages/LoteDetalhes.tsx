@@ -10,7 +10,8 @@ import { ArrowLeft, Package, MapPin, Activity, FileText, Calendar, Clock, GitBra
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { exportScaPdf } from "@/lib/exportScaPdf";
+import { exportScaPdf, type PdfLanguage } from "@/lib/exportScaPdf";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FileUpload from "@/components/FileUpload";
 import LoteTimeline from "@/components/LoteTimeline";
 import LoteGenealogy from "@/components/LoteGenealogy";
@@ -61,6 +62,7 @@ const LoteDetalhes = () => {
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [avaliador, setAvaliador] = useState("");
   const [pdfPassword, setPdfPassword] = useState("");
+  const [pdfLang, setPdfLang] = useState<PdfLanguage>("pt");
 
   useEffect(() => {
     fetchLoteDetails();
@@ -254,6 +256,18 @@ const LoteDetalhes = () => {
                           Se definida, o PDF só poderá ser aberto com esta password.
                         </p>
                       </div>
+                      <div className="space-y-2">
+                        <Label>Idioma do PDF</Label>
+                        <Select value={pdfLang} onValueChange={(v) => setPdfLang(v as PdfLanguage)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pt">Português</SelectItem>
+                            <SelectItem value="en">English</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     <DialogFooter>
                       <Button
@@ -280,6 +294,7 @@ const LoteDetalhes = () => {
                             notas_sensoriais: (lote as any).notas_sensoriais,
                             avaliador: avaliador.trim() || null,
                             password: pdfPassword.trim() || null,
+                            lang: pdfLang,
                             origem: lote.colheitas ? {
                               exploracao: lote.colheitas.parcelas.exploracoes.designacao,
                               parcela: lote.colheitas.parcelas.codigo_parcela,
