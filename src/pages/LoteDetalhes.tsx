@@ -62,6 +62,7 @@ const LoteDetalhes = () => {
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [avaliador, setAvaliador] = useState("");
   const [pdfPassword, setPdfPassword] = useState("");
+  const [pdfLang, setPdfLang] = useState<PdfLanguage>("pt");
 
   useEffect(() => {
     fetchLoteDetails();
