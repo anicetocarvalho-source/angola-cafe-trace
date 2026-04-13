@@ -294,6 +294,7 @@ const LoteDetalhes = () => {
                             notas_sensoriais: (lote as any).notas_sensoriais,
                             avaliador: avaliador.trim() || null,
                             password: pdfPassword.trim() || null,
+                            lang: pdfLang,
                             origem: lote.colheitas ? {
                               exploracao: lote.colheitas.parcelas.exploracoes.designacao,
                               parcela: lote.colheitas.parcelas.codigo_parcela,
