@@ -58,6 +58,9 @@ const LoteDetalhes = () => {
   const navigate = useNavigate();
   const [lote, setLote] = useState<LoteDetalhado | null>(null);
   const [loading, setLoading] = useState(true);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [avaliador, setAvaliador] = useState("");
+  const [pdfPassword, setPdfPassword] = useState("");
 
   useEffect(() => {
     fetchLoteDetails();
