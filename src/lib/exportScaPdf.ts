@@ -1,6 +1,14 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+async function computeHash(content: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(content);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 interface SCAScores {
   sca_aroma: number | null;
   sca_acidez: number | null;
@@ -47,6 +55,7 @@ const translations = {
     detailedScores: "Pontuações Detalhadas",
     attribute: "Atributo", score: "Pontuação",
     sensoryNotes: "Notas Sensoriais",
+    digitalSignature: "Assinatura Digital (SHA-256)",
     footer: "Angola Café Trace — Sistema de Rastreabilidade",
     generatedAt: "Gerado em",
     date: () => new Date().toLocaleDateString("pt-PT"),
@@ -63,6 +72,7 @@ const translations = {
     detailedScores: "Detailed Scores",
     attribute: "Attribute", score: "Score",
     sensoryNotes: "Sensory Notes",
+    digitalSignature: "Digital Signature (SHA-256)",
     footer: "Angola Coffee Trace — Traceability System",
     generatedAt: "Generated at",
     date: () => new Date().toLocaleDateString("en-GB"),
@@ -187,7 +197,7 @@ function drawRadarChart(doc: jsPDF, scores: SCAScores, cx: number, cy: number, r
   }
 }
 
-export function exportScaPdf(data: ExportData) {
+export async function exportScaPdf(data: ExportData) {
   const lang = data.lang || "pt";
   const t = translations[lang];
 
@@ -323,6 +333,35 @@ export function exportScaPdf(data: ExportData) {
     doc.setFontSize(9);
     doc.text(data.notas_sensoriais, 14, finalY + 6, { maxWidth: pageWidth - 28 });
   }
+
+  // Digital signature hash
+  const hashInput = JSON.stringify({
+    lote: data.referencia_lote,
+    tipo: data.tipo,
+    volume_kg: data.volume_kg,
+    estado: data.estado,
+    scores: data.scores,
+    totalScore: data.totalScore,
+    notas_sensoriais: data.notas_sensoriais,
+    avaliador: data.avaliador || null,
+    origem: data.origem || null,
+    generated: t.dateTime(),
+  });
+  const hash = await computeHash(hashInput);
+
+  const sensoryFinalY = data.notas_sensoriais
+    ? (doc as any).lastAutoTable.finalY + 8 + 14
+    : (doc as any).lastAutoTable.finalY + 8;
+
+  let sigY = sensoryFinalY + 4;
+  doc.setTextColor(60, 60, 60);
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "bold");
+  doc.text(t.digitalSignature, 14, sigY);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(6);
+  doc.setTextColor(100, 100, 100);
+  doc.text(hash, 14, sigY + 4);
 
   // Footer
   const pageHeight = doc.internal.pageSize.getHeight();
