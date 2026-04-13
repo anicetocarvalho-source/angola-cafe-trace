@@ -271,7 +271,7 @@ const LoteDetalhes = () => {
                     </div>
                     <DialogFooter>
                       <Button
-                        onClick={() => {
+                        onClick={async () => {
                           const scores = {
                             sca_aroma: (lote as any).sca_aroma,
                             sca_acidez: (lote as any).sca_acidez,
@@ -284,7 +284,7 @@ const LoteDetalhes = () => {
                             sca_sweetness: (lote as any).sca_sweetness,
                             sca_overall: (lote as any).sca_overall,
                           };
-                          exportScaPdf({
+                          await exportScaPdf({
                             referencia_lote: lote.referencia_lote,
                             tipo: lote.tipo,
                             volume_kg: lote.volume_kg,
