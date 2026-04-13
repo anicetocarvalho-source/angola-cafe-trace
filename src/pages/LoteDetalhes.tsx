@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Package, MapPin, Activity, FileText, Calendar, Clock, GitBranch, Download, Globe } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Package, MapPin, Activity, FileText, Calendar, Clock, GitBranch, Download, Lock } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { exportScaPdf } from "@/lib/exportScaPdf";
 import FileUpload from "@/components/FileUpload";
 import LoteTimeline from "@/components/LoteTimeline";
@@ -56,6 +58,9 @@ const LoteDetalhes = () => {
   const navigate = useNavigate();
   const [lote, setLote] = useState<LoteDetalhado | null>(null);
   const [loading, setLoading] = useState(true);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [avaliador, setAvaliador] = useState("");
+  const [pdfPassword, setPdfPassword] = useState("");
 
   useEffect(() => {
     fetchLoteDetails();
@@ -207,58 +212,91 @@ const LoteDetalhes = () => {
           <TabsContent value="sensorial">
             <div className="space-y-6">
               <div className="flex justify-end">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
+                  <DialogTrigger asChild>
                     <Button variant="outline" size="sm">
                       <Download className="h-4 w-4 mr-2" />
                       Exportar PDF
                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {(["pt", "en"] as const).map((lang) => {
-                      const langLabel = lang === "pt" ? "Português" : "English";
-                      return (
-                        <DropdownMenuItem
-                          key={lang}
-                          onClick={async () => {
-                            const scores = {
-                              sca_aroma: (lote as any).sca_aroma,
-                              sca_acidez: (lote as any).sca_acidez,
-                              sca_corpo: (lote as any).sca_corpo,
-                              sca_sabor: (lote as any).sca_sabor,
-                              sca_aftertaste: (lote as any).sca_aftertaste,
-                              sca_uniformidade: (lote as any).sca_uniformidade,
-                              sca_balance: (lote as any).sca_balance,
-                              sca_clean_cup: (lote as any).sca_clean_cup,
-                              sca_sweetness: (lote as any).sca_sweetness,
-                              sca_overall: (lote as any).sca_overall,
-                            };
-                            await exportScaPdf({
-                              referencia_lote: lote.referencia_lote,
-                              tipo: lote.tipo,
-                              volume_kg: lote.volume_kg,
-                              estado: lote.estado,
-                              scores,
-                              totalScore: lote.classificacao_sensorial,
-                              notas_sensoriais: (lote as any).notas_sensoriais,
-                              lang,
-                              origem: lote.colheitas ? {
-                                exploracao: lote.colheitas.parcelas.exploracoes.designacao,
-                                parcela: lote.colheitas.parcelas.codigo_parcela,
-                                municipio: lote.colheitas.parcelas.exploracoes.municipio,
-                                provincia: lote.colheitas.parcelas.exploracoes.provincia,
-                                campanha: lote.colheitas.campanha,
-                              } : null,
-                            });
-                          }}
-                        >
-                          <Globe className="h-4 w-4 mr-2" />
-                          {langLabel}
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Exportar Perfil SCA</DialogTitle>
+                      <DialogDescription>
+                        Preencha os campos opcionais antes de gerar o PDF.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="avaliador">Nome do Avaliador SCA</Label>
+                        <Input
+                          id="avaliador"
+                          value={avaliador}
+                          onChange={(e) => setAvaliador(e.target.value)}
+                          placeholder="Ex: João Silva, Q-Grader #12345"
+                          maxLength={100}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="pdf-password" className="flex items-center gap-1.5">
+                          <Lock className="h-3.5 w-3.5" />
+                          Password do PDF (opcional)
+                        </Label>
+                        <Input
+                          id="pdf-password"
+                          type="password"
+                          value={pdfPassword}
+                          onChange={(e) => setPdfPassword(e.target.value)}
+                          placeholder="Deixe vazio para sem protecção"
+                          maxLength={50}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Se definida, o PDF só poderá ser aberto com esta password.
+                        </p>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        onClick={() => {
+                          const scores = {
+                            sca_aroma: (lote as any).sca_aroma,
+                            sca_acidez: (lote as any).sca_acidez,
+                            sca_corpo: (lote as any).sca_corpo,
+                            sca_sabor: (lote as any).sca_sabor,
+                            sca_aftertaste: (lote as any).sca_aftertaste,
+                            sca_uniformidade: (lote as any).sca_uniformidade,
+                            sca_balance: (lote as any).sca_balance,
+                            sca_clean_cup: (lote as any).sca_clean_cup,
+                            sca_sweetness: (lote as any).sca_sweetness,
+                            sca_overall: (lote as any).sca_overall,
+                          };
+                          exportScaPdf({
+                            referencia_lote: lote.referencia_lote,
+                            tipo: lote.tipo,
+                            volume_kg: lote.volume_kg,
+                            estado: lote.estado,
+                            scores,
+                            totalScore: lote.classificacao_sensorial,
+                            notas_sensoriais: (lote as any).notas_sensoriais,
+                            avaliador: avaliador.trim() || null,
+                            password: pdfPassword.trim() || null,
+                            origem: lote.colheitas ? {
+                              exploracao: lote.colheitas.parcelas.exploracoes.designacao,
+                              parcela: lote.colheitas.parcelas.codigo_parcela,
+                              municipio: lote.colheitas.parcelas.exploracoes.municipio,
+                              provincia: lote.colheitas.parcelas.exploracoes.provincia,
+                              campanha: lote.colheitas.campanha,
+                            } : null,
+                          });
+                          setExportDialogOpen(false);
+                        }}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Gerar PDF
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
               <SCARadarChart
                 scores={{
