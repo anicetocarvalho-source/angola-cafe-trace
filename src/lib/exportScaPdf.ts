@@ -150,7 +150,15 @@ function drawRadarChart(doc: jsPDF, scores: SCAScores, cx: number, cy: number, r
 }
 
 export function exportScaPdf(data: ExportData) {
-  const doc = new jsPDF();
+  const doc = new jsPDF({
+    ...(data.password ? {
+      encryption: {
+        userPassword: data.password,
+        ownerPassword: data.password,
+        userPermissions: ["print"],
+      },
+    } : {}),
+  });
   const pageWidth = doc.internal.pageSize.getWidth();
 
   // Header
@@ -279,10 +287,5 @@ export function exportScaPdf(data: ExportData) {
   doc.text("Angola Café Trace — Sistema de Rastreabilidade", 14, pageHeight - 7);
   doc.text(`Gerado em ${new Date().toLocaleString("pt-PT")}`, pageWidth - 14, pageHeight - 7, { align: "right" });
 
-  // Password protection
-  if (data.password) {
-    doc.save(`SCA_${data.referencia_lote}.pdf`, { encryption: { userPassword: data.password, ownerPassword: data.password, userPermissions: ["print"] } });
-  } else {
-    doc.save(`SCA_${data.referencia_lote}.pdf`);
-  }
+  doc.save(`SCA_${data.referencia_lote}.pdf`);
 }
