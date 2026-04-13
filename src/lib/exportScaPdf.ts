@@ -188,6 +188,9 @@ function drawRadarChart(doc: jsPDF, scores: SCAScores, cx: number, cy: number, r
 }
 
 export function exportScaPdf(data: ExportData) {
+  const lang = data.lang || "pt";
+  const t = translations[lang];
+
   const doc = new jsPDF({
     ...(data.password ? {
       encryption: {
@@ -205,37 +208,37 @@ export function exportScaPdf(data: ExportData) {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("Perfil Sensorial SCA", 14, 16);
+  doc.text(t.title, 14, 16);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(`Lote: ${data.referencia_lote}`, 14, 24);
-  doc.text(`Data: ${new Date().toLocaleDateString("pt-PT")}`, pageWidth - 14, 24, { align: "right" });
+  doc.text(`${lang === "pt" ? "Lote" : "Lot"}: ${data.referencia_lote}`, 14, 24);
+  doc.text(`${lang === "pt" ? "Data" : "Date"}: ${t.date()}`, pageWidth - 14, 24, { align: "right" });
 
   // Lot info section
   let y = 42;
   doc.setTextColor(60, 60, 60);
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text("Informação do Lote", 14, y);
+  doc.text(t.lotInfo, 14, y);
   y += 8;
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   const info: [string, string][] = [
-    ["Referência", data.referencia_lote],
-    ["Tipo", data.tipo],
-    ["Volume", `${data.volume_kg} kg`],
-    ["Estado", data.estado],
+    [t.ref, data.referencia_lote],
+    [t.tipo, data.tipo],
+    [t.volume, `${data.volume_kg} kg`],
+    [t.estado, data.estado],
   ];
   if (data.avaliador) {
-    info.push(["Avaliador", data.avaliador]);
+    info.push([t.avaliador, data.avaliador]);
   }
   if (data.origem) {
     info.push(
-      ["Exploração", data.origem.exploracao],
-      ["Parcela", data.origem.parcela],
-      ["Localização", `${data.origem.municipio}, ${data.origem.provincia}`],
-      ["Campanha", data.origem.campanha],
+      [t.exploracao, data.origem.exploracao],
+      [t.parcela, data.origem.parcela],
+      [t.localizacao, `${data.origem.municipio}, ${data.origem.provincia}`],
+      [t.campanha, data.origem.campanha],
     );
   }
 
@@ -256,7 +259,7 @@ export function exportScaPdf(data: ExportData) {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text(`Pontuação Total: ${data.totalScore.toFixed(1)}`, 18, y + 2);
+    doc.text(`${t.totalScore}: ${data.totalScore.toFixed(1)}`, 18, y + 2);
     doc.setFontSize(9);
     doc.text(classification, 18, y + 7);
     y += 16;
@@ -267,7 +270,7 @@ export function exportScaPdf(data: ExportData) {
   doc.setTextColor(60, 60, 60);
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text("Gráfico Radar", 14, y);
+  doc.text(t.radarChart, 14, y);
   y += 4;
 
   const chartCenterX = pageWidth / 2;
@@ -279,10 +282,15 @@ export function exportScaPdf(data: ExportData) {
   doc.setTextColor(60, 60, 60);
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text("Pontuações Detalhadas", 14, y);
+  doc.text(t.detailedScores, 14, y);
   y += 4;
 
-  const tableData = attributes.map((a) => {
+  const localAttrs = attributes.map((a) => ({
+    ...a,
+    label: (t.attrs as any)[a.key] || a.label,
+  }));
+
+  const tableData = localAttrs.map((a) => {
     const val = (data.scores as any)[a.key];
     const score = val != null ? val.toFixed(1) : "—";
     const bar = val != null ? "█".repeat(Math.round(val)) + "░".repeat(10 - Math.round(val)) : "—";
@@ -291,7 +299,7 @@ export function exportScaPdf(data: ExportData) {
 
   autoTable(doc, {
     startY: y,
-    head: [["Atributo", "Pontuação", ""]],
+    head: [[t.attribute, t.score, ""]],
     body: tableData,
     margin: { left: 14, right: 14 },
     styles: { fontSize: 8, cellPadding: 2 },
@@ -310,7 +318,7 @@ export function exportScaPdf(data: ExportData) {
     doc.setTextColor(60, 60, 60);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Notas Sensoriais", 14, finalY);
+    doc.text(t.sensoryNotes, 14, finalY);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.text(data.notas_sensoriais, 14, finalY + 6, { maxWidth: pageWidth - 28 });
@@ -322,8 +330,8 @@ export function exportScaPdf(data: ExportData) {
   doc.line(14, pageHeight - 12, pageWidth - 14, pageHeight - 12);
   doc.setFontSize(7);
   doc.setTextColor(150, 150, 150);
-  doc.text("Angola Café Trace — Sistema de Rastreabilidade", 14, pageHeight - 7);
-  doc.text(`Gerado em ${new Date().toLocaleString("pt-PT")}`, pageWidth - 14, pageHeight - 7, { align: "right" });
+  doc.text(t.footer, 14, pageHeight - 7);
+  doc.text(`${t.generatedAt} ${t.dateTime()}`, pageWidth - 14, pageHeight - 7, { align: "right" });
 
   doc.save(`SCA_${data.referencia_lote}.pdf`);
 }
