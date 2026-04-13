@@ -22,6 +22,8 @@ interface ExportData {
   scores: SCAScores;
   totalScore: number | null;
   notas_sensoriais: string | null;
+  avaliador?: string | null;
+  password?: string | null;
   origem?: {
     exploracao: string;
     parcela: string;
@@ -173,12 +175,15 @@ export function exportScaPdf(data: ExportData) {
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  const info = [
+  const info: [string, string][] = [
     ["Referência", data.referencia_lote],
     ["Tipo", data.tipo],
     ["Volume", `${data.volume_kg} kg`],
     ["Estado", data.estado],
   ];
+  if (data.avaliador) {
+    info.push(["Avaliador", data.avaliador]);
+  }
   if (data.origem) {
     info.push(
       ["Exploração", data.origem.exploracao],
@@ -274,5 +279,10 @@ export function exportScaPdf(data: ExportData) {
   doc.text("Angola Café Trace — Sistema de Rastreabilidade", 14, pageHeight - 7);
   doc.text(`Gerado em ${new Date().toLocaleString("pt-PT")}`, pageWidth - 14, pageHeight - 7, { align: "right" });
 
-  doc.save(`SCA_${data.referencia_lote}.pdf`);
+  // Password protection
+  if (data.password) {
+    doc.save(`SCA_${data.referencia_lote}.pdf`, { encryption: { userPassword: data.password, ownerPassword: data.password, userPermissions: ["print"] } });
+  } else {
+    doc.save(`SCA_${data.referencia_lote}.pdf`);
+  }
 }
