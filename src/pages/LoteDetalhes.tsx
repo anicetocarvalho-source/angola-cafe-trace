@@ -256,6 +256,18 @@ const LoteDetalhes = () => {
                           Se definida, o PDF só poderá ser aberto com esta password.
                         </p>
                       </div>
+                      <div className="space-y-2">
+                        <Label>Idioma do PDF</Label>
+                        <Select value={pdfLang} onValueChange={(v) => setPdfLang(v as PdfLanguage)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pt">Português</SelectItem>
+                            <SelectItem value="en">English</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     <DialogFooter>
                       <Button
