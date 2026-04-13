@@ -14,6 +14,8 @@ interface SCAScores {
   sca_overall: number | null;
 }
 
+export type PdfLanguage = "pt" | "en";
+
 interface ExportData {
   referencia_lote: string;
   tipo: string;
@@ -24,6 +26,7 @@ interface ExportData {
   notas_sensoriais: string | null;
   avaliador?: string | null;
   password?: string | null;
+  lang?: PdfLanguage;
   origem?: {
     exploracao: string;
     parcela: string;
@@ -32,6 +35,41 @@ interface ExportData {
     campanha: string;
   } | null;
 }
+
+const translations = {
+  pt: {
+    title: "Perfil Sensorial SCA",
+    lotInfo: "Informação do Lote",
+    ref: "Referência", tipo: "Tipo", volume: "Volume", estado: "Estado",
+    avaliador: "Avaliador", exploracao: "Exploração", parcela: "Parcela",
+    localizacao: "Localização", campanha: "Campanha",
+    totalScore: "Pontuação Total", radarChart: "Gráfico Radar",
+    detailedScores: "Pontuações Detalhadas",
+    attribute: "Atributo", score: "Pontuação",
+    sensoryNotes: "Notas Sensoriais",
+    footer: "Angola Café Trace — Sistema de Rastreabilidade",
+    generatedAt: "Gerado em",
+    date: () => new Date().toLocaleDateString("pt-PT"),
+    dateTime: () => new Date().toLocaleString("pt-PT"),
+    attrs: { sca_aroma: "Aroma", sca_acidez: "Acidez", sca_corpo: "Corpo", sca_sabor: "Sabor", sca_aftertaste: "Aftertaste", sca_uniformidade: "Uniformidade", sca_balance: "Balance", sca_clean_cup: "Clean Cup", sca_sweetness: "Sweetness", sca_overall: "Overall" },
+  },
+  en: {
+    title: "SCA Sensory Profile",
+    lotInfo: "Lot Information",
+    ref: "Reference", tipo: "Type", volume: "Volume", estado: "Status",
+    avaliador: "Evaluator", exploracao: "Farm", parcela: "Plot",
+    localizacao: "Location", campanha: "Campaign",
+    totalScore: "Total Score", radarChart: "Radar Chart",
+    detailedScores: "Detailed Scores",
+    attribute: "Attribute", score: "Score",
+    sensoryNotes: "Sensory Notes",
+    footer: "Angola Coffee Trace — Traceability System",
+    generatedAt: "Generated at",
+    date: () => new Date().toLocaleDateString("en-GB"),
+    dateTime: () => new Date().toLocaleString("en-GB"),
+    attrs: { sca_aroma: "Aroma", sca_acidez: "Acidity", sca_corpo: "Body", sca_sabor: "Flavor", sca_aftertaste: "Aftertaste", sca_uniformidade: "Uniformity", sca_balance: "Balance", sca_clean_cup: "Clean Cup", sca_sweetness: "Sweetness", sca_overall: "Overall" },
+  },
+} as const;
 
 const getClassification = (score: number) => {
   if (score >= 90) return "Outstanding";
