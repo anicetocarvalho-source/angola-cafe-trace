@@ -1,52 +1,43 @@
 
 
-# Plano: Documento Word (.docx) — Descrição Completa da Plataforma INCA Coffee Trace
+# Plano: Adicionar Diagramas ao Documento Word
 
 ## Objectivo
-Gerar um documento Word profissional com a descrição completa da plataforma e todos os seus módulos, pronto para integrar numa apresentação institucional.
+Gerar uma versão actualizada do documento Word (`INCA_Coffee_Trace_Descricao_v2.docx`) com dois diagramas visuais integrados:
 
-## Estrutura do Documento
+1. **Diagrama de Arquitectura do Sistema** — camadas da plataforma (Frontend, API, Base de Dados, Integrações externas)
+2. **Diagrama do Fluxo da Cadeia de Valor** — desde a produção até ao consumidor final
 
-1. **Capa** — Título "INCA Coffee Trace", subtítulo "Plataforma Nacional de Rastreabilidade do Café de Angola", INCA/MINDCOM/AIPEX
-2. **Visão Geral** — Missão, contexto (EUDR, valorização do café angolano), arquitectura geral (28 módulos, 44 rotas, 8 perfis de utilizador, 29 tabelas)
-3. **Perfis de Utilizador** — Tabela com os 8 perfis (Admin INCA, Tecnico INCA, Produtor, Cooperativa, Processador, Transportador, Exportador, Comprador) e respectivas permissões
-4. **Módulos da Cadeia de Valor** — Descrição detalhada de cada módulo:
-   - Produção (Explorações, Parcelas, Colheitas, Manutenção Agrícola)
-   - Gestão de Lotes (criação, QR automático, operações split/blend, genealogia SVG, timeline)
-   - Secagem e Processamento (registos de secagem, transformação)
-   - Torra (perfis, curvas temperatura/tempo, perda de peso)
-   - Embalagem (tipo, validade, códigos finais)
-   - Armazenamento (stocks, condições ambientais)
-   - Logística (rotas, veículos, checkpoints GPS, temperatura/humidade)
-   - Exportação e EUDR (embarque, documentação, pacote EUDR)
-   - Comercialização (contratos, compradores, Incoterms)
-5. **Módulos de Controlo e Qualidade**
-   - Validação INCA (workflow aprovação/reprovação)
-   - Qualidade e Certificações (análise SCA com gráfico radar, exportação PDF bilingue com hash digital)
-   - Checklists PCC (pontos críticos de controlo)
-   - Fiscalização (visitas técnicas, acções de controlo, evidências fotográficas)
-6. **Módulos de Inteligência e Informação**
-   - SIM — Sistema de Informação de Mercado (preços, volumes, comparação regional)
-   - Portal Público SIM e Boletim Mensal
-   - IoT — Sensores (leituras temperatura/humidade em tempo real)
-7. **Módulos de Administração**
-   - Dashboard por perfil (8 dashboards especializados)
-   - Gestão de utilizadores e roles
-   - Auditoria (logs de alterações)
-   - Relatórios
-   - Mapa interactivo de explorações
-8. **Portal Público**
-   - Verificação de lotes por QR/referência (sem autenticação)
-   - Transparência: origem, qualidade, certificações, timeline
-9. **Segurança e Arquitectura Técnica**
-   - Autenticação multi-perfil, RLS por função, encriptação PDF, assinatura digital SHA-256
-10. **Resumo** — Tabela síntese com todos os módulos, rotas e perfis de acesso
+## Abordagem Técnica
 
-## Detalhes Técnicos
+Como o `docx-js` não suporta desenho vectorial nativo, os diagramas serão:
+1. Gerados como imagens PNG via scripts Python (usando `matplotlib` ou construção manual com `Pillow`)
+2. Inseridos no documento Word como `ImageRun`
 
-- Geração via biblioteca `docx` (docx-js) em Node.js
-- Formatação profissional com estilos Heading1/2/3, tabelas com bordas, cores institucionais
-- Paleta: verde escuro (#2C5F2D) + dourado (#B8860B) + branco
-- Output: `/mnt/documents/INCA_Coffee_Trace_Descricao.docx`
-- Validação e QA do documento gerado
+### Diagrama 1 — Arquitectura do Sistema
+Diagrama em camadas horizontais com caixas coloridas:
+- **Camada Frontend**: React/Vite, PWA, Dashboards por perfil
+- **Camada API/Auth**: Supabase Auth, RLS, Edge Functions
+- **Camada Dados**: PostgreSQL, 29 tabelas, Triggers, Auditoria
+- **Integrações**: IoT, EUDR, RNPA, Blockchain, Certificações
+- Setas de conexão entre camadas
+
+### Diagrama 2 — Fluxo da Cadeia de Valor
+Diagrama horizontal com setas sequenciais:
+```text
+Produção → Colheita → Secagem → Processamento → Torra → Embalagem → Armazenamento → Logística → Exportação → Comercialização
+```
+- Cada etapa numa caixa com ícone/cor distinta
+- Indicação dos perfis de utilizador responsáveis
+- Pontos de controlo de qualidade (SCA, PCC) marcados
+
+### Paleta
+Mantém as cores institucionais: verde escuro (#2C5F2D), dourado (#B8860B), branco, cinza escuro.
+
+## Passos de Implementação
+
+1. Criar script Python para gerar os 2 diagramas como PNG (`matplotlib`)
+2. Regenerar o documento Word completo com os diagramas inseridos após as secções "Visão Geral" e "Módulos da Cadeia de Valor"
+3. QA: converter para PDF, inspeccionar visualmente cada página
+4. Output: `/mnt/documents/INCA_Coffee_Trace_Descricao_v2.docx`
 
