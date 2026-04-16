@@ -6,9 +6,10 @@ import { Loader2 } from "lucide-react";
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredRole?: string;
+  requiredRoles?: string[];
 }
 
-const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, requiredRole, requiredRoles }: ProtectedRouteProps) => {
   const { user, loading, hasRole } = useAuth();
   const navigate = useNavigate();
 
@@ -30,8 +31,19 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     return null;
   }
 
-  // Admins have access to everything, otherwise check specific role
-  if (requiredRole && !hasRole(requiredRole) && !hasRole("admin_inca")) {
+  // Admins have access to everything
+  if (hasRole("admin_inca")) {
+    return <>{children}</>;
+  }
+
+  // Check specific role(s)
+  const hasRequiredAccess = requiredRoles
+    ? requiredRoles.some((r) => hasRole(r))
+    : requiredRole
+      ? hasRole(requiredRole)
+      : true;
+
+  if (!hasRequiredAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
