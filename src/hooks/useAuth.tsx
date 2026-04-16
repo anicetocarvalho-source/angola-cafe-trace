@@ -11,8 +11,19 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rolesLoading, setRolesLoading] = useState(true);
   const [roles, setRoles] = useState<UserRole[]>([]);
   const navigate = useNavigate();
+
+  const fetchRoles = async (userId: string) => {
+    setRolesLoading(true);
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    setRoles(data || []);
+    setRolesLoading(false);
+  };
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -21,18 +32,12 @@ export function useAuth() {
         setSession(session);
         setUser(session?.user ?? null);
 
-        // Fetch roles after state is set
         if (session?.user) {
-          setTimeout(async () => {
-            const { data } = await supabase
-              .from("user_roles")
-              .select("role")
-              .eq("user_id", session.user.id);
-            
-            setRoles(data || []);
-          }, 0);
+          // Use setTimeout to avoid Supabase auth deadlock
+          setTimeout(() => fetchRoles(session.user.id), 0);
         } else {
           setRoles([]);
+          setRolesLoading(false);
         }
 
         setLoading(false);
@@ -45,12 +50,9 @@ export function useAuth() {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", session.user.id);
-        
-        setRoles(data || []);
+        await fetchRoles(session.user.id);
+      } else {
+        setRolesLoading(false);
       }
       
       setLoading(false);
@@ -71,10 +73,12 @@ export function useAuth() {
     return roles.some((r) => r.role === role);
   };
 
+  const isFullyLoaded = !loading && !rolesLoading;
+
   return {
     user,
     session,
-    loading,
+    loading: !isFullyLoaded,
     roles,
     hasRole,
     signOut,
