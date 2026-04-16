@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -50,9 +51,13 @@ const ProtectedRoute = ({ children, requiredRole, requiredRoles }: ProtectedRout
           <h2 className="text-2xl font-bold text-foreground mb-2">
             Acesso Negado
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-6">
             Não tem permissões para aceder a esta página.
           </p>
+          <Button variant="default" onClick={() => navigate("/dashboard")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar ao Dashboard
+          </Button>
         </div>
       </div>
     );
