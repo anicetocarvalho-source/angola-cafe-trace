@@ -324,7 +324,7 @@ const App = () => (
           <Route
             path="/comercializacao"
             element={
-            <ProtectedRoute requiredRole="exportador">
+              <ProtectedRoute requiredRoles={["exportador", "comprador", "tecnico_inca"]}>
                 <Comercializacao />
               </ProtectedRoute>
             }
