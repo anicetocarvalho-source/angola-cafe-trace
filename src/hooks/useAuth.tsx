@@ -73,10 +73,12 @@ export function useAuth() {
     return roles.some((r) => r.role === role);
   };
 
+  const isFullyLoaded = !loading && !rolesLoading;
+
   return {
     user,
     session,
-    loading,
+    loading: !isFullyLoaded,
     roles,
     hasRole,
     signOut,
