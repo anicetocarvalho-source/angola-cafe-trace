@@ -130,7 +130,7 @@ export type Database = {
           table_name: string
           timestamp: string
           user_email: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           action: string
@@ -141,7 +141,7 @@ export type Database = {
           table_name: string
           timestamp?: string
           user_email?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           action?: string
@@ -152,7 +152,7 @@ export type Database = {
           table_name?: string
           timestamp?: string
           user_email?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

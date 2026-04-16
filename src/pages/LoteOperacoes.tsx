@@ -121,7 +121,7 @@ const LoteOperacoes = () => {
       const { data, error } = await supabase
         .from("lotes")
         .insert({
-          referencia_lote: `TEMP-BLEND-${Date.now()}`,
+          referencia_lote: `PLACEHOLDER-${Date.now()}`,
           volume_kg: totalVolume,
           tipo: blendTipo as any,
           tipo_transformacao: "blend",
