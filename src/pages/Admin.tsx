@@ -52,23 +52,26 @@ const Admin = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(`
-          id,
-          nome,
-          user_roles (
-            role
-          )
-        `);
+      const [profilesRes, rolesRes] = await Promise.all([
+        supabase.from("profiles").select("id, nome"),
+        supabase.from("user_roles").select("user_id, role"),
+      ]);
 
-      if (error) throw error;
+      if (profilesRes.error) throw profilesRes.error;
+      if (rolesRes.error) throw rolesRes.error;
 
-      const usersWithEmails: UserWithRoles[] = (data || []).map((profile: any) => ({
+      const rolesByUser = new Map<string, { role: string }[]>();
+      (rolesRes.data || []).forEach((r: any) => {
+        const arr = rolesByUser.get(r.user_id) || [];
+        arr.push({ role: r.role });
+        rolesByUser.set(r.user_id, arr);
+      });
+
+      const usersWithEmails: UserWithRoles[] = (profilesRes.data || []).map((profile: any) => ({
         id: profile.id,
-        email: "user@example.com", // Placeholder
+        email: "—",
         profiles: [{ nome: profile.nome }],
-        user_roles: Array.isArray(profile.user_roles) ? profile.user_roles : [],
+        user_roles: rolesByUser.get(profile.id) || [],
       }));
 
       setUsers(usersWithEmails);

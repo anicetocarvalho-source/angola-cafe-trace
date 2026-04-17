@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
-  const { user, roles, hasRole } = useAuth();
+  const { user, roles, hasRole, loading: authLoading } = useAuth();
 
   const { data: stats = { totalLotes: 0, lotesAprovados: 0, lotesPendentes: 0, totalExploracoes: 0 }, isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
@@ -34,7 +34,7 @@ const Dashboard = () => {
   });
 
   const renderDashboard = () => {
-    if (isLoading) {
+    if (authLoading || isLoading) {
       return (
         <div className="space-y-6">
           <div>
