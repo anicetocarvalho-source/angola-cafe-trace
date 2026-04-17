@@ -1,43 +1,62 @@
 
 
-# Plano: Adicionar Diagramas ao Documento Word
+# Relatório de Testes de Rotas da Plataforma
 
-## Objectivo
-Gerar uma versão actualizada do documento Word (`INCA_Coffee_Trace_Descricao_v2.docx`) com dois diagramas visuais integrados:
+## Resultados dos Testes
 
-1. **Diagrama de Arquitectura do Sistema** — camadas da plataforma (Frontend, API, Base de Dados, Integrações externas)
-2. **Diagrama do Fluxo da Cadeia de Valor** — desde a produção até ao consumidor final
+### Rotas Públicas (sem autenticação) — TODAS OK
+| Rota | Resultado |
+|------|-----------|
+| `/` (Homepage) | Carrega correctamente com hero, KPIs animados, navegação |
+| `/auth` | Formulário de login/registo funcional, login rápido disponível |
+| `/verificar` | Portal público de verificação de lotes funcional |
+| `/sim-publico` | Dashboard SIM público com 8 indicadores, 202 registos |
+| `/boletim-mercado` | Boletim mensal funcional (dados zerados para abril 2026) |
 
-## Abordagem Técnica
+### Rota 404 — OK
+| Rota | Resultado |
+|------|-----------|
+| `/rota-inexistente-xyz` | Mostra página 404 com link "Return to Home" |
 
-Como o `docx-js` não suporta desenho vectorial nativo, os diagramas serão:
-1. Gerados como imagens PNG via scripts Python (usando `matplotlib` ou construção manual com `Pillow`)
-2. Inseridos no documento Word como `ImageRun`
+### Rotas Protegidas — Redirect OK
+| Rota | Resultado |
+|------|-----------|
+| `/dashboard` (sem auth) | Redireciona correctamente para `/auth` |
 
-### Diagrama 1 — Arquitectura do Sistema
-Diagrama em camadas horizontais com caixas coloridas:
-- **Camada Frontend**: React/Vite, PWA, Dashboards por perfil
-- **Camada API/Auth**: Supabase Auth, RLS, Edge Functions
-- **Camada Dados**: PostgreSQL, 29 tabelas, Triggers, Auditoria
-- **Integrações**: IoT, EUDR, RNPA, Blockchain, Certificações
-- Setas de conexão entre camadas
+### Rotas Protegidas (com auth Admin) — Via Sidebar OK
+| Rota | Resultado |
+|------|-----------|
+| `/dashboard` | Dashboard Administrativo carrega (com flash "Conta Configurada") |
+| `/admin` | Página de administração carrega (erro de FK profiles↔user_roles) |
+| `/lotes` | Carrega via sidebar com 11 lotes listados |
 
-### Diagrama 2 — Fluxo da Cadeia de Valor
-Diagrama horizontal com setas sequenciais:
-```text
-Produção → Colheita → Secagem → Processamento → Torra → Embalagem → Armazenamento → Logística → Exportação → Comercialização
-```
-- Cada etapa numa caixa com ícone/cor distinta
-- Indicação dos perfis de utilizador responsáveis
-- Pontos de controlo de qualidade (SCA, PCC) marcados
+## Problemas Encontrados
 
-### Paleta
-Mantém as cores institucionais: verde escuro (#2C5F2D), dourado (#B8860B), branco, cinza escuro.
+### 1. Flash "Conta Configurada" persiste no login (MODERADO)
+Apesar da correcção anterior ao `useAuth`, o dashboard ainda mostra brevemente o fallback "Conta Configurada / Nenhum atribuído" antes de carregar o dashboard correcto. O problema é que o `onAuthStateChange` dispara antes dos roles serem carregados, e o componente Dashboard já começa a renderizar. A correcção actual usa `isFullyLoaded = !loading && !rolesLoading`, mas o `rolesLoading` inicia como `true` e o `loading` é colocado a `false` antes de `rolesLoading` em certos caminhos de execução.
 
-## Passos de Implementação
+### 2. Lotes com prefixo TEMP- não normalizados (MENOR)
+Existem 2 lotes na base de dados com referências `TEMP-1775654026722-1` e `TEMP-1775654025842-0` que não foram apanhados pela migração anterior (que só corrigiu `TEMP-BLEND%`). Estes lotes com prefixo `TEMP-` devem ser normalizados.
 
-1. Criar script Python para gerar os 2 diagramas como PNG (`matplotlib`)
-2. Regenerar o documento Word completo com os diagramas inseridos após as secções "Visão Geral" e "Módulos da Cadeia de Valor"
-3. QA: converter para PDF, inspeccionar visualmente cada página
-4. Output: `/mnt/documents/INCA_Coffee_Trace_Descricao_v2.docx`
+### 3. Erro FK profiles↔user_roles na página Admin (MODERADO)
+A página `/admin` tenta fazer join entre `profiles` e `user_roles` mas não existe FK definida no schema, resultando no erro PGRST200.
+
+### 4. Página de 404 em inglês (MENOR)
+A página NotFound mostra "Oops! Page not found" e "Return to Home" em inglês, inconsistente com o resto da plataforma que está em português.
+
+## Plano de Correcções
+
+### Passo 1: Corrigir flash "Conta Configurada" no Dashboard
+- No `Dashboard.tsx`, verificar se `loading` inclui o estado dos roles antes de renderizar o conteúdo
+- Alternativa: adicionar um skeleton/spinner no Dashboard enquanto roles carregam
+
+### Passo 2: Normalizar lotes TEMP- restantes
+- Migração SQL: `UPDATE lotes SET referencia_lote = public.generate_lot_reference() WHERE referencia_lote LIKE 'TEMP-%'`
+- Actualizar trigger para também capturar `TEMP-%` (não apenas `PLACEHOLDER-`)
+
+### Passo 3: Corrigir join FK na página Admin
+- Alterar a query em `Admin.tsx` para fazer queries separadas (profiles + user_roles) em vez de join directo, ou criar a FK necessária
+
+### Passo 4: Traduzir página 404 para português
+- Actualizar `NotFound.tsx`: "Página não encontrada", "Voltar à página inicial"
 
