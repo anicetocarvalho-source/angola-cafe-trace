@@ -52,9 +52,10 @@ const Admin = () => {
 
   const fetchUsers = async () => {
     try {
-      const [profilesRes, rolesRes] = await Promise.all([
+      const [profilesRes, rolesRes, emailsRes] = await Promise.all([
         supabase.from("profiles").select("id, nome"),
         supabase.from("user_roles").select("user_id, role"),
+        supabase.functions.invoke("list-user-emails"),
       ]);
 
       if (profilesRes.error) throw profilesRes.error;
@@ -67,9 +68,11 @@ const Admin = () => {
         rolesByUser.set(r.user_id, arr);
       });
 
+      const emails: Record<string, string> = emailsRes.data?.emails || {};
+
       const usersWithEmails: UserWithRoles[] = (profilesRes.data || []).map((profile: any) => ({
         id: profile.id,
-        email: "—",
+        email: emails[profile.id] || "—",
         profiles: [{ nome: profile.nome }],
         user_roles: rolesByUser.get(profile.id) || [],
       }));
