@@ -51,7 +51,7 @@ const orphanLabels: Record<string, string> = {
   profiles_sem_entidade: "Perfis com entidade inválida",
 };
 
-const actionVariant = (action: string) => {
+const actionVariant = (action: string): "default" | "secondary" | "destructive" | "outline" => {
   if (action === "INSERT") return "default";
   if (action === "UPDATE") return "secondary";
   if (action === "DELETE") return "destructive";
@@ -62,9 +62,9 @@ export const DataIntegrity = () => {
   const integrityQuery = useQuery({
     queryKey: ["data-integrity"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_data_integrity_report" as never);
+      const { data, error } = await (supabase.rpc as any)("get_data_integrity_report");
       if (error) throw error;
-      return data as unknown as IntegrityReport;
+      return data as IntegrityReport;
     },
     refetchInterval: 30_000,
   });
@@ -84,12 +84,8 @@ export const DataIntegrity = () => {
   });
 
   const report = integrityQuery.data;
-  const totalOrphans = report
-    ? Object.values(report.orphans).reduce((a, b) => a + b, 0)
-    : 0;
-  const totalRecords = report
-    ? Object.values(report.counts).reduce((a, b) => a + b, 0)
-    : 0;
+  const totalOrphans = report ? Object.values(report.orphans).reduce((a, b) => a + b, 0) : 0;
+  const totalRecords = report ? Object.values(report.counts).reduce((a, b) => a + b, 0) : 0;
 
   const handleRefresh = () => {
     integrityQuery.refetch();
@@ -101,9 +97,7 @@ export const DataIntegrity = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Integridade de Dados</h2>
-          <p className="text-sm text-muted-foreground">
-            Actualizado automaticamente a cada 30 segundos
-          </p>
+          <p className="text-sm text-muted-foreground">Actualizado automaticamente a cada 30 segundos</p>
         </div>
         <Button variant="outline" size="sm" onClick={handleRefresh} disabled={integrityQuery.isFetching}>
           <RefreshCw className={`h-4 w-4 mr-2 ${integrityQuery.isFetching ? "animate-spin" : ""}`} />
@@ -228,14 +222,10 @@ export const DataIntegrity = () => {
                         .sort(([, a], [, b]) => b - a)
                         .map(([key, count]) => (
                           <TableRow key={key}>
-                            <TableCell className="text-sm">
-                              {orphanLabels[key] || key}
-                            </TableCell>
+                            <TableCell className="text-sm">{orphanLabels[key] || key}</TableCell>
                             <TableCell className="text-right">
                               {count === 0 ? (
-                                <Badge variant="outline" className="text-secondary border-secondary">
-                                  OK
-                                </Badge>
+                                <Badge variant="outline" className="text-secondary border-secondary">OK</Badge>
                               ) : (
                                 <Badge variant="destructive">{count}</Badge>
                               )}

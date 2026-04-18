@@ -170,9 +170,7 @@ const Admin = () => {
                   <Users className="h-5 w-5 text-primary" />
                   <CardTitle>Utilizadores do Sistema</CardTitle>
                 </div>
-                <CardDescription>
-                  Gerir perfis e permissões dos utilizadores
-                </CardDescription>
+                <CardDescription>Gerir perfis e permissões dos utilizadores</CardDescription>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -199,9 +197,7 @@ const Admin = () => {
                             <TableCell>
                               <div className="flex flex-wrap gap-2">
                                 {user.user_roles.length === 0 ? (
-                                  <span className="text-sm text-muted-foreground">
-                                    Sem perfis atribuídos
-                                  </span>
+                                  <span className="text-sm text-muted-foreground">Sem perfis atribuídos</span>
                                 ) : (
                                   user.user_roles.map((ur, idx) => (
                                     <Badge key={idx} variant="outline" className="gap-2">
@@ -218,9 +214,7 @@ const Admin = () => {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Select
-                                onValueChange={(value) => handleAddRole(user.id, value)}
-                              >
+                              <Select onValueChange={(value) => handleAddRole(user.id, value)}>
                                 <SelectTrigger className="w-[200px]">
                                   <SelectValue placeholder="Adicionar perfil" />
                                 </SelectTrigger>
