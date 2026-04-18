@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Users, Shield } from "lucide-react";
+import { Users, Shield, ShieldCheck } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -16,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DataIntegrity } from "@/components/admin/DataIntegrity";
 
 interface UserWithRoles {
   id: string;
