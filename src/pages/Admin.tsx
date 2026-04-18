@@ -151,83 +151,94 @@ const Admin = () => {
           <p className="text-muted-foreground">Gestão de utilizadores e permissões</p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              <CardTitle>Utilizadores do Sistema</CardTitle>
-            </div>
-            <CardDescription>
-              Gerir perfis e permissões dos utilizadores
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <p className="text-center text-muted-foreground py-8">A carregar...</p>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Perfis Actuais</TableHead>
-                      <TableHead>Atribuir Perfil</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {users.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{user.profiles[0]?.nome || "N/A"}</p>
-                            <p className="text-xs text-muted-foreground">{user.email}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-2">
-                            {user.user_roles.length === 0 ? (
-                              <span className="text-sm text-muted-foreground">
-                                Sem perfis atribuídos
-                              </span>
-                            ) : (
-                              user.user_roles.map((ur, idx) => (
-                                <Badge key={idx} variant="outline" className="gap-2">
-                                  {roles.find((r) => r.value === ur.role)?.label || ur.role}
-                                  <button
-                                    onClick={() => handleRemoveRole(user.id, ur.role)}
-                                    className="text-xs hover:text-destructive"
-                                  >
-                                    ✕
-                                  </button>
-                                </Badge>
-                              ))
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            onValueChange={(value) => handleAddRole(user.id, value)}
-                          >
-                            <SelectTrigger className="w-[200px]">
-                              <SelectValue placeholder="Adicionar perfil" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {roles.map((role) => (
-                                <SelectItem key={role.value} value={role.value}>
-                                  {role.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="users" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="users" className="gap-2">
+              <Users className="h-4 w-4" /> Utilizadores
+            </TabsTrigger>
+            <TabsTrigger value="integrity" className="gap-2">
+              <ShieldCheck className="h-4 w-4" /> Integridade de Dados
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  <CardTitle>Utilizadores do Sistema</CardTitle>
+                </div>
+                <CardDescription>Gerir perfis e permissões dos utilizadores</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <p className="text-center text-muted-foreground py-8">A carregar...</p>
+                ) : (
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Nome</TableHead>
+                          <TableHead>Perfis Actuais</TableHead>
+                          <TableHead>Atribuir Perfil</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((user) => (
+                          <TableRow key={user.id}>
+                            <TableCell>
+                              <div>
+                                <p className="font-medium">{user.profiles[0]?.nome || "N/A"}</p>
+                                <p className="text-xs text-muted-foreground">{user.email}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-wrap gap-2">
+                                {user.user_roles.length === 0 ? (
+                                  <span className="text-sm text-muted-foreground">Sem perfis atribuídos</span>
+                                ) : (
+                                  user.user_roles.map((ur, idx) => (
+                                    <Badge key={idx} variant="outline" className="gap-2">
+                                      {roles.find((r) => r.value === ur.role)?.label || ur.role}
+                                      <button
+                                        onClick={() => handleRemoveRole(user.id, ur.role)}
+                                        className="text-xs hover:text-destructive"
+                                      >
+                                        ✕
+                                      </button>
+                                    </Badge>
+                                  ))
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Select onValueChange={(value) => handleAddRole(user.id, value)}>
+                                <SelectTrigger className="w-[200px]">
+                                  <SelectValue placeholder="Adicionar perfil" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {roles.map((role) => (
+                                    <SelectItem key={role.value} value={role.value}>
+                                      {role.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="integrity">
+            <DataIntegrity />
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
