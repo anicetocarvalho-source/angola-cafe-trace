@@ -1429,6 +1429,7 @@ export type Database = {
     Functions: {
       generate_lot_reference: { Args: never; Returns: string }
       generate_qr_code: { Args: never; Returns: string }
+      get_data_integrity_report: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
