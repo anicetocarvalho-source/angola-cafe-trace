@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "@/hooks/useAuth";
+import AppLayout from "./components/AppLayout";
 import ScrollToTop from "./components/ScrollToTop";
 import BackToTop from "./components/BackToTop";
 import Index from "./pages/Index";
@@ -55,338 +56,93 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange={false}>
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/verificar" element={<Verificar />} />
-          <Route path="/verificar/:referencia" element={<Verificar />} />
-          <Route path="/sim-publico" element={<SIMPublico />} />
-          <Route path="/boletim-mercado" element={<BoletimMercado />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/mapa"
-            element={
-              <ProtectedRoute>
-                <Mapa />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lotes"
-            element={
-              <ProtectedRoute>
-                <Lotes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lotes/novo"
-            element={
-              <ProtectedRoute>
-                <NovoLote />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/exploracoes"
-            element={
-              <ProtectedRoute>
-                <Exploracoes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/exploracoes/nova"
-            element={
-              <ProtectedRoute>
-                <NovaExploracao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/secagem/nova"
-            element={
-              <ProtectedRoute>
-                <NovaSecagem />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/nova-analise"
-            element={
-              <ProtectedRoute>
-                <NovaAnalise />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/validacao"
-            element={
-              <ProtectedRoute requiredRole="tecnico_inca">
-                <Validacao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/qualidade"
-            element={
-            <ProtectedRoute requiredRole="tecnico_inca">
-                <Qualidade />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute requiredRole="admin_inca">
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/sim"
-            element={
-              <ProtectedRoute>
-                <SIM />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/exportacao"
-            element={
-            <ProtectedRoute requiredRole="exportador">
-                <Exportacao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/nova-exportacao"
-            element={
-              <ProtectedRoute>
-                <NovaExportacao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/relatorios"
-            element={
-              <ProtectedRoute>
-                <Relatorios />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/parcelas"
-            element={
-              <ProtectedRoute>
-                <Parcelas />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/parcelas/nova"
-            element={
-              <ProtectedRoute>
-                <NovaParcela />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lotes/:id"
-            element={
-              <ProtectedRoute>
-                <LoteDetalhes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/iot"
-            element={
-            <ProtectedRoute requiredRole="tecnico_inca">
-                <IoT />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/colheitas"
-            element={
-              <ProtectedRoute>
-                <Colheitas />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/colheitas/nova"
-            element={
-              <ProtectedRoute>
-                <NovaColheita />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/colheitas/:id/editar"
-            element={
-              <ProtectedRoute>
-                <NovaColheita />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/auditoria"
-            element={
-              <ProtectedRoute requiredRole="admin_inca">
-                <Auditoria />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/exportacao/:id"
-            element={
-              <ProtectedRoute>
-                <ExportacaoDetalhes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/manutencao"
-            element={
-              <ProtectedRoute>
-                <ManutencaoAgricola />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/manutencao/nova"
-            element={
-              <ProtectedRoute>
-                <NovaManutencao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/manutencao/:id/editar"
-            element={
-              <ProtectedRoute>
-                <NovaManutencao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/fiscalizacao"
-            element={
-              <ProtectedRoute requiredRole="tecnico_inca">
-                <Fiscalizacao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/fiscalizacao/nova"
-            element={
-              <ProtectedRoute requiredRole="tecnico_inca">
-                <NovaVisita />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/fiscalizacao/:id"
-            element={
-              <ProtectedRoute requiredRole="tecnico_inca">
-                <VisitaDetalhes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/transformacao"
-            element={
-            <ProtectedRoute requiredRole="processador">
-                <Transformacao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logistica"
-            element={
-            <ProtectedRoute requiredRole="transportador">
-                <Logistica />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/comercializacao"
-            element={
-              <ProtectedRoute requiredRoles={["exportador", "comprador", "tecnico_inca"]}>
-                <Comercializacao />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/armazenamento"
-            element={
-            <ProtectedRoute requiredRole="processador">
-                <Armazenamento />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/checklists"
-            element={
-              <ProtectedRoute requiredRole="tecnico_inca">
-                <Checklists />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/torra"
-            element={
-              <ProtectedRoute requiredRole="processador">
-                <Torra />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/embalagem"
-            element={
-              <ProtectedRoute requiredRole="processador">
-                <Embalagem />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lotes/operacoes"
-            element={
-              <ProtectedRoute>
-                <LoteOperacoes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/perfil"
-            element={
-              <ProtectedRoute>
-                <Perfil />
-              </ProtectedRoute>
-            }
-          />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <BackToTop />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <ScrollToTop />
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/verificar" element={<Verificar />} />
+              <Route path="/verificar/:referencia" element={<Verificar />} />
+              <Route path="/sim-publico" element={<SIMPublico />} />
+              <Route path="/boletim-mercado" element={<BoletimMercado />} />
+
+              {/* Authenticated routes (persistent layout) */}
+              <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/mapa" element={<Mapa />} />
+                <Route path="/lotes" element={<Lotes />} />
+                <Route path="/lotes/novo" element={<NovoLote />} />
+                <Route path="/lotes/operacoes" element={<LoteOperacoes />} />
+                <Route path="/lotes/:id" element={<LoteDetalhes />} />
+                <Route path="/exploracoes" element={<Exploracoes />} />
+                <Route path="/exploracoes/nova" element={<NovaExploracao />} />
+                <Route path="/secagem/nova" element={<NovaSecagem />} />
+                <Route path="/nova-analise" element={<NovaAnalise />} />
+                <Route path="/sim" element={<SIM />} />
+                <Route path="/nova-exportacao" element={<NovaExportacao />} />
+                <Route path="/relatorios" element={<Relatorios />} />
+                <Route path="/parcelas" element={<Parcelas />} />
+                <Route path="/parcelas/nova" element={<NovaParcela />} />
+                <Route path="/colheitas" element={<Colheitas />} />
+                <Route path="/colheitas/nova" element={<NovaColheita />} />
+                <Route path="/colheitas/:id/editar" element={<NovaColheita />} />
+                <Route path="/exportacao/:id" element={<ExportacaoDetalhes />} />
+                <Route path="/manutencao" element={<ManutencaoAgricola />} />
+                <Route path="/manutencao/nova" element={<NovaManutencao />} />
+                <Route path="/manutencao/:id/editar" element={<NovaManutencao />} />
+                <Route path="/comercializacao" element={<Comercializacao />} />
+                <Route path="/perfil" element={<Perfil />} />
+              </Route>
+
+              {/* tecnico_inca-restricted */}
+              <Route element={<AppLayout requiredRole="tecnico_inca" />}>
+                <Route path="/validacao" element={<Validacao />} />
+                <Route path="/qualidade" element={<Qualidade />} />
+                <Route path="/iot" element={<IoT />} />
+                <Route path="/fiscalizacao" element={<Fiscalizacao />} />
+                <Route path="/fiscalizacao/nova" element={<NovaVisita />} />
+                <Route path="/fiscalizacao/:id" element={<VisitaDetalhes />} />
+                <Route path="/checklists" element={<Checklists />} />
+              </Route>
+
+              {/* admin_inca-restricted */}
+              <Route element={<AppLayout requiredRole="admin_inca" />}>
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/auditoria" element={<Auditoria />} />
+              </Route>
+
+              {/* exportador-restricted */}
+              <Route element={<AppLayout requiredRole="exportador" />}>
+                <Route path="/exportacao" element={<Exportacao />} />
+              </Route>
+
+              {/* processador-restricted */}
+              <Route element={<AppLayout requiredRole="processador" />}>
+                <Route path="/transformacao" element={<Transformacao />} />
+                <Route path="/armazenamento" element={<Armazenamento />} />
+                <Route path="/torra" element={<Torra />} />
+                <Route path="/embalagem" element={<Embalagem />} />
+              </Route>
+
+              {/* transportador-restricted */}
+              <Route element={<AppLayout requiredRole="transportador" />}>
+                <Route path="/logistica" element={<Logistica />} />
+              </Route>
+
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <BackToTop />
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   </ThemeProvider>
 );
 
