@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -129,7 +128,7 @@ const Validacao = () => {
 
   if (!hasRole("tecnico_inca") && !hasRole("admin_inca")) {
     return (
-      <DashboardLayout>
+      <>
         <Card>
           <CardContent className="pt-6 text-center">
             <p className="text-muted-foreground">
@@ -137,12 +136,12 @@ const Validacao = () => {
             </p>
           </CardContent>
         </Card>
-      </DashboardLayout>
+      </>
     );
   }
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         <div>
@@ -318,7 +317,7 @@ const Validacao = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -149,7 +148,7 @@ const Fiscalizacao = () => {
   const visitasRealizadas = visitas?.filter((v) => v.estado === "realizada").length || 0;
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -342,7 +341,7 @@ const Fiscalizacao = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

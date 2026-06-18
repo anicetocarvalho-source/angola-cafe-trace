@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -115,17 +114,17 @@ const LoteDetalhes = () => {
 
   if (loading) {
     return (
-      <DashboardLayout>
+      <>
         <div className="flex items-center justify-center h-96">
           <p className="text-muted-foreground">A carregar...</p>
         </div>
-      </DashboardLayout>
+      </>
     );
   }
 
   if (!lote) {
     return (
-      <DashboardLayout>
+      <>
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">Lote não encontrado</p>
           <Button onClick={() => navigate("/lotes")}>
@@ -133,12 +132,12 @@ const LoteDetalhes = () => {
             Voltar
           </Button>
         </div>
-      </DashboardLayout>
+      </>
     );
   }
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/lotes")}>
@@ -504,7 +503,7 @@ const LoteDetalhes = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

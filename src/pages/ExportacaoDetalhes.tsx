@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -122,28 +121,28 @@ export default function ExportacaoDetalhes() {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <>
         <div className="flex items-center justify-center h-64">
           <p className="text-muted-foreground">A carregar...</p>
         </div>
-      </DashboardLayout>
+      </>
     );
   }
 
   if (!exportacao) {
     return (
-      <DashboardLayout>
+      <>
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <AlertTriangle className="h-12 w-12 text-destructive" />
           <p className="text-muted-foreground">Exportação não encontrada</p>
           <Button onClick={() => navigate('/exportacao')}>Voltar</Button>
         </div>
-      </DashboardLayout>
+      </>
     );
   }
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         
@@ -435,6 +434,6 @@ export default function ExportacaoDetalhes() {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </>
   );
 }

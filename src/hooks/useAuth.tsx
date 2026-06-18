@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,18 @@ export interface UserRole {
   role: string;
 }
 
-export function useAuth() {
+interface AuthContextValue {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  roles: UserRole[];
+  hasRole: (role: string) => boolean;
+  signOut: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,12 +39,12 @@ export function useAuth() {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // Use setTimeout to avoid Supabase auth deadlock
+          // Avoid Supabase auth deadlock
           setTimeout(() => fetchRoles(session.user.id), 0);
         } else {
           setRoles([]);
@@ -54,7 +65,7 @@ export function useAuth() {
       } else {
         setRolesLoading(false);
       }
-      
+
       setLoading(false);
     });
 
@@ -69,13 +80,11 @@ export function useAuth() {
     navigate("/auth");
   };
 
-  const hasRole = (role: string) => {
-    return roles.some((r) => r.role === role);
-  };
+  const hasRole = (role: string) => roles.some((r) => r.role === role);
 
   const isFullyLoaded = !loading && !rolesLoading;
 
-  return {
+  const value: AuthContextValue = {
     user,
     session,
     loading: !isFullyLoaded,
@@ -83,4 +92,14 @@ export function useAuth() {
     hasRole,
     signOut,
   };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth(): AuthContextValue {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return ctx;
 }

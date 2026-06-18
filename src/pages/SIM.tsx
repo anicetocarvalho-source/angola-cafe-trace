@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -157,7 +156,7 @@ const SIM = () => {
   const topIndicators = Object.values(latestByIndicator).slice(0, 4);
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         {/* Header */}
@@ -417,7 +416,7 @@ const SIM = () => {
           Última actualização: {new Date().toLocaleString("pt-PT")}
         </p>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

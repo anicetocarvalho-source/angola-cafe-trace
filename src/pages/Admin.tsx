@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -131,7 +130,7 @@ const Admin = () => {
 
   if (!hasRole("admin_inca")) {
     return (
-      <DashboardLayout>
+      <>
         <Card>
           <CardContent className="pt-6 text-center">
             <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -141,12 +140,12 @@ const Admin = () => {
             </p>
           </CardContent>
         </Card>
-      </DashboardLayout>
+      </>
     );
   }
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Administração</h1>
@@ -242,7 +241,7 @@ const Admin = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 
