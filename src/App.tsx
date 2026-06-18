@@ -135,6 +135,12 @@ const App = () => (
                 <Route path="/logistica" element={<Logistica />} />
               </Route>
 
+              {/* comercializacao - multiple roles */}
+              <Route element={<AppLayout requiredRoles={["exportador", "comprador", "tecnico_inca"]} />}>
+                <Route path="/comercializacao" element={<Comercializacao />} />
+              </Route>
+
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
