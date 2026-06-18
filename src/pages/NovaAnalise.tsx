@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,7 +111,7 @@ const NovaAnalise = () => {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6 max-w-3xl">
         <div>
           <Button
@@ -271,7 +270,7 @@ const NovaAnalise = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import DataTablePagination from "@/components/DataTablePagination";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,7 +73,7 @@ const Lotes = () => {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
 
@@ -207,7 +206,7 @@ const Lotes = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

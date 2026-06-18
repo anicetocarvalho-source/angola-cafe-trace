@@ -1,62 +1,64 @@
+## Diagnóstico
 
+Quando se clica num item do menu, sente-se o sistema inteiro a recarregar (sidebar, header, perfil, papéis, contagens) e não apenas o conteúdo da página. Isto acontece por duas causas técnicas que se reforçam:
 
-# Relatório de Testes de Rotas da Plataforma
+### 1. `DashboardLayout` está dentro de cada página, em vez de envolver as rotas
+Cada página (`Mapa`, `Lotes`, `Dashboard`, `LoteDetalhes`, etc.) faz `<DashboardLayout>...</DashboardLayout>` no seu próprio JSX. Como o React Router substitui o elemento da rota a cada navegação, o `DashboardLayout` **desmonta e volta a montar** sempre — ou seja, o header, a sidebar, o `NotificationCenter`, o estado de colapso da sidebar, animações, tudo é recriado do zero a cada clique.
 
-## Resultados dos Testes
+### 2. `useAuth` é um hook isolado, não um contexto partilhado
+`src/hooks/useAuth.tsx` é um hook normal: cada componente que o chama (`ProtectedRoute` e `DashboardLayout`) cria a sua **própria instância** com `useState`. Como o layout é remontado a cada navegação:
+- `loading` arranca em `true`,
+- corre `supabase.auth.getSession()` outra vez,
+- corre `fetchRoles()` outra vez,
+- enquanto isso o `ProtectedRoute` mostra o spinner de página inteira e o `DashboardLayout` esconde os grupos de menu (porque `filteredGroups` filtra com `loading`).
 
-### Rotas Públicas (sem autenticação) — TODAS OK
-| Rota | Resultado |
-|------|-----------|
-| `/` (Homepage) | Carrega correctamente com hero, KPIs animados, navegação |
-| `/auth` | Formulário de login/registo funcional, login rápido disponível |
-| `/verificar` | Portal público de verificação de lotes funcional |
-| `/sim-publico` | Dashboard SIM público com 8 indicadores, 202 registos |
-| `/boletim-mercado` | Boletim mensal funcional (dados zerados para abril 2026) |
+O resultado visível é o "flash" de recarga global a cada clique.
 
-### Rota 404 — OK
-| Rota | Resultado |
-|------|-----------|
-| `/rota-inexistente-xyz` | Mostra página 404 com link "Return to Home" |
+## Plano
 
-### Rotas Protegidas — Redirect OK
-| Rota | Resultado |
-|------|-----------|
-| `/dashboard` (sem auth) | Redireciona correctamente para `/auth` |
+### Passo 1 — Transformar `useAuth` num contexto (AuthProvider único)
+- Converter `src/hooks/useAuth.tsx` em `AuthContext` + `AuthProvider` + hook consumidor `useAuth()`.
+- A subscrição a `supabase.auth.onAuthStateChange` e o `fetchRoles` passam a viver **uma só vez** no provider, na raiz da app.
+- Todos os componentes (`ProtectedRoute`, `DashboardLayout`, páginas) continuam a chamar `useAuth()` com a mesma assinatura — só lêem do contexto, não re-fazem fetch.
+- Envolver a app com `<AuthProvider>` em `src/App.tsx`, por dentro do `<BrowserRouter>` (precisa de router para o `navigate` do `signOut`).
 
-### Rotas Protegidas (com auth Admin) — Via Sidebar OK
-| Rota | Resultado |
-|------|-----------|
-| `/dashboard` | Dashboard Administrativo carrega (com flash "Conta Configurada") |
-| `/admin` | Página de administração carrega (erro de FK profiles↔user_roles) |
-| `/lotes` | Carrega via sidebar com 11 lotes listados |
+Benefício: navegar deixa de disparar novo `getSession`/`fetchRoles`, e `loading` deixa de voltar a `true`.
 
-## Problemas Encontrados
+### Passo 2 — Elevar `DashboardLayout` para uma rota de layout persistente
+- Criar um componente `AppLayout` que renderiza `<DashboardLayout><Outlet /></DashboardLayout>` (com `ProtectedRoute` por dentro, opcionalmente, para as rotas privadas).
+- Em `src/App.tsx`, reorganizar as `Routes` para que todas as rotas privadas fiquem aninhadas numa rota pai que usa esse layout:
+  ```text
+  <Route element={<AppLayout />}>
+    <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/mapa" element={<Mapa />} />
+    ... (todas as rotas atualmente protegidas)
+  </Route>
+  ```
+- Manter fora deste layout as rotas públicas (`/`, `/auth`, `/verificar`, `/sim-publico`, `/boletim-mercado`).
+- Manter as restrições por papel: ou criar pequenos wrappers `<RequireRole role="...">` por rota, ou manter `ProtectedRoute requiredRole` à volta do `<Outlet />` em sub-grupos. A regra atual de cada rota é preservada exatamente.
 
-### 1. Flash "Conta Configurada" persiste no login (MODERADO)
-Apesar da correcção anterior ao `useAuth`, o dashboard ainda mostra brevemente o fallback "Conta Configurada / Nenhum atribuído" antes de carregar o dashboard correcto. O problema é que o `onAuthStateChange` dispara antes dos roles serem carregados, e o componente Dashboard já começa a renderizar. A correcção actual usa `isFullyLoaded = !loading && !rolesLoading`, mas o `rolesLoading` inicia como `true` e o `loading` é colocado a `false` antes de `rolesLoading` em certos caminhos de execução.
+### Passo 3 — Remover `<DashboardLayout>` do interior de cada página
+Em todas as páginas listadas (Mapa, Lotes, LoteDetalhes, Dashboard, Exploracoes, Parcelas, Colheitas, NovaColheita, Manutencao, NovaManutencao, Fiscalizacao, NovaVisita, VisitaDetalhes, Transformacao, Logistica, Comercializacao, Armazenamento, Torra, Embalagem, LoteOperacoes, Exportacao, NovaExportacao, ExportacaoDetalhes, Qualidade, Validacao, Checklists, IoT, Admin, Auditoria, Relatorios, SIM, Perfil, NovoLote, NovaExploracao, NovaParcela, NovaSecagem, NovaAnalise):
+- Apagar o `import DashboardLayout` e os wrappers `<DashboardLayout>...</DashboardLayout>`, devolvendo apenas o conteúdo da página.
+- O conteúdo passa a ser renderizado dentro do `<Outlet />` do layout persistente.
 
-### 2. Lotes com prefixo TEMP- não normalizados (MENOR)
-Existem 2 lotes na base de dados com referências `TEMP-1775654026722-1` e `TEMP-1775654025842-0` que não foram apanhados pela migração anterior (que só corrigiu `TEMP-BLEND%`). Estes lotes com prefixo `TEMP-` devem ser normalizados.
+### Passo 4 — Envolver o `Outlet` com `PageTransition` (uma única instância)
+Para manter a animação suave de entrada de página (mas só no conteúdo, não no header/sidebar), o `AppLayout` renderiza:
+```text
+<DashboardLayout>
+  <PageTransition><Outlet /></PageTransition>
+</DashboardLayout>
+```
 
-### 3. Erro FK profiles↔user_roles na página Admin (MODERADO)
-A página `/admin` tenta fazer join entre `profiles` e `user_roles` mas não existe FK definida no schema, resultando no erro PGRST200.
+### Passo 5 — Verificação
+- Navegar entre `/dashboard`, `/mapa`, `/lotes`, `/admin` e confirmar que:
+  - O header, a sidebar e o estado colapsado/expandido **não piscam** nem reaparecem.
+  - Não aparece o spinner global do `ProtectedRoute` entre páginas.
+  - O `NotificationCenter` continua aberto/fechado de forma consistente.
+- Confirmar que rotas com restrição de papel (ex.: `/admin`, `/exportacao`, `/iot`) continuam a bloquear utilizadores sem permissão.
+- Confirmar que logout (`signOut`) ainda redireciona para `/auth`.
 
-### 4. Página de 404 em inglês (MENOR)
-A página NotFound mostra "Oops! Page not found" e "Return to Home" em inglês, inconsistente com o resto da plataforma que está em português.
+## Notas
 
-## Plano de Correcções
-
-### Passo 1: Corrigir flash "Conta Configurada" no Dashboard
-- No `Dashboard.tsx`, verificar se `loading` inclui o estado dos roles antes de renderizar o conteúdo
-- Alternativa: adicionar um skeleton/spinner no Dashboard enquanto roles carregam
-
-### Passo 2: Normalizar lotes TEMP- restantes
-- Migração SQL: `UPDATE lotes SET referencia_lote = public.generate_lot_reference() WHERE referencia_lote LIKE 'TEMP-%'`
-- Actualizar trigger para também capturar `TEMP-%` (não apenas `PLACEHOLDER-`)
-
-### Passo 3: Corrigir join FK na página Admin
-- Alterar a query em `Admin.tsx` para fazer queries separadas (profiles + user_roles) em vez de join directo, ou criar a FK necessária
-
-### Passo 4: Traduzir página 404 para português
-- Actualizar `NotFound.tsx`: "Página não encontrada", "Voltar à página inicial"
-
+- Não há alteração de regras de negócio nem de queries — apenas estrutura de routing e gestão de estado de autenticação.
+- A API pública do hook (`user`, `session`, `loading`, `roles`, `hasRole`, `signOut`) mantém-se igual; nenhuma página precisa de ser alterada além da remoção do wrapper de layout.

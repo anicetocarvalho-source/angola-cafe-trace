@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -362,11 +361,11 @@ const Relatorios = () => {
 
   if (loading) {
     return (
-      <DashboardLayout>
+      <>
         <div className="min-h-[60vh] flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      </DashboardLayout>
+      </>
     );
   }
 
@@ -375,7 +374,7 @@ const Relatorios = () => {
   const eudrRate = data.eudrStats.total > 0 ? Math.round((data.eudrStats.compliant / data.eudrStats.total) * 100) : 0;
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         <div>
@@ -713,7 +712,7 @@ const Relatorios = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

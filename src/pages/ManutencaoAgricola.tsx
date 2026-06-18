@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -293,7 +292,7 @@ const ManutencaoAgricola = () => {
   }, [manutencoes, selectedParcela, selectedTipo, dataInicio, dataFim]);
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         <div className="flex items-center justify-between">
@@ -593,7 +592,7 @@ const ManutencaoAgricola = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

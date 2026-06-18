@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import DataTablePagination from "@/components/DataTablePagination";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -93,7 +92,7 @@ const Qualidade = () => {
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -279,7 +278,7 @@ const Qualidade = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

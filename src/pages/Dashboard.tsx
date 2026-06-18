@@ -1,6 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import DashboardLayout from "@/components/DashboardLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminDashboard } from "@/components/dashboard/AdminDashboard";
 import { ProducerDashboard } from "@/components/dashboard/ProducerDashboard";
@@ -86,7 +85,7 @@ const Dashboard = () => {
     );
   };
 
-  return <DashboardLayout>{renderDashboard()}</DashboardLayout>;
+  return <>{renderDashboard()}</>;
 };
 
 export default Dashboard;

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,7 +125,7 @@ const NovaExportacao = () => {
     .reduce((sum, l) => sum + Number(l.volume_kg), 0);
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6 max-w-4xl">
         <div>
           <Button
@@ -316,7 +315,7 @@ const NovaExportacao = () => {
           </div>
         </form>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

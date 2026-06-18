@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,7 +75,7 @@ export default function Colheitas() {
   if (isLoading) return <LoadingSkeleton />;
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6">
         <Breadcrumbs />
         
@@ -209,6 +208,6 @@ export default function Colheitas() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </>
   );
 }
