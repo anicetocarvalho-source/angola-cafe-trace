@@ -61,6 +61,12 @@ export default {
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
         'gradient-card': 'var(--gradient-card)',
+        'gradient-auth': 'var(--gradient-auth)',
+        'gradient-copper': 'var(--gradient-copper)',
+      },
+      fontFamily: {
+        sora: ['Sora', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        manrope: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'soft': 'var(--shadow-soft)',

@@ -82,6 +82,20 @@ All colors MUST be HSL.
     
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Auth page — Premium coffee roast (Burnt Sienna) */
+    --auth-bg: 28 38% 8%;              /* #1a120b espresso */
+    --auth-bg-glow: 25 32% 18%;        /* #3d2b1f warm glow */
+    --auth-surface: 0 0% 100%;         /* used with low opacity */
+    --auth-border: 0 0% 100%;          /* used with low opacity */
+    --auth-foreground: 30 15% 88%;
+    --auth-muted: 30 10% 62%;
+    --copper: 25 40% 39%;              /* #8b5e3c */
+    --copper-hover: 25 35% 47%;        /* #a6724d */
+    --copper-deep: 25 41% 21%;         /* #4a321f */
+    --copper-foreground: 0 0% 100%;
+    --gradient-auth: radial-gradient(circle at top right, hsl(var(--auth-bg-glow)), hsl(var(--auth-bg)));
+    --gradient-copper: linear-gradient(135deg, hsl(var(--copper)) 0%, hsl(var(--copper-deep)) 100%);
   }
 
   .dark {
