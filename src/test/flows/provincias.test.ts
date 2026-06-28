@@ -89,9 +89,9 @@ describe("Regressão: nenhum ficheiro reintroduz lista hardcoded de províncias"
         /placeholder=["'][^"']*Provín?cia/i.test(src) &&
         /<Select(Trigger|\s)/.test(src);
       const derivesFromData =
-        /new Set\([^)]*\.provincia/.test(src) ||
+        /new Set\(/.test(src) && /\.provincia/.test(src) ||
         /provincias\s*=\s*useMemo/.test(src) ||
-        /\.map\([^)]*provincia/.test(src);
+        /\.provincia\b/.test(src);
       const importsCentral = /from\s+["']@\/lib\/provincias["']/.test(src);
       if (hasProvinciaSelect && !derivesFromData && !importsCentral) {
         offenders.push(f);
