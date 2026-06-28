@@ -14,11 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-const provincias = [
-  "Bengo", "Benguela", "Bié", "Cabinda", "Cuando Cubango", "Cuanza Norte",
-  "Cuanza Sul", "Cunene", "Huambo", "Huíla", "Luanda", "Lunda Norte",
-  "Lunda Sul", "Malanje", "Moxico", "Namibe", "Uíge", "Zaire"
-];
+import { PROVINCIAS_ANGOLA } from "@/lib/provincias";
+
+const provincias = PROVINCIAS_ANGOLA;
 
 const formSchema = z.object({
   designacao: z.string().min(3, "Mínimo 3 caracteres"),
