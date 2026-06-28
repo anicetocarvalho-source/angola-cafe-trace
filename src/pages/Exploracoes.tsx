@@ -22,8 +22,9 @@ const Exploracoes = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [provinciaFilter, setProvinciaFilter] = useState("all");
+  const [loc, setLoc] = useState({ provincia: "", municipio: "", comuna: "" });
   const [page, setPage] = useState(0);
+
 
   const { data: exploracoes, isLoading } = useQuery({
     queryKey: ["exploracoes"],
