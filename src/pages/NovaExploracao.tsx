@@ -180,104 +180,23 @@ const NovaExploracao = () => {
                   />
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-3">
-                  <FormField
-                    control={form.control}
-                    name="provincia"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Província *</FormLabel>
-                        <Select
-                          onValueChange={(v) => {
-                            field.onChange(v);
-                            form.setValue("municipio", "", { shouldValidate: false });
-                            form.setValue("comuna", "", { shouldValidate: false });
-                          }}
-                          value={field.value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccione província" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {PROVINCIAS_ANGOLA.map((p) => (
-                              <SelectItem key={p} value={p}>
-                                {p}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="municipio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Município *</FormLabel>
-                        <Select
-                          onValueChange={(v) => {
-                            field.onChange(v);
-                            form.setValue("comuna", "", { shouldValidate: false });
-                          }}
-                          value={field.value || ""}
-                          disabled={!provincia}
-                        >
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={provincia ? "Seleccione município" : "Escolha província primeiro"}
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {municipiosDisponiveis.map((m) => (
-                              <SelectItem key={m} value={m}>
-                                {m}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="comuna"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Comuna</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value || ""}
-                          disabled={!municipio || comunasDisponiveis.length === 0}
-                        >
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={
-                                !municipio
-                                  ? "Escolha município primeiro"
-                                  : comunasDisponiveis.length === 0
-                                    ? "Sem comunas registadas"
-                                    : "Seleccione comuna"
-                              }
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {comunasDisponiveis.map((c) => (
-                              <SelectItem key={c} value={c}>
-                                {c}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                <div className="space-y-2">
+                  <LocalizacaoSelect
+                    value={{ provincia: provincia ?? "", municipio: municipio ?? "", comuna }}
+                    onChange={(v) => {
+                      form.setValue("provincia", v.provincia as any, { shouldValidate: true });
+                      form.setValue("municipio", v.municipio, { shouldValidate: true });
+                      form.setValue("comuna", v.comuna, { shouldValidate: true });
+                    }}
+                    required
+                    errors={{
+                      provincia: form.formState.errors.provincia?.message as string | undefined,
+                      municipio: form.formState.errors.municipio?.message as string | undefined,
+                      comuna: form.formState.errors.comuna?.message as string | undefined,
+                    }}
                   />
                 </div>
+
 
                 <div className="space-y-2">
                   <Label>Coordenadas GPS (opcional)</Label>
