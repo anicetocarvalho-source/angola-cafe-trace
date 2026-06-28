@@ -38,11 +38,6 @@ const Exploracoes = () => {
     },
   });
 
-  const provincias = useMemo(() => {
-    if (!exploracoes) return [];
-    return [...new Set(exploracoes.map((e) => e.provincia))].sort();
-  }, [exploracoes]);
-
   const filtered = useMemo(() => {
     if (!exploracoes) return [];
     return exploracoes.filter((e) => {
@@ -50,10 +45,13 @@ const Exploracoes = () => {
         e.designacao.toLowerCase().includes(searchTerm.toLowerCase()) ||
         e.municipio.toLowerCase().includes(searchTerm.toLowerCase());
       const matchStatus = statusFilter === "all" || e.status === statusFilter;
-      const matchProvincia = provinciaFilter === "all" || e.provincia === provinciaFilter;
-      return matchSearch && matchStatus && matchProvincia;
+      const matchProv = !loc.provincia || e.provincia === loc.provincia;
+      const matchMun = !loc.municipio || e.municipio === loc.municipio;
+      const matchCom = !loc.comuna || e.comuna === loc.comuna;
+      return matchSearch && matchStatus && matchProv && matchMun && matchCom;
     });
-  }, [exploracoes, searchTerm, statusFilter, provinciaFilter]);
+  }, [exploracoes, searchTerm, statusFilter, loc]);
+
 
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
