@@ -21,7 +21,9 @@ const provincias = PROVINCIAS_ANGOLA;
 const formSchema = z.object({
   designacao: z.string().min(3, "Mínimo 3 caracteres"),
   area_ha: z.string().min(1, "Área obrigatória"),
-  provincia: z.string().min(1, "Província obrigatória"),
+  provincia: z.enum(PROVINCIAS_ANGOLA, {
+    errorMap: () => ({ message: "Província inválida. Seleccione uma das 21 províncias de Angola." }),
+  }),
   municipio: z.string().min(2, "Município obrigatório"),
   comuna: z.string().optional(),
   aldeia: z.string().optional(),
@@ -40,7 +42,7 @@ const NovaExploracao = () => {
     defaultValues: {
       designacao: "",
       area_ha: "",
-      provincia: "",
+      provincia: undefined,
       municipio: "",
       comuna: "",
       aldeia: "",
