@@ -84,35 +84,34 @@ const Exploracoes = () => {
           <CardHeader>
             <CardTitle>Minhas Explorações</CardTitle>
             <CardDescription>{filtered.length} explorações encontradas</CardDescription>
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Pesquisar por designação ou município..."
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }}
-                  className="pl-10"
-                />
+            <div className="space-y-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Pesquisar por designação ou município..."
+                    value={searchTerm}
+                    onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(0); }}>
+                  <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos estados</SelectItem>
+                    <SelectItem value="pendente">Pendente</SelectItem>
+                    <SelectItem value="validado">Validado</SelectItem>
+                    <SelectItem value="indeferido">Indeferido</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos estados</SelectItem>
-                  <SelectItem value="pendente">Pendente</SelectItem>
-                  <SelectItem value="validado">Validado</SelectItem>
-                  <SelectItem value="indeferido">Indeferido</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={provinciaFilter} onValueChange={(v) => { setProvinciaFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Província" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas províncias</SelectItem>
-                  {provincias.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <LocalizacaoSelect
+                value={loc}
+                onChange={(v) => { setLoc(v); setPage(0); }}
+                allowAll
+              />
             </div>
+
           </CardHeader>
           <CardContent>
             {isLoading ? (
