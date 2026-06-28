@@ -69,15 +69,8 @@ const NovaExploracao = () => {
 
   const provincia = form.watch("provincia");
   const municipio = form.watch("municipio");
+  const comuna = form.watch("comuna") ?? "";
 
-  const municipiosDisponiveis = useMemo(
-    () => (provincia ? getMunicipios(provincia as ProvinciaAngola) : []),
-    [provincia],
-  );
-  const comunasDisponiveis = useMemo(
-    () => (provincia && municipio ? getComunas(provincia as ProvinciaAngola, municipio) : []),
-    [provincia, municipio],
-  );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
