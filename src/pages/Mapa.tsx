@@ -16,11 +16,13 @@ interface Exploracao {
   designacao: string;
   provincia: string;
   municipio: string;
+  comuna: string | null;
   latitude: number;
   longitude: number;
   area_ha: number;
   status: string;
 }
+
 
 const Mapa = () => {
   const [exploracoes, setExploracoes] = useState<Exploracao[]>([]);
