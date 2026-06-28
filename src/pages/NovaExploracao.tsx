@@ -42,7 +42,7 @@ const NovaExploracao = () => {
     defaultValues: {
       designacao: "",
       area_ha: "",
-      provincia: "",
+      provincia: undefined,
       municipio: "",
       comuna: "",
       aldeia: "",
