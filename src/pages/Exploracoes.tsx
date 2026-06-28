@@ -9,10 +9,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import LocalizacaoSelect from "@/components/forms/LocalizacaoSelect";
 import { Plus, MapPin, Search } from "lucide-react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+
 
 const PAGE_SIZE = 15;
 
@@ -20,8 +22,9 @@ const Exploracoes = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [provinciaFilter, setProvinciaFilter] = useState("all");
+  const [loc, setLoc] = useState({ provincia: "", municipio: "", comuna: "" });
   const [page, setPage] = useState(0);
+
 
   const { data: exploracoes, isLoading } = useQuery({
     queryKey: ["exploracoes"],
@@ -35,11 +38,6 @@ const Exploracoes = () => {
     },
   });
 
-  const provincias = useMemo(() => {
-    if (!exploracoes) return [];
-    return [...new Set(exploracoes.map((e) => e.provincia))].sort();
-  }, [exploracoes]);
-
   const filtered = useMemo(() => {
     if (!exploracoes) return [];
     return exploracoes.filter((e) => {
@@ -47,10 +45,13 @@ const Exploracoes = () => {
         e.designacao.toLowerCase().includes(searchTerm.toLowerCase()) ||
         e.municipio.toLowerCase().includes(searchTerm.toLowerCase());
       const matchStatus = statusFilter === "all" || e.status === statusFilter;
-      const matchProvincia = provinciaFilter === "all" || e.provincia === provinciaFilter;
-      return matchSearch && matchStatus && matchProvincia;
+      const matchProv = !loc.provincia || e.provincia === loc.provincia;
+      const matchMun = !loc.municipio || e.municipio === loc.municipio;
+      const matchCom = !loc.comuna || e.comuna === loc.comuna;
+      return matchSearch && matchStatus && matchProv && matchMun && matchCom;
     });
-  }, [exploracoes, searchTerm, statusFilter, provinciaFilter]);
+  }, [exploracoes, searchTerm, statusFilter, loc]);
+
 
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
@@ -83,35 +84,34 @@ const Exploracoes = () => {
           <CardHeader>
             <CardTitle>Minhas Explorações</CardTitle>
             <CardDescription>{filtered.length} explorações encontradas</CardDescription>
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Pesquisar por designação ou município..."
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }}
-                  className="pl-10"
-                />
+            <div className="space-y-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Pesquisar por designação ou município..."
+                    value={searchTerm}
+                    onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(0); }}>
+                  <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos estados</SelectItem>
+                    <SelectItem value="pendente">Pendente</SelectItem>
+                    <SelectItem value="validado">Validado</SelectItem>
+                    <SelectItem value="indeferido">Indeferido</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Estado" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos estados</SelectItem>
-                  <SelectItem value="pendente">Pendente</SelectItem>
-                  <SelectItem value="validado">Validado</SelectItem>
-                  <SelectItem value="indeferido">Indeferido</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={provinciaFilter} onValueChange={(v) => { setProvinciaFilter(v); setPage(0); }}>
-                <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Província" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas províncias</SelectItem>
-                  {provincias.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <LocalizacaoSelect
+                value={loc}
+                onChange={(v) => { setLoc(v); setPage(0); }}
+                allowAll
+              />
             </div>
+
           </CardHeader>
           <CardContent>
             {isLoading ? (
