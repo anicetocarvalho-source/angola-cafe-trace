@@ -92,7 +92,7 @@ const Mapa = () => {
     setFilteredExploracoes(filtered);
   };
 
-  const provincias = Array.from(new Set(exploracoes.map((e) => e.provincia))).sort();
+  
 
   const getStatusColor = (status: string) => {
     switch (status) {
