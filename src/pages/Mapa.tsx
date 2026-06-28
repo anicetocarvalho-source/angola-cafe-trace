@@ -124,54 +124,52 @@ const Mapa = () => {
             <CardDescription>Filtre as explorações no mapa</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <Label>Pesquisar</Label>
-                <Input
-                  placeholder="Nome ou município..."
-                  value={filters.search}
-                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                />
+            <div className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Pesquisar</Label>
+                  <Input
+                    placeholder="Nome ou município..."
+                    value={filters.search}
+                    onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Estado</Label>
+                  <Select
+                    value={filters.status}
+                    onValueChange={(value) => setFilters({ ...filters, status: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos os estados" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="validado">Validado</SelectItem>
+                      <SelectItem value="pendente">Pendente</SelectItem>
+                      <SelectItem value="indeferido">Indeferido</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-
-              <div className="space-y-2">
-                <Label>Província</Label>
-                <Select
-                  value={filters.provincia}
-                  onValueChange={(value) => setFilters({ ...filters, provincia: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todas as províncias" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas</SelectItem>
-                    {provincias.map((p) => (
-                      <SelectItem key={p} value={p}>
-                        {p}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Estado</Label>
-                <Select
-                  value={filters.status}
-                  onValueChange={(value) => setFilters({ ...filters, status: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos os estados" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
-                    <SelectItem value="validado">Validado</SelectItem>
-                    <SelectItem value="pendente">Pendente</SelectItem>
-                    <SelectItem value="indeferido">Indeferido</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <LocalizacaoSelect
+                value={{
+                  provincia: filters.provincia,
+                  municipio: filters.municipio,
+                  comuna: filters.comuna,
+                }}
+                onChange={(v) =>
+                  setFilters({
+                    ...filters,
+                    provincia: v.provincia,
+                    municipio: v.municipio,
+                    comuna: v.comuna,
+                  })
+                }
+                allowAll
+              />
             </div>
+
           </CardContent>
         </Card>
 
