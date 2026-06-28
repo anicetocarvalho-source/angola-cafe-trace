@@ -65,13 +65,20 @@ const Mapa = () => {
   const applyFilters = () => {
     let filtered = [...exploracoes];
 
-    if (filters.provincia && filters.provincia !== "all") {
+    if (filters.provincia) {
       filtered = filtered.filter((e) => e.provincia === filters.provincia);
+    }
+    if (filters.municipio) {
+      filtered = filtered.filter((e) => e.municipio === filters.municipio);
+    }
+    if (filters.comuna) {
+      filtered = filtered.filter((e) => e.comuna === filters.comuna);
     }
 
     if (filters.status && filters.status !== "all") {
       filtered = filtered.filter((e) => e.status === filters.status);
     }
+
 
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
