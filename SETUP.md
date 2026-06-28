@@ -1,8 +1,22 @@
 # Setup do Sistema INCA Coffee Trace
 
+## Cobertura territorial 🇦🇴
+
+O sistema cobre as **21 províncias de Angola** (divisão político-administrativa de 2024):
+Bengo, Benguela, Bié, Cabinda, Cuando, Cuanza Norte, Cuanza Sul, Cubango, Cunene,
+Huambo, Huíla, Icolo e Bengo, Luanda, Lunda Norte, Lunda Sul, Malanje, Moxico,
+Moxico Leste, Namibe, Uíge e Zaire.
+
+A reforma de 2024 dividiu "Cuando Cubango" em **Cuando** e **Cubango**, criou
+**Icolo e Bengo** (desanexada de Luanda) e **Moxico Leste** (desanexada de Moxico).
+A fonte única da lista é `src/lib/provincias.ts` (`PROVINCIAS_ANGOLA`), validada
+no formulário de exploração via `z.enum(PROVINCIAS_ANGOLA)` e coberta por testes
+de regressão em `src/test/flows/provincias.test.ts` e `provincia-validation.test.ts`.
+
 ## Dados Demo Carregados ✅
 
 O sistema já tem dados de demonstração carregados:
+
 
 ### Entidades
 - **Cooperativa Café Huambo** (Produtor) - Huambo
