@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
 import InteractiveMap from "@/components/InteractiveMap";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import LocalizacaoSelect from "@/components/forms/LocalizacaoSelect";
+
 
 interface Exploracao {
   id: string;
