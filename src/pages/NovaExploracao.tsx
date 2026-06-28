@@ -10,17 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-import { PROVINCIAS_ANGOLA, type ProvinciaAngola } from "@/lib/provincias";
-import {
-  getMunicipios,
-  getComunas,
-  isMunicipioValido,
-  isComunaValida,
-} from "@/lib/dpa-angola";
+import { PROVINCIAS_ANGOLA } from "@/lib/provincias";
+import { isMunicipioValido, isComunaValida } from "@/lib/dpa-angola";
+import LocalizacaoSelect from "@/components/forms/LocalizacaoSelect";
+
 
 const formSchema = z
   .object({
