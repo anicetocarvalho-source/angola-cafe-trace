@@ -29,10 +29,13 @@ const Mapa = () => {
   const [filteredExploracoes, setFilteredExploracoes] = useState<Exploracao[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    provincia: "all",
+    provincia: "",
+    municipio: "",
+    comuna: "",
     status: "all",
     search: "",
   });
+
   useEffect(() => {
     fetchExploracoes();
   }, []);
