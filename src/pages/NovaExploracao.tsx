@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,23 +14,43 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-import { PROVINCIAS_ANGOLA } from "@/lib/provincias";
+import { PROVINCIAS_ANGOLA, type ProvinciaAngola } from "@/lib/provincias";
+import {
+  getMunicipios,
+  getComunas,
+  isMunicipioValido,
+  isComunaValida,
+} from "@/lib/dpa-angola";
 
-const provincias = PROVINCIAS_ANGOLA;
-
-const formSchema = z.object({
-  designacao: z.string().min(3, "Mínimo 3 caracteres"),
-  area_ha: z.string().min(1, "Área obrigatória"),
-  provincia: z.enum(PROVINCIAS_ANGOLA, {
-    errorMap: () => ({ message: "Província inválida. Seleccione uma das 21 províncias de Angola." }),
-  }),
-  municipio: z.string().min(2, "Município obrigatório"),
-  comuna: z.string().optional(),
-  aldeia: z.string().optional(),
-  latitude: z.string().optional(),
-  longitude: z.string().optional(),
-  altitude_m: z.string().optional(),
-});
+const formSchema = z
+  .object({
+    designacao: z.string().min(3, "Mínimo 3 caracteres"),
+    area_ha: z.string().min(1, "Área obrigatória"),
+    provincia: z.enum(PROVINCIAS_ANGOLA, {
+      errorMap: () => ({ message: "Província inválida. Seleccione uma das 21 províncias de Angola." }),
+    }),
+    municipio: z.string().min(1, "Município obrigatório"),
+    comuna: z.string().optional().or(z.literal("")),
+    latitude: z.string().optional(),
+    longitude: z.string().optional(),
+    altitude_m: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!isMunicipioValido(data.provincia, data.municipio)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["municipio"],
+        message: "Município não pertence à província seleccionada.",
+      });
+    }
+    if (data.comuna && !isComunaValida(data.provincia, data.municipio, data.comuna)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["comuna"],
+        message: "Comuna não pertence ao município seleccionado.",
+      });
+    }
+  });
 
 const NovaExploracao = () => {
   const navigate = useNavigate();
@@ -45,19 +65,29 @@ const NovaExploracao = () => {
       provincia: undefined,
       municipio: "",
       comuna: "",
-      aldeia: "",
       latitude: "",
       longitude: "",
       altitude_m: "",
     },
   });
 
+  const provincia = form.watch("provincia");
+  const municipio = form.watch("municipio");
+
+  const municipiosDisponiveis = useMemo(
+    () => (provincia ? getMunicipios(provincia as ProvinciaAngola) : []),
+    [provincia],
+  );
+  const comunasDisponiveis = useMemo(
+    () => (provincia && municipio ? getComunas(provincia as ProvinciaAngola, municipio) : []),
+    [provincia, municipio],
+  );
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return;
     setLoading(true);
 
     try {
-      // Get user's entity
       const { data: profile } = await supabase
         .from("profiles")
         .select("entidade_id")
@@ -76,7 +106,6 @@ const NovaExploracao = () => {
         provincia: values.provincia,
         municipio: values.municipio,
         comuna: values.comuna || null,
-        aldeia: values.aldeia || null,
         latitude: values.latitude ? parseFloat(values.latitude) : null,
         longitude: values.longitude ? parseFloat(values.longitude) : null,
         altitude_m: values.altitude_m ? parseInt(values.altitude_m) : null,
@@ -162,21 +191,26 @@ const NovaExploracao = () => {
                   />
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-3">
                   <FormField
                     control={form.control}
                     name="provincia"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Província *</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Seleccione província" />
-                            </SelectTrigger>
-                          </FormControl>
+                        <Select
+                          onValueChange={(v) => {
+                            field.onChange(v);
+                            form.setValue("municipio", "", { shouldValidate: false });
+                            form.setValue("comuna", "", { shouldValidate: false });
+                          }}
+                          value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccione província" />
+                          </SelectTrigger>
                           <SelectContent>
-                            {provincias.map((p) => (
+                            {PROVINCIAS_ANGOLA.map((p) => (
                               <SelectItem key={p} value={p}>
                                 {p}
                               </SelectItem>
@@ -194,39 +228,62 @@ const NovaExploracao = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Município *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ex: Caála" {...field} />
-                        </FormControl>
+                        <Select
+                          onValueChange={(v) => {
+                            field.onChange(v);
+                            form.setValue("comuna", "", { shouldValidate: false });
+                          }}
+                          value={field.value || ""}
+                          disabled={!provincia}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={provincia ? "Seleccione município" : "Escolha província primeiro"}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {municipiosDisponiveis.map((m) => (
+                              <SelectItem key={m} value={m}>
+                                {m}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="comuna"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Comuna</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ex: Catata" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="aldeia"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Aldeia</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Nome da aldeia" {...field} />
-                        </FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                          disabled={!municipio || comunasDisponiveis.length === 0}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={
+                                !municipio
+                                  ? "Escolha município primeiro"
+                                  : comunasDisponiveis.length === 0
+                                    ? "Sem comunas registadas"
+                                    : "Seleccione comuna"
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {comunasDisponiveis.map((c) => (
+                              <SelectItem key={c} value={c}>
+                                {c}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
